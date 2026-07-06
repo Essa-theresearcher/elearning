@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lesson 1 Practice Quiz — Digital Bridge Academy</title>
+<style>
+  :root{
+    --navy:#132A4C;
+    --navy-dark:#0B1B33;
+    --gold:#C9A227;
+    --ivory:#FAF6EC;
+    --charcoal:#2B2B2B;
+    --soft-grey:#6E6E6E;
+    --line:#E3D9BE;
+    --correct:#2F6B52;
+    --correct-bg:#EAF3EE;
+    --incorrect:#8C3A3A;
+    --incorrect-bg:#F6EBEA;
+    --code-bg:#0F1F38;
+    --code-text:#E8E3D3;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ivory);
+    color:var(--charcoal);
+    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .topbar{
+    background:var(--navy);
+    border-bottom:3px solid var(--gold);
+    padding:14px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .topbar .brand{
+    color:#fff;
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:0.03em;
+  }
+  .topbar .lesson-tag{
+    color:#D9CDA3;
+    font-size:12.5px;
+  }
+  .wrap{
+    max-width:680px;
+    margin:0 auto;
+    padding:28px 18px 60px;
+  }
+  .hero{
+    text-align:center;
+    margin-bottom:22px;
+  }
+  .hero .kicker{
+    color:var(--gold);
+    font-weight:700;
+    font-size:11.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+  .hero h1{
+    font-family:Georgia, "Times New Roman", serif;
+    color:var(--navy);
+    font-size:26px;
+    margin:6px 0 4px;
+  }
+  .hero p{
+    color:var(--soft-grey);
+    font-size:14px;
+    margin:0;
+  }
+
+  /* Byte meter — signature element */
+  .byte-meter{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:14px;
+    margin:22px 0 6px;
+    flex-wrap:wrap;
+  }
+  .bits{
+    display:flex;
+    gap:5px;
+  }
+  .bit{
+    width:22px;
+    height:22px;
+    border:1.5px solid var(--line);
+    border-radius:3px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:"Courier New", Courier, monospace;
+    font-size:11px;
+    color:var(--soft-grey);
+    background:#fff;
+  }
+  .bit.on{
+    background:var(--navy);
+    border-color:var(--navy);
+    color:var(--gold);
+    font-weight:700;
+  }
+  @media (prefers-reduced-motion: no-preference){
+    .bit{ transition: background .35s ease, color .35s ease, border-color .35s ease; }
+  }
+  .byte-readout{
+    font-family:"Courier New", Courier, monospace;
+    font-size:12.5px;
+    color:var(--soft-grey);
+    text-align:center;
+    margin-bottom:22px;
+  }
+  .byte-readout b{ color:var(--navy); }
+
+  .progress-text{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--soft-grey);
+    margin-bottom:18px;
+  }
+
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:26px 26px 22px;
+    box-shadow:0 1px 3px rgba(19,42,76,0.06);
+  }
+  .category-tag{
+    display:inline-block;
+    background:var(--ivory);
+    border:1px solid var(--line);
+    color:var(--navy);
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    padding:4px 10px;
+    border-radius:3px;
+    margin-bottom:14px;
+  }
+  .question{
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:17.5px;
+    line-height:1.5;
+    color:var(--navy-dark);
+    margin:0 0 16px;
+  }
+  .code-block{
+    background:var(--code-bg);
+    color:var(--code-text);
+    font-family:"Courier New", Courier, monospace;
+    font-size:13.5px;
+    padding:14px 16px;
+    border-radius:4px;
+    margin-bottom:16px;
+    white-space:pre;
+    overflow-x:auto;
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  .option{
+    text-align:left;
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:5px;
+    padding:12px 14px;
+    font-size:14px;
+    color:var(--charcoal);
+    cursor:pointer;
+    font-family:inherit;
+  }
+  @media (prefers-reduced-motion: no-preference){
+    .option{ transition: border-color .15s ease, background .15s ease; }
+  }
+  .option:hover:not(:disabled){
+    border-color:var(--gold);
+    background:var(--ivory);
+  }
+  .option:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:2px;
+  }
+  .option:disabled{ cursor:default; }
+  .option.correct-answer{
+    border-color:var(--correct);
+    background:var(--correct-bg);
+    color:var(--correct);
+    font-weight:700;
+  }
+  .option.wrong-answer{
+    border-color:var(--incorrect);
+    background:var(--incorrect-bg);
+    color:var(--incorrect);
+    font-weight:700;
+  }
+  .option.dimmed{ opacity:0.5; }
+
+  .feedback{
+    margin-top:18px;
+    padding:14px 16px;
+    border-radius:5px;
+    font-size:13.5px;
+    line-height:1.55;
+    display:none;
+  }
+  .feedback.show{ display:block; }
+  .feedback.is-correct{ background:var(--correct-bg); color:var(--correct); border:1px solid var(--correct); }
+  .feedback.is-incorrect{ background:var(--incorrect-bg); color:var(--incorrect); border:1px solid var(--incorrect); }
+  .feedback .label{ font-weight:700; display:block; margin-bottom:4px; }
+  .feedback .explain{ color:var(--charcoal); }
+
+  .actions{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:20px;
+  }
+  .btn{
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    padding:11px 22px;
+    font-size:14px;
+    font-weight:700;
+    border-radius:5px;
+    cursor:pointer;
+    display:none;
+    font-family:inherit;
+  }
+  .btn.show{ display:inline-block; }
+  .btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .btn:hover{ background:var(--navy-dark); }
+
+  /* Results screen */
+  .results{ display:none; }
+  .results.show{ display:block; }
+  .quiz-screen.hide{ display:none; }
+  .score-hero{
+    text-align:center;
+    padding:8px 0 6px;
+  }
+  .score-hero .big{
+    font-family:Georgia, serif;
+    font-size:48px;
+    color:var(--navy);
+    font-weight:700;
+    line-height:1;
+  }
+  .score-hero .big span{ color:var(--gold); }
+  .score-hero .msg{
+    font-size:14.5px;
+    color:var(--charcoal);
+    max-width:440px;
+    margin:12px auto 0;
+    line-height:1.5;
+  }
+  .breakdown{
+    margin-top:26px;
+    border-top:1px solid var(--line);
+    padding-top:18px;
+  }
+  .breakdown h3{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--soft-grey);
+    margin:0 0 12px;
+  }
+  .cat-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:9px 0;
+    border-bottom:1px solid #F0EBDB;
+    font-size:13.5px;
+  }
+  .cat-row:last-child{ border-bottom:none; }
+  .cat-row .name{ color:var(--navy-dark); font-weight:600; }
+  .cat-row .fraction{ color:var(--soft-grey); font-family:"Courier New", monospace; }
+  .restart-row{
+    text-align:center;
+    margin-top:26px;
+  }
+  .btn-outline{
+    background:none;
+    border:1.5px solid var(--navy);
+    color:var(--navy);
+    padding:10px 22px;
+    font-size:13.5px;
+    font-weight:700;
+    border-radius:5px;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .btn-outline:hover{ background:var(--navy); color:#fff; }
+  .btn-outline:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+  @media (max-width:420px){
+    .bit{ width:18px; height:18px; font-size:9px; }
+    .hero h1{ font-size:22px; }
+    .card{ padding:20px 18px 18px; }
+    .score-hero .big{ font-size:38px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand">DIGITAL BRIDGE ACADEMY</span>
+  <span class="lesson-tag">Computer Fundamentals · Lesson 1 Practice Quiz</span>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="kicker">Post-lesson check</div>
+    <h1>Test what stuck from the recording</h1>
+    <p>21 questions across hardware, binary, code execution, memory, and the OS. No pressure — this is here to show you what to rewatch, not to grade you.</p>
+  </div>
+
+  <div class="byte-meter" id="byteMeter"></div>
+  <div class="byte-readout" id="byteReadout"></div>
+  <div class="progress-text" id="progressText"></div>
+
+  <!-- QUIZ SCREEN -->
+  <div class="card quiz-screen" id="quizScreen">
+    <div class="category-tag" id="categoryTag"></div>
+    <p class="question" id="questionText"></p>
+    <div class="code-block" id="codeBlock" style="display:none;"></div>
+    <div class="options" id="optionsWrap"></div>
+
+    <div class="feedback" id="feedback">
+      <span class="label" id="feedbackLabel"></span>
+      <span class="explain" id="feedbackExplain"></span>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="nextBtn">Next question →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div class="card results" id="resultsScreen">
+    <div class="score-hero">
+      <div class="big" id="scoreBig"></div>
+      <p class="msg" id="scoreMsg"></p>
+    </div>
+    <div class="breakdown">
+      <h3>By topic</h3>
+      <div id="categoryBreakdown"></div>
+    </div>
+    <div class="restart-row">
+      <button class="btn-outline" id="restartBtn">Retake the quiz</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+
+  const QUESTIONS = [
+    // ---- Hardware ----
+    { category:"Hardware", question:"Which component actually executes program instructions?",
+      options:["RAM","CPU","Storage","I/O"], correct:1,
+      explanation:"The CPU is the part that carries out instructions, one at a time — the 'thinking' part of the machine." },
+    { category:"Hardware", question:"Which component loses everything it's holding the moment the computer loses power?",
+      options:["Storage (SSD/HDD)","RAM","Both lose their contents","Neither loses its contents"], correct:1,
+      explanation:"RAM is temporary working memory — it's cleared on shutdown. Storage is what keeps data permanently." },
+    { category:"Hardware", question:"What connects the CPU, RAM, storage, and I/O so they can exchange data?",
+      options:["The kernel","The bus","The GIL","The scheduler"], correct:1,
+      explanation:"The bus is the physical pathway data travels along between components. Its speed is part of why RAM feels instant and disk feels slow." },
+    { category:"Hardware", question:"A program that keeps reading the same huge file from disk instead of holding it in memory is most likely bottlenecked by:",
+      options:["CPU speed","Storage / I/O speed","RAM capacity","Bus width"], correct:1,
+      explanation:"Disk access is thousands of times slower than RAM access — repeatedly hitting storage instead of caching in memory is a classic slowdown." },
+
+    // ---- Binary & Encoding ----
+    { category:"Binary & Encoding", question:"How many distinct values can a single byte (8 bits) represent?",
+      options:["8","128","256","512"], correct:2,
+      explanation:"8 bits gives 2^8 = 256 possible combinations, numbered 0–255." },
+    { category:"Binary & Encoding", question:"What decimal number does the binary pattern 01000001 represent?",
+      code:"01000001",
+      options:["63","65","66","97"], correct:1,
+      explanation:"Reading place values 128-64-32-16-8-4-2-1: only the 64 and 1 positions are on → 64 + 1 = 65." },
+    { category:"Binary & Encoding", question:"Why can't plain ASCII represent Somali or Arabic script characters?",
+      options:["ASCII only covers 128 characters, mostly basic English letters and symbols","ASCII is outdated software that needs updating","ASCII only works on Linux computers","ASCII requires an internet connection"], correct:0,
+      explanation:"ASCII was built for a small, fixed character set. Unicode extended this to cover virtually every writing system, which is why Python 3 strings work with Somali and Arabic text directly." },
+    { category:"Binary & Encoding", question:"In Python, what does chr(97) return?",
+      options:["'A'","'a'","97","'9'"], correct:1,
+      explanation:"97 is the encoding number for lowercase 'a'. Uppercase 'A' is a completely different number (65)." },
+    { category:"Binary & Encoding", question:"Why does \"5\" + \"5\" produce \"55\" in Python instead of 10?",
+      options:["It's a bug in Python","The two values are encoded character data (strings), not numbers, so + concatenates them","Python secretly converts strings to binary first","It's a typo — the real answer is 10"], correct:1,
+      explanation:"A str and an int are stored completely differently underneath. Strings get joined, not added, because they were never numbers to begin with." },
+
+    // ---- Code Execution ----
+    { category:"Code Execution", question:"What is the very first step when you run a Python script?",
+      options:["The CPU executes machine code directly","You (or the interpreter) start from human-readable source code in a .py file","The operating system clears the cache","RAM is reformatted"], correct:1,
+      explanation:"Everything starts with your readable source code — it's translated downward from there, ending in machine code the CPU runs." },
+    { category:"Code Execution", question:"What is bytecode?",
+      options:["The final machine code the CPU runs directly","An intermediate, simplified instruction set between Python source and machine code","Another name for Python source code","A type of hard drive"], correct:1,
+      explanation:"Bytecode sits between your readable Python and raw machine code — it's what the Python Virtual Machine actually executes." },
+    { category:"Code Execution", question:"Which of these is a compiled language rather than an interpreted one?",
+      options:["Python","JavaScript","Rust","Bash"], correct:2,
+      explanation:"Rust is compiled directly to machine code ahead of time. Python translates to bytecode and interprets it as it runs." },
+    { category:"Code Execution", question:"Which built-in Python module lets you inspect the bytecode behind a function?",
+      options:["os","sys","dis","re"], correct:2,
+      explanation:"dis.dis() disassembles a function and shows you the exact bytecode instructions it compiles to." },
+    { category:"Code Execution", question:"What's the main practical advantage of an interpreted language like Python over a compiled one?",
+      options:["It always runs faster","You can run code immediately after any change, with no separate build step","It never produces bugs","It doesn't require a CPU"], correct:1,
+      explanation:"Skipping the compile step means faster iteration — you save a file and run it immediately, which is why Python is popular for scripting and learning." },
+
+    // ---- Variables & Memory ----
+    { category:"Variables & Memory", question:"In `b = a`, where `a` is a list, what does `b` actually get?",
+      code:"a = [1, 2, 3]\nb = a",
+      options:["An independent copy of the list","A reference pointing to the exact same list object as a","Nothing — this is invalid syntax","A new, empty list"], correct:1,
+      explanation:"Variables in Python are names pointing to objects, not boxes holding values. b and a now point to the same object in memory." },
+    { category:"Variables & Memory", question:"Which Python operator checks whether two variables point to the exact same object in memory?",
+      options:["==","is","in","="], correct:1,
+      explanation:"== compares values for equality. is compares identity — whether it's literally the same object, which id() would also confirm." },
+    { category:"Variables & Memory", question:"Which of these Python types is mutable — meaning it can be changed in place?",
+      options:["tuple","str","list","int"], correct:2,
+      explanation:"Lists can be modified in place (e.g. .append()). Tuples, strings, and ints are immutable — changing them creates a brand-new object instead." },
+    { category:"Variables & Memory", question:"Where do simple, short-lived local variables and function-call tracking typically live?",
+      options:["The heap","The stack","Storage","The GIL"], correct:1,
+      explanation:"The stack handles fast, short-lived data and function call frames. More complex objects like lists and dicts live on the heap." },
+
+    // ---- Operating System ----
+    { category:"Operating System", question:"What is a process?",
+      options:["A single CPU instruction","A running instance of a program, with its own private slice of memory","A type of hard drive","A Python built-in function"], correct:1,
+      explanation:"When you run python app.py, the OS creates a new process for it — isolated from other running programs." },
+    { category:"Operating System", question:"What actually happens during a 'context switch'?",
+      options:["The paused program is deleted permanently","The CPU saves one process's state and loads another's so it can run next","Python code is converted straight to binary","RAM capacity is increased"], correct:1,
+      explanation:"Context switching is how a single CPU core creates the illusion of running many programs at once — pausing and resuming state, many times per second." },
+    { category:"Operating System", question:"What is the GIL in CPython?",
+      options:["A graphic design tool","A mechanism that allows only one thread to execute Python bytecode at a time","A type of RAM chip","A common error message"], correct:1,
+      explanation:"The Global Interpreter Lock keeps bytecode execution safe and predictable, but means Python threads don't run bytecode truly in parallel — a common interview topic." },
+  ];
+
+  const TOTAL = QUESTIONS.length;
+  let current = 0;
+  let answered = false;
+  let score = 0;
+  const catStats = {};
+  QUESTIONS.forEach(q => { if(!catStats[q.category]) catStats[q.category] = {correct:0, total:0}; catStats[q.category].total++; });
+
+  const quizScreen = document.getElementById('quizScreen');
+  const resultsScreen = document.getElementById('resultsScreen');
+  const byteMeterEl = document.getElementById('byteMeter');
+  const byteReadoutEl = document.getElementById('byteReadout');
+  const progressTextEl = document.getElementById('progressText');
+  const categoryTagEl = document.getElementById('categoryTag');
+  const questionTextEl = document.getElementById('questionText');
+  const codeBlockEl = document.getElementById('codeBlock');
+  const optionsWrapEl = document.getElementById('optionsWrap');
+  const feedbackEl = document.getElementById('feedback');
+  const feedbackLabelEl = document.getElementById('feedbackLabel');
+  const feedbackExplainEl = document.getElementById('feedbackExplain');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function renderByteMeter(answeredCount){
+    const bitsOn = Math.round((answeredCount / TOTAL) * 8);
+    const placeValues = [128,64,32,16,8,4,2,1];
+    let html = '<div class="bits">';
+    let decimal = 0;
+    for(let i=0;i<8;i++){
+      const on = i < bitsOn;
+      if(on) decimal += placeValues[i];
+      html += `<div class="bit ${on ? 'on':''}">${on ? '1':'0'}</div>`;
+    }
+    html += '</div>';
+    byteMeterEl.innerHTML = html;
+    byteReadoutEl.innerHTML = `byte value: <b>${decimal}</b> / 255`;
+  }
+
+  function renderQuestion(){
+    answered = false;
+    const q = QUESTIONS[current];
+    categoryTagEl.textContent = q.category;
+    questionTextEl.textContent = q.question;
+
+    if(q.code){
+      codeBlockEl.style.display = 'block';
+      codeBlockEl.textContent = q.code;
+    } else {
+      codeBlockEl.style.display = 'none';
+    }
+
+    optionsWrapEl.innerHTML = '';
+    q.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'option';
+      btn.type = 'button';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => selectOption(idx));
+      optionsWrapEl.appendChild(btn);
+    });
+
+    feedbackEl.className = 'feedback';
+    nextBtn.classList.remove('show');
+    progressTextEl.textContent = `Question ${current + 1} of ${TOTAL}`;
+    renderByteMeter(current);
+  }
+
+  function selectOption(idx){
+    if(answered) return;
+    answered = true;
+    const q = QUESTIONS[current];
+    const buttons = optionsWrapEl.querySelectorAll('.option');
+    const isCorrect = idx === q.correct;
+
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if(i === q.correct) btn.classList.add('correct-answer');
+      else if(i === idx) btn.classList.add('wrong-answer');
+      else btn.classList.add('dimmed');
+    });
+
+    if(isCorrect){
+      score++;
+      catStats[q.category].correct++;
+      feedbackEl.className = 'feedback show is-correct';
+      feedbackLabelEl.textContent = 'Correct.';
+    } else {
+      feedbackEl.className = 'feedback show is-incorrect';
+      feedbackLabelEl.textContent = 'Not quite.';
+    }
+    feedbackExplainEl.textContent = q.explanation;
+
+    nextBtn.textContent = (current === TOTAL - 1) ? 'See results →' : 'Next question →';
+    nextBtn.classList.add('show');
+    renderByteMeter(current + 1);
+  }
+
+  nextBtn.addEventListener('click', () => {
+    current++;
+    if(current >= TOTAL){
+      showResults();
+    } else {
+      renderQuestion();
+    }
+  });
+
+  function saveQuizResult(){
+    // Posts to the backend when this page is served by app.py.
+    // If opened standalone, the quiz still works and simply skips database sync.
+    fetch('/api/progress/quiz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        lessonSlug: 'cs-fundamentals-lesson-1',
+        score: score,
+        totalQuestions: TOTAL,
+        categoryBreakdown: catStats,
+      }),
+    }).catch(function(){ /* Keep the quiz usable if opened without the backend. */ });
+  }
+
+  function showResults(){
+    quizScreen.classList.add('hide');
+    document.getElementById('byteMeter').parentElement.style.display = 'none'; // hide progress row wrapper? keep simple
+    progressTextEl.style.display = 'none';
+    resultsScreen.classList.add('show');
+
+    saveQuizResult();
+
+    const pct = Math.round((score / TOTAL) * 100);
+    document.getElementById('scoreBig').innerHTML = `${score}<span>/${TOTAL}</span>`;
+
+    let msg;
+    if(pct >= 90) msg = "Strong grasp of the fundamentals — you're ready to move on to Lesson 2.";
+    else if(pct >= 70) msg = "Solid overall. Check the topics below and rewatch just those sections before moving on.";
+    else msg = "Worth a second pass. Rewatch the recording, focusing on the topics below, then retake this quiz.";
+    document.getElementById('scoreMsg').textContent = `${pct}% — ${msg}`;
+
+    const breakdownEl = document.getElementById('categoryBreakdown');
+    breakdownEl.innerHTML = '';
+    Object.keys(catStats).forEach(cat => {
+      const s = catStats[cat];
+      const row = document.createElement('div');
+      row.className = 'cat-row';
+      row.innerHTML = `<span class="name">${cat}</span><span class="fraction">${s.correct} / ${s.total}</span>`;
+      breakdownEl.appendChild(row);
+    });
+  }
+
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    current = 0; score = 0; answered = false;
+    Object.keys(catStats).forEach(c => catStats[c].correct = 0);
+    quizScreen.classList.remove('hide');
+    resultsScreen.classList.remove('show');
+    document.getElementById('byteMeter').parentElement.style.display = '';
+    progressTextEl.style.display = '';
+    renderQuestion();
+  });
+
+  // init
+  renderQuestion();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lesson 1 Class Activity — Digital Bridge Academy</title>
+<style>
+  :root{
+    --navy:#132A4C;
+    --navy-dark:#0B1B33;
+    --gold:#C9A227;
+    --ivory:#FAF6EC;
+    --charcoal:#2B2B2B;
+    --soft-grey:#6E6E6E;
+    --line:#E3D9BE;
+    --correct:#2F6B52;
+    --correct-bg:#EAF3EE;
+    --code-bg:#0F1F38;
+    --code-text:#E8E3D3;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ivory);
+    color:var(--charcoal);
+    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .topbar{
+    background:var(--navy);
+    border-bottom:3px solid var(--gold);
+    padding:14px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .topbar .brand{ color:#fff; font-weight:700; font-size:14px; letter-spacing:0.03em; }
+  .topbar .lesson-tag{ color:#D9CDA3; font-size:12.5px; }
+
+  .wrap{ max-width:720px; margin:0 auto; padding:28px 18px 70px; }
+
+  .hero{ text-align:center; margin-bottom:8px; }
+  .hero .kicker{ color:var(--gold); font-weight:700; font-size:11.5px; letter-spacing:0.08em; text-transform:uppercase; }
+  .hero h1{ font-family:Georgia, "Times New Roman", serif; color:var(--navy); font-size:26px; margin:6px 0 4px; }
+  .hero p{ color:var(--soft-grey); font-size:14px; margin:0 0 8px; max-width:520px; margin-left:auto; margin-right:auto; }
+
+  .runtime-note{
+    text-align:center;
+    font-size:12px;
+    color:var(--soft-grey);
+    background:#fff;
+    border:1px dashed var(--line);
+    border-radius:5px;
+    padding:8px 14px;
+    margin:18px 0 30px;
+  }
+
+  .activity{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:24px 24px 22px;
+    margin-bottom:22px;
+    box-shadow:0 1px 3px rgba(19,42,76,0.06);
+  }
+  .activity-num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:26px; height:26px;
+    background:var(--navy);
+    color:var(--gold);
+    font-family:"Courier New", monospace;
+    font-weight:700;
+    font-size:12.5px;
+    border-radius:3px;
+    margin-right:10px;
+  }
+  .activity-title{
+    display:flex;
+    align-items:center;
+    font-family:Georgia, serif;
+    font-size:17px;
+    color:var(--navy-dark);
+    margin:0 0 6px;
+  }
+  .activity-sub{
+    color:var(--soft-grey);
+    font-size:13px;
+    margin:0 0 16px;
+    padding-left:36px;
+  }
+  .activity-body{ padding-left:0; }
+
+  .code-block{
+    background:var(--code-bg);
+    color:var(--code-text);
+    font-family:"Courier New", Courier, monospace;
+    font-size:13px;
+    padding:14px 16px;
+    border-radius:4px;
+    margin-bottom:14px;
+    white-space:pre;
+    overflow-x:auto;
+  }
+
+  label.field-label{
+    display:block;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--navy);
+    margin-bottom:6px;
+  }
+  input[type="text"], textarea{
+    width:100%;
+    border:1.5px solid var(--line);
+    border-radius:5px;
+    padding:10px 12px;
+    font-size:14px;
+    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:var(--charcoal);
+    background:#fff;
+    margin-bottom:12px;
+  }
+  textarea{ min-height:70px; resize:vertical; font-family:inherit; }
+  input[type="text"]:focus, textarea:focus{
+    outline:2px solid var(--gold);
+    outline-offset:1px;
+    border-color:var(--gold);
+  }
+
+  .btn{
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    font-size:13.5px;
+    font-weight:700;
+    border-radius:5px;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .btn:hover{ background:var(--navy-dark); }
+  .btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .btn-outline{
+    background:none;
+    border:1.5px solid var(--navy);
+    color:var(--navy);
+    padding:9px 16px;
+    font-size:13px;
+    font-weight:700;
+    border-radius:5px;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .btn-outline:hover{ background:var(--navy); color:#fff; }
+  .btn-outline:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+  .reveal{
+    display:none;
+    margin-top:14px;
+    padding:14px 16px;
+    background:var(--correct-bg);
+    border:1px solid var(--correct);
+    border-radius:5px;
+    font-size:13.5px;
+    line-height:1.55;
+    color:var(--correct);
+  }
+  .reveal.show{ display:block; }
+  .reveal b{ color:var(--navy-dark); }
+  .reveal .explain{ color:var(--charcoal); display:block; margin-top:6px; }
+
+  .live-output{
+    display:none;
+    margin-top:14px;
+  }
+  .live-output.show{ display:block; }
+  .live-output .code-block{ margin-bottom:0; }
+
+  .closing{
+    text-align:center;
+    margin-top:8px;
+  }
+  .closing p{
+    color:var(--soft-grey);
+    font-size:13px;
+    margin-bottom:16px;
+  }
+
+  @media (max-width:420px){
+    .hero h1{ font-size:22px; }
+    .activity{ padding:18px 16px 18px; }
+    .activity-sub{ padding-left:0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand">DIGITAL BRIDGE ACADEMY</span>
+  <span class="lesson-tag">Computer Fundamentals · Lesson 1 Class Activity</span>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="kicker">Hands-on · Do this after watching the recording</div>
+    <h1>Class Activity: How Computers Actually Work</h1>
+    <p>This is the hands-on portion you'd normally do live in class, adapted so you can work through it on your own. Take your time — nothing here is timed or graded.</p>
+  </div>
+
+  <div class="runtime-note">
+    Six short activities · ~25–30 minutes total · A notebook or the notes app on your phone is useful here
+  </div>
+
+  <!-- ACTIVITY 1 -->
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">1</span>Binary Detective</p>
+    <p class="activity-sub">Type any single letter. Guess its encoding number before you reveal it.</p>
+    <div class="activity-body">
+      <label class="field-label" for="letterInput">Type one letter (e.g. A, m, z)</label>
+      <input type="text" id="letterInput" maxlength="1" placeholder="A" />
+      <button class="btn" id="revealLetterBtn">Reveal the number</button>
+      <div class="live-output" id="letterOutput">
+        <div class="code-block" id="letterCode"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 2 -->
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">2</span>Bytecode Explorer</p>
+    <p class="activity-sub">Here's what a simple function compiles to. Study it, then answer below.</p>
+    <div class="activity-body">
+      <div class="code-block">def add(a, b):
+    return a + b
+
+&gt;&gt;&gt; import dis
+&gt;&gt;&gt; dis.dis(add)
+  2      0 LOAD_FAST     0 (a)
+         2 LOAD_FAST     1 (b)
+         4 BINARY_ADD
+         6 RETURN_VALUE</div>
+      <label class="field-label" for="bytecodeInput">Which single instruction actually performs the addition?</label>
+      <input type="text" id="bytecodeInput" placeholder="Type the instruction name" />
+      <button class="btn" id="revealBytecodeBtn">Check my answer</button>
+      <div class="reveal" id="bytecodeReveal">
+        <b>BINARY_ADD</b>
+        <span class="explain">LOAD_FAST twice just fetches a and b onto the stack. BINARY_ADD is the one instruction that does the actual math — everything else is bookkeeping.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 3 -->
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">3</span>Reference or Copy?</p>
+    <p class="activity-sub">Predict the output before revealing it.</p>
+    <div class="activity-body">
+      <div class="code-block">a = [1, 2, 3]
+b = a
+b.append(4)
+print(a)</div>
+      <label class="field-label" for="refInput">What does this print?</label>
+      <input type="text" id="refInput" placeholder="Your prediction" />
+      <button class="btn" id="revealRefBtn">Reveal the answer</button>
+      <div class="reveal" id="refReveal">
+        <b>[1, 2, 3, 4]</b>
+        <span class="explain">b was never a separate copy — it's another name pointing at the same list as a. Changing it through b changes what a sees too.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 4 -->
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">4</span>Predict, Then Check</p>
+    <p class="activity-sub">Same idea, different type. Does this behave the same way?</p>
+    <div class="activity-body">
+      <div class="code-block">x = 10
+y = x
+y = y + 5
+print(x, y)</div>
+      <label class="field-label" for="mutInput">What does this print, and why does it differ from Activity 3?</label>
+      <textarea id="mutInput" placeholder="Your prediction and reasoning"></textarea>
+      <button class="btn" id="revealMutBtn">Reveal the answer</button>
+      <div class="reveal" id="mutReveal">
+        <b>10 15</b>
+        <span class="explain">Numbers are immutable. y = y + 5 doesn't change the object 10 — it makes y point to a brand-new object, 15, while x still points to the original 10. Lists can be changed in place; numbers can't.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 5 -->
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">5</span>Field Notes: Spot the Processes</p>
+    <p class="activity-sub">A real-world task using your own machine — no reveal, just observation.</p>
+    <div class="activity-body">
+      <p style="font-size:13.5px; color:var(--charcoal); margin-top:0;">
+        Open <b>Task Manager</b> (Windows) or <b>Activity Monitor</b> (macOS), and look through
+        the list while nothing unusual is running.
+      </p>
+      <label class="field-label" for="processInput">Roughly how many processes are running, and which ones surprised you?</label>
+      <textarea id="processInput" placeholder="e.g. 140 processes — didn't expect to see three separate Chrome entries"></textarea>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 6 -->
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">6</span>In Your Own Words</p>
+    <p class="activity-sub">The real test of whether this clicked.</p>
+    <div class="activity-body">
+      <label class="field-label" for="reflectionInput">In 2–3 sentences: what happens between running <code>python app.py</code> and seeing output appear?</label>
+      <textarea id="reflectionInput" placeholder="No need to be perfect — write it in your own words"></textarea>
+    </div>
+  </div>
+
+  <div class="closing">
+    <p>Save your answers before you close this tab — nothing here is stored automatically.</p>
+    <button class="btn-outline" id="downloadBtn">Download my activity notes</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  // Activity 1 — real computation, no faking
+  document.getElementById('revealLetterBtn').addEventListener('click', function(){
+    const input = document.getElementById('letterInput').value;
+    const out = document.getElementById('letterOutput');
+    const code = document.getElementById('letterCode');
+    if(!input){
+      code.textContent = "Type a letter first.";
+    } else {
+      const ch = input[0];
+      const num = ch.charCodeAt(0);
+      const bin = num.toString(2).padStart(8, '0');
+      code.textContent = `'${ch}'  →  decimal ${num}  →  binary ${bin}`;
+    }
+    out.classList.add('show');
+  });
+
+  function wireReveal(btnId, revealId){
+    document.getElementById(btnId).addEventListener('click', function(){
+      document.getElementById(revealId).classList.add('show');
+    });
+  }
+  wireReveal('revealBytecodeBtn', 'bytecodeReveal');
+  wireReveal('revealRefBtn', 'refReveal');
+  wireReveal('revealMutBtn', 'mutReveal');
+
+  document.getElementById('downloadBtn').addEventListener('click', function(){
+    const letter = document.getElementById('letterInput').value || '(not answered)';
+    const bytecode = document.getElementById('bytecodeInput').value || '(not answered)';
+    const ref = document.getElementById('refInput').value || '(not answered)';
+    const mut = document.getElementById('mutInput').value || '(not answered)';
+    const process = document.getElementById('processInput').value || '(not answered)';
+    const reflection = document.getElementById('reflectionInput').value || '(not answered)';
+
+    const notes = `DIGITAL BRIDGE ACADEMY — Lesson 1 Class Activity Notes
+========================================================
+
+1. Binary Detective — letter you tried: ${letter}
+
+2. Bytecode Explorer — your answer: ${bytecode}
+
+3. Reference or Copy? — your prediction: ${ref}
+
+4. Predict, Then Check — your prediction/reasoning: ${mut}
+
+5. Field Notes: Spot the Processes — your observation: ${process}
+
+6. In Your Own Words — your reflection: ${reflection}
+`;
+    const blob = new Blob([notes], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lesson1_activity_notes.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+})();
+</script>
+
+</body>
+</html>

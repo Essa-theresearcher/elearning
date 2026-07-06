@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 1 - How Computers Actually Work</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --navy: #132a4c;
+      --navy-dark: #0b1b33;
+      --gold: #c9a227;
+      --paper: #ffffff;
+      --canvas: #f4f5f0;
+      --ivory: #faf6ec;
+      --line: #ded9c9;
+      --line-strong: #c8bea3;
+      --ink: #202633;
+      --muted: #66707d;
+      --teal: #206d6f;
+      --teal-soft: #e2f0ec;
+      --blue: #436a9f;
+      --rose: #9b594c;
+      --shadow: 0 16px 34px rgba(19, 42, 76, 0.08);
+      --radius: 8px;
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    code {
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      background: #eef1f3;
+      color: var(--navy-dark);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.92em;
+      white-space: nowrap;
+    }
+
+    pre code {
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      color: inherit;
+      font-size: inherit;
+      white-space: pre;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(19, 42, 76, 0.04);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 14px 24px;
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--navy);
+      color: var(--gold);
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-text strong {
+      display: block;
+      color: var(--navy-dark);
+      font-size: 14px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-text span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 230px;
+    }
+
+    .progress-copy {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      position: relative;
+      flex: 1;
+      height: 8px;
+      min-width: 120px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #e9e3d2;
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--teal);
+      transition: width 180ms ease;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+      gap: 28px;
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 28px 24px 56px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 82px;
+      align-self: start;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 24px rgba(19, 42, 76, 0.05);
+      overflow: hidden;
+    }
+
+    .sidebar-head {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--ivory);
+    }
+
+    .eyebrow {
+      display: block;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .sidebar h1 {
+      margin: 6px 0 8px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .sidebar-meta {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .lesson-nav {
+      display: grid;
+      padding: 8px;
+    }
+
+    .lesson-nav a {
+      display: grid;
+      grid-template-columns: 22px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 10px;
+      border-radius: 7px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .lesson-nav a:hover,
+    .lesson-nav a.active {
+      background: var(--teal-soft);
+      color: var(--navy-dark);
+    }
+
+    .nav-dot {
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--line-strong);
+      border-radius: 50%;
+      background: var(--paper);
+    }
+
+    .lesson-nav a.done .nav-dot {
+      border-color: var(--teal);
+      background: var(--teal);
+      box-shadow: inset 0 0 0 3px var(--paper);
+    }
+
+    .duration {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .main {
+      min-width: 0;
+    }
+
+    .lesson-section {
+      margin-bottom: 26px;
+      scroll-margin-top: 94px;
+    }
+
+    .section-surface {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 28px 30px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-title {
+      max-width: 780px;
+    }
+
+    .section-title h2 {
+      margin: 4px 0 8px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .section-body {
+      padding: 26px 30px 30px;
+    }
+
+    .complete-btn,
+    .primary-link,
+    .secondary-link,
+    .file-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .complete-btn {
+      background: var(--navy);
+      color: var(--paper);
+    }
+
+    .complete-btn:hover {
+      background: var(--navy-dark);
+    }
+
+    .complete-btn.is-done {
+      background: var(--teal);
+    }
+
+    .primary-link {
+      background: var(--navy);
+      color: var(--paper);
+    }
+
+    .primary-link:hover {
+      background: var(--navy-dark);
+    }
+
+    .secondary-link,
+    .file-label {
+      background: var(--paper);
+      color: var(--navy);
+      border-color: var(--navy);
+    }
+
+    .secondary-link:hover,
+    .file-label:hover {
+      background: var(--ivory);
+    }
+
+    .welcome-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .lead {
+      margin: 0 0 22px;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .objective-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .objective-list li {
+      display: grid;
+      grid-template-columns: 12px 1fr;
+      gap: 12px;
+      color: var(--ink);
+    }
+
+    .objective-list li::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      margin-top: 9px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    .notes-cover {
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+    }
+
+    .notes-cover img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .notes-cover figcaption {
+      border-top: 1px solid var(--line);
+      padding: 12px 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .session-plan {
+      width: 100%;
+      margin-top: 24px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .session-plan th,
+    .session-plan td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .session-plan th {
+      background: var(--navy);
+      color: var(--paper);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .session-plan td:first-child {
+      width: 90px;
+      color: var(--teal);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .video-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .video-frame {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 420px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: #111827;
+      border: 1px solid #101827;
+      color: var(--paper);
+    }
+
+    .video-frame video {
+      display: none;
+      width: 100%;
+      height: 100%;
+      min-height: 420px;
+      object-fit: contain;
+      background: #000000;
+    }
+
+    .video-frame.has-video video {
+      display: block;
+    }
+
+    .video-frame.has-video .video-empty {
+      display: none;
+    }
+
+    .video-empty {
+      max-width: 440px;
+      padding: 36px 28px;
+      text-align: center;
+    }
+
+    .video-empty strong {
+      display: block;
+      margin-bottom: 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .video-empty span {
+      color: #ccd7e6;
+      font-size: 15px;
+    }
+
+    .video-panel {
+      display: grid;
+      gap: 18px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--ivory);
+    }
+
+    .video-panel h3,
+    .reader-actions h3 {
+      margin: 0;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    .video-panel p,
+    .reader-actions p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .video-file {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .video-status {
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .reader-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .reader-actions {
+      display: grid;
+      gap: 14px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--ivory);
+    }
+
+    .reader-actions .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .topic-stack {
+      display: grid;
+      gap: 20px;
+    }
+
+    .topic {
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topic:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .topic h3 {
+      margin: 0 0 10px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .topic p {
+      margin: 0 0 12px;
+      color: var(--ink);
+    }
+
+    .topic ul {
+      margin: 0 0 14px;
+      padding-left: 20px;
+    }
+
+    .topic li {
+      margin: 6px 0;
+    }
+
+    .note-table {
+      width: 100%;
+      margin: 14px 0 16px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .note-table th,
+    .note-table td {
+      padding: 12px 12px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .note-table th {
+      background: var(--teal-soft);
+      color: var(--navy-dark);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .code-sample {
+      margin: 14px 0;
+      padding: 16px;
+      overflow-x: auto;
+      border-radius: 6px;
+      background: #101827;
+      color: #edf2f7;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .callout {
+      margin-top: 14px;
+      padding: 15px 16px;
+      border-left: 4px solid var(--gold);
+      background: var(--ivory);
+      color: var(--ink);
+    }
+
+    .callout strong {
+      color: var(--navy-dark);
+    }
+
+    .embedded-frame {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--ivory);
+    }
+
+    .activity-frame {
+      min-height: 1540px;
+    }
+
+    .quiz-frame {
+      min-height: 1040px;
+    }
+
+    .wrapup-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.75fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .term-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .term-cloud span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--paper);
+      color: var(--navy-dark);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .homework-list {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .homework-list li {
+      margin: 10px 0;
+    }
+
+    .next-lesson {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--teal-soft);
+    }
+
+    .next-lesson h3 {
+      margin: 0 0 8px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .next-lesson p {
+      margin: 0;
+      color: var(--ink);
+    }
+
+    @media (max-width: 1060px) {
+      .layout,
+      .welcome-grid,
+      .video-layout,
+      .reader-layout,
+      .wrapup-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .lesson-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .video-frame,
+      .video-frame video {
+        min-height: 340px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        position: static;
+      }
+
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px 16px;
+      }
+
+      .progress-wrap {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .layout {
+        padding: 18px 14px 40px;
+      }
+
+      .lesson-nav {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
+        flex-direction: column;
+        padding: 22px 18px 16px;
+      }
+
+      .section-title h2 {
+        font-size: 25px;
+      }
+
+      .section-body {
+        padding: 20px 18px 22px;
+      }
+
+      .lead {
+        font-size: 16px;
+      }
+
+      .session-plan {
+        display: block;
+        overflow-x: auto;
+      }
+
+      .video-frame,
+      .video-frame video {
+        min-height: 240px;
+      }
+
+      .video-empty strong {
+        font-size: 22px;
+      }
+
+      .activity-frame {
+        min-height: 1760px;
+      }
+
+      .quiz-frame {
+        min-height: 1160px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand-lockup" href="#welcome" aria-label="Digital Bridge Academy lesson home">
+        <span class="brand-mark">DB</span>
+        <span class="brand-text">
+          <strong>Digital Bridge Academy</strong>
+          <span>Computer Fundamentals for Programmers</span>
+        </span>
+      </a>
+      <div class="progress-wrap" aria-label="Lesson progress">
+        <span class="progress-copy" id="progressCopy">0 of 6 complete</span>
+        <span class="progress-track" aria-hidden="true">
+          <span class="progress-fill" id="progressFill"></span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Lesson contents">
+      <div class="sidebar-head">
+        <span class="eyebrow">Lesson 1</span>
+        <h1>How Computers Actually Work</h1>
+        <div class="sidebar-meta">2-hour session with notes, video, activity, quiz, and wrap-up</div>
+      </div>
+      <nav class="lesson-nav" id="lessonNav">
+        <a href="#welcome" data-section="welcome">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Welcome</span>
+          <span class="duration">5 min</span>
+        </a>
+        <a href="#video" data-section="video">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Video</span>
+          <span class="duration">2 hr</span>
+        </a>
+        <a href="#reading" data-section="reading">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Reading Notes</span>
+          <span class="duration">45 min</span>
+        </a>
+        <a href="#activity" data-section="activity">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Class Activity</span>
+          <span class="duration">30 min</span>
+        </a>
+        <a href="#quiz" data-section="quiz">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Practice Quiz</span>
+          <span class="duration">21 q</span>
+        </a>
+        <a href="#wrapup" data-section="wrapup">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Wrap-up</span>
+          <span class="duration">15 min</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <section class="lesson-section" id="welcome" data-track-section="welcome">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Welcome and framing</span>
+              <h2>Welcome to Computer Fundamentals</h2>
+              <p>The missing layer behind the Python you already know.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="welcome">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="welcome-grid">
+              <div>
+                <p class="lead">You have learned Python basics: variables, loops, functions, and maybe a few small projects. This lesson fills the layer underneath that work: what is happening inside the machine when your code runs.</p>
+                <ul class="objective-list" aria-label="Learning objectives">
+                  <li>A clear mental model of the four core hardware components inside any computer.</li>
+                  <li>How data becomes patterns of 1s and 0s, and how encoding turns those patterns into meaning.</li>
+                  <li>What happens between starting a Python script and seeing output on screen.</li>
+                  <li>How Python stores variables in memory, and why references and mutability matter.</li>
+                  <li>How the operating system juggles many programs on limited hardware.</li>
+                  <li>A hands-on activity that turns the concepts into predictions, observations, and notes.</li>
+                  <li>The vocabulary to explain this clearly in interviews, reviews, and debugging.</li>
+                </ul>
+
+                <table class="session-plan" aria-label="Session plan">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Segment</th>
+                      <th>Focus</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>5 min</td>
+                      <td>Welcome and framing</td>
+                      <td>Why this lesson matters and what students will walk away with.</td>
+                    </tr>
+                    <tr>
+                      <td>15 min</td>
+                      <td>Hardware basics</td>
+                      <td>CPU, RAM, storage, I/O, buses, and how components talk.</td>
+                    </tr>
+                    <tr>
+                      <td>20 min</td>
+                      <td>Binary and encoding</td>
+                      <td>Bits, bytes, place values, ASCII, Unicode, and hands-on demos.</td>
+                    </tr>
+                    <tr>
+                      <td>20 min</td>
+                      <td>Code to execution</td>
+                      <td>Source, bytecode, PVM, machine code, compiled vs interpreted.</td>
+                    </tr>
+                    <tr>
+                      <td>20 min</td>
+                      <td>Variables and memory</td>
+                      <td>References, <code>id()</code>, mutability, stack, heap, and predictions.</td>
+                    </tr>
+                    <tr>
+                      <td>15 min</td>
+                      <td>Operating system</td>
+                      <td>Processes, threads, scheduling, context switching, and the GIL.</td>
+                    </tr>
+                    <tr>
+                      <td>30 min</td>
+                      <td>Class activity</td>
+                      <td>Binary detective, bytecode explorer, reference predictions, and reflection notes.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <figure class="notes-cover">
+                <img src="assets/lesson1-notes-cover.png" alt="Cover page preview of the Lesson 1 reading notes">
+                <figcaption>Reading notes attached below as the full 12-page PDF.</figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="video" data-track-section="video">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Lesson video</span>
+              <h2>Class Recording</h2>
+              <p>Add the recording here when it is ready. The page will preview the selected video locally in your browser.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="video">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="video-layout">
+              <div class="video-frame" id="videoFrame">
+                <video id="lessonVideo" controls preload="metadata"></video>
+                <div class="video-empty">
+                  <strong>Video will appear here</strong>
+                  <span>Choose the lesson recording after you upload or move it onto this computer.</span>
+                </div>
+              </div>
+              <div class="video-panel">
+                <h3>Recording slot</h3>
+                <p>Select an MP4, MOV, WEBM, or other browser-supported video file. This keeps the course page ready before the final recording is available.</p>
+                <label class="file-label" for="videoInput">Choose video file</label>
+                <input class="video-file" id="videoInput" type="file" accept="video/*">
+                <div class="video-status" id="videoStatus">No video selected yet.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="reading" data-track-section="reading">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Reading notes</span>
+              <h2>Lesson Notes</h2>
+              <p>The full PDF is attached, with the main concepts organized for reading on the page.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="reading">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="reader-layout">
+              <div class="reader-actions">
+                <h3>Full PDF</h3>
+                <p>Open the student handbook supplement or keep reading the structured notes on this page.</p>
+                <div class="button-row">
+                  <a class="primary-link" href="assets/lesson1-notes.pdf" target="_blank" rel="noopener">Open PDF</a>
+                  <a class="secondary-link" href="assets/lesson1-notes.pdf" download>Download</a>
+                </div>
+              </div>
+
+              <div class="topic-stack">
+                <article class="topic">
+                  <h3>1. What Is a Computer, Really?</h3>
+                  <p>Every computer is built from four core parts working together. Understanding them explains why programs run out of memory, why disk access feels slow, and why some tasks are CPU-bound while others are I/O-bound.</p>
+                  <table class="note-table" aria-label="Core computer components">
+                    <thead>
+                      <tr>
+                        <th>Component</th>
+                        <th>Job</th>
+                        <th>Analogy</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>CPU</td>
+                        <td>Executes instructions, one at a time.</td>
+                        <td>The chef doing the cooking.</td>
+                      </tr>
+                      <tr>
+                        <td>RAM</td>
+                        <td>Holds data the CPU is actively working with.</td>
+                        <td>The kitchen counter: fast, but cleared later.</td>
+                      </tr>
+                      <tr>
+                        <td>Storage</td>
+                        <td>Holds files permanently, even when powered off.</td>
+                        <td>The pantry: slower to reach, but persistent.</td>
+                      </tr>
+                      <tr>
+                        <td>I/O</td>
+                        <td>Moves data in and out through keyboard, screen, network, and disk.</td>
+                        <td>Waiters carrying orders in and dishes out.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="callout"><strong>Quick check:</strong> Your saved Python file does not disappear after shutdown because it lives in storage. It is only loaded into RAM while the program is running.</div>
+                </article>
+
+                <article class="topic">
+                  <h3>2. Everything Is Just Numbers: Binary</h3>
+                  <p>At the lowest level, a computer recognizes two electrical states: on and off. We represent them as 1 and 0. Text, photos, numbers, and Python scripts are ultimately long sequences of those bits.</p>
+                  <ul>
+                    <li><strong>Bit:</strong> one 1 or 0, the smallest unit of data.</li>
+                    <li><strong>Byte:</strong> 8 bits, enough for 256 possible values from 0 to 255.</li>
+                    <li><strong>Encoding:</strong> a rule for turning bytes into meaning, such as text.</li>
+                  </ul>
+                  <pre class="code-sample"><code>&gt;&gt;&gt; ord('A')
+65
+&gt;&gt;&gt; bin(65)
+'0b1000001'
+&gt;&gt;&gt; chr(65)
+'A'
+&gt;&gt;&gt; ord('a')
+97</code></pre>
+                  <p>ASCII covers basic English letters, digits, and punctuation. Unicode expands this to cover writing systems such as Somali and Arabic, plus symbols and emoji. Python 3 strings are Unicode by default.</p>
+                </article>
+
+                <article class="topic">
+                  <h3>3. From Your Code to a Running Program</h3>
+                  <p>Readable Python has to be transformed before the CPU can execute it. The journey is source code -> interpreter -> bytecode -> Python Virtual Machine -> machine code and CPU.</p>
+                  <table class="note-table" aria-label="Compiled and interpreted languages">
+                    <thead>
+                      <tr>
+                        <th>Question</th>
+                        <th>Compiled languages</th>
+                        <th>Interpreted languages</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Before running</td>
+                        <td>Translated to machine code ahead of time.</td>
+                        <td>Translated to bytecode as it runs or just before.</td>
+                      </tr>
+                      <tr>
+                        <td>Speed</td>
+                        <td>Generally faster at runtime.</td>
+                        <td>Generally slower because translation is part of execution.</td>
+                      </tr>
+                      <tr>
+                        <td>Flexibility</td>
+                        <td>Must rebuild after many code changes.</td>
+                        <td>Run immediately after a change, useful for fast iteration.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <pre class="code-sample"><code>import dis
+
+def add(a, b):
+    return a + b
+
+dis.dis(add)</code></pre>
+                </article>
+
+                <article class="topic">
+                  <h3>4. How Python Stores Variables</h3>
+                  <p>In Python, a variable is a name pointing to an object in memory. It is not a labeled box that holds a value. This is why assigning one list to another name can make both names point to the same list.</p>
+                  <pre class="code-sample"><code>a = [1, 2, 3]
+b = a
+b.append(4)
+print(a)  # [1, 2, 3, 4]</code></pre>
+                  <p><code>==</code> checks whether values are equal. <code>is</code> checks whether two names point to the exact same object. Lists, dictionaries, and sets are mutable; integers, floats, strings, tuples, and booleans are immutable.</p>
+                  <div class="callout"><strong>Prediction exercise:</strong> Work out what <code>x = 10; y = x; y = y + 5; print(x, y)</code> prints before running it. Then explain why numbers behave differently from lists.</div>
+                </article>
+
+                <article class="topic">
+                  <h3>5. The Operating System's Role</h3>
+                  <p>The operating system decides which process gets CPU time and for how long. It switches between programs so quickly that many tasks feel simultaneous even when hardware is limited.</p>
+                  <ul>
+                    <li><strong>Process:</strong> a running instance of a program with its own private memory.</li>
+                    <li><strong>Thread:</strong> a smaller unit of work inside a process; threads share memory.</li>
+                    <li><strong>Scheduling:</strong> the OS choosing what runs next.</li>
+                    <li><strong>Context switching:</strong> saving one process state and loading another.</li>
+                    <li><strong>GIL:</strong> CPython's lock that allows only one thread to execute Python bytecode at a time.</li>
+                  </ul>
+                  <div class="callout"><strong>Full journey:</strong> You type Python source -> the interpreter turns it into bytecode -> the OS creates a process and loads it into RAM -> the CPU executes instructions -> output appears and can be saved to storage.</div>
+                </article>
+              </div>
+            </div>
+
+            <div class="callout">
+              <strong>Full handbook:</strong> Use the Open PDF or Download buttons above when you want the original 12-page student supplement.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="activity" data-track-section="activity">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Hands-on practice</span>
+              <h2>Class Activity</h2>
+              <p>Six short exercises for binary, bytecode, references, mutability, processes, and your own explanation of the full journey.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="activity">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <iframe class="embedded-frame activity-frame" src="assets/lesson1_class_activity-2.html" title="Lesson 1 class activity"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="quiz" data-track-section="quiz">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Post-lesson check</span>
+              <h2>Practice Quiz</h2>
+              <p>Twenty-one questions across hardware, binary, code execution, memory, and the operating system.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="quiz">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <iframe class="embedded-frame quiz-frame" src="assets/lesson1_quiz-2.html" title="Lesson 1 practice quiz"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="wrapup" data-track-section="wrapup">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Wrap-up and next steps</span>
+              <h2>Before the Next Meetup</h2>
+              <p>Use the homework to turn the concepts into things you can explain without reading from notes.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="wrapup">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="wrapup-grid">
+              <div>
+                <ol class="homework-list">
+                  <li>Run the <code>ord()</code>, <code>chr()</code>, and <code>bin()</code> examples yourself, then try a few other letters and characters.</li>
+                  <li>Run the <code>dis.dis()</code> example on one of your own functions and inspect the bytecode.</li>
+                  <li>Work through the mutability prediction exercise and explain the result in your own words.</li>
+                  <li>Write 2-3 sentences explaining what happens between running <code>python app.py</code> and seeing output appear.</li>
+                </ol>
+
+                <div class="term-cloud" aria-label="Key terms">
+                  <span>CPU</span>
+                  <span>RAM</span>
+                  <span>Storage</span>
+                  <span>I/O</span>
+                  <span>Bus</span>
+                  <span>Bit</span>
+                  <span>Byte</span>
+                  <span>Binary</span>
+                  <span>Encoding</span>
+                  <span>Bytecode</span>
+                  <span>PVM</span>
+                  <span>Reference</span>
+                  <span>Mutable</span>
+                  <span>Stack</span>
+                  <span>Heap</span>
+                  <span>Process</span>
+                  <span>Thread</span>
+                  <span>GIL</span>
+                </div>
+              </div>
+
+              <div class="next-lesson">
+                <h3>Next lesson</h3>
+                <p>How the Internet Actually Works - what really happens between typing a URL and a page loading on your screen.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const sections = Array.from(document.querySelectorAll("[data-track-section]"));
+      const navLinks = Array.from(document.querySelectorAll("[data-section]"));
+      const completeButtons = Array.from(document.querySelectorAll("[data-complete]"));
+      const progressCopy = document.getElementById("progressCopy");
+      const progressFill = document.getElementById("progressFill");
+      const lessonSlug = "cs-fundamentals-lesson-1";
+      const storageKey = "dba-lesson-1-complete";
+      const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
+      const total = sections.length;
+
+      let completed = new Set(JSON.parse(localStorage.getItem(storageKey) || "[]"));
+
+      function saveProgress() {
+        localStorage.setItem(storageKey, JSON.stringify(Array.from(completed)));
+        saveProgressToBackend();
+      }
+
+      function saveProgressToBackend() {
+        if (!canUseBackend) return;
+
+        fetch("/api/progress/lesson", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lessonSlug: lessonSlug,
+            completedSections: Array.from(completed)
+          })
+        }).catch(function () {
+          // Keep local progress if the backend is temporarily unavailable.
+        });
+      }
+
+      function loadProgressFromBackend() {
+        if (!canUseBackend) {
+          renderProgress();
+          return;
+        }
+
+        fetch("/api/progress/lesson?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(function (response) {
+            if (!response.ok) throw new Error("Could not load progress");
+            return response.json();
+          })
+          .then(function (data) {
+            if (Array.isArray(data.completedSections)) {
+              completed = new Set(data.completedSections);
+              localStorage.setItem(storageKey, JSON.stringify(Array.from(completed)));
+              renderProgress();
+            }
+          })
+          .catch(function () {
+            renderProgress();
+          });
+      }
+
+      function renderProgress() {
+        const count = completed.size;
+        progressCopy.textContent = count + " of " + total + " complete";
+        progressFill.style.width = Math.round((count / total) * 100) + "%";
+
+        navLinks.forEach(function (link) {
+          const id = link.dataset.section;
+          link.classList.toggle("done", completed.has(id));
+        });
+
+        completeButtons.forEach(function (button) {
+          const id = button.dataset.complete;
+          const isDone = completed.has(id);
+          button.classList.toggle("is-done", isDone);
+          button.textContent = isDone ? "Completed" : "Mark complete";
+        });
+      }
+
+      completeButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          const id = button.dataset.complete;
+          if (completed.has(id)) {
+            completed.delete(id);
+          } else {
+            completed.add(id);
+          }
+          saveProgress();
+          renderProgress();
+        });
+      });
+
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          const id = entry.target.id;
+          navLinks.forEach(function (link) {
+            link.classList.toggle("active", link.dataset.section === id);
+          });
+        });
+      }, {
+        rootMargin: "-30% 0px -58% 0px",
+        threshold: 0.01
+      });
+
+      sections.forEach(function (section) {
+        observer.observe(section);
+      });
+
+      const videoInput = document.getElementById("videoInput");
+      const video = document.getElementById("lessonVideo");
+      const videoFrame = document.getElementById("videoFrame");
+      const videoStatus = document.getElementById("videoStatus");
+      let currentVideoUrl = null;
+
+      videoInput.addEventListener("change", function () {
+        const file = videoInput.files && videoInput.files[0];
+        if (!file) return;
+
+        if (currentVideoUrl) {
+          URL.revokeObjectURL(currentVideoUrl);
+        }
+
+        currentVideoUrl = URL.createObjectURL(file);
+        video.src = currentVideoUrl;
+        videoFrame.classList.add("has-video");
+        videoStatus.textContent = "Selected: " + file.name;
+      });
+
+      function resizeEmbeddedFrame(frame) {
+        try {
+          const doc = frame.contentDocument;
+          if (!doc || !doc.body) return;
+          const height = Math.max(
+            doc.body.scrollHeight,
+            doc.documentElement ? doc.documentElement.scrollHeight : 0
+          );
+          if (height > 0) {
+            frame.style.height = height + 24 + "px";
+          }
+        } catch (_) {
+          // Keep the CSS fallback height if the browser blocks iframe measurement.
+        }
+      }
+
+      document.querySelectorAll(".embedded-frame").forEach(function (frame) {
+        frame.addEventListener("load", function () {
+          resizeEmbeddedFrame(frame);
+        });
+      });
+
+      renderProgress();
+      loadProgressFromBackend();
+    })();
+  </script>
+</body>
+</html>
