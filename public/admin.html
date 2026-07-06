@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Teacher Dashboard - Digital Bridge Academy</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Digital Bridge <span>Academy</span></div>
+      <div class="topbar-right">
+        <span id="adminName"></span>
+        <a class="btn secondary" href="marketplace.html">Marketplace</a>
+        <button class="secondary" id="changePwBtn">Change password</button>
+        <button class="secondary" id="logoutBtn">Log out</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" style="padding-top:28px; padding-bottom:60px;">
+    <div class="tabs">
+      <div class="tab active" data-tab="progress">Accountability</div>
+      <div class="tab" data-tab="courses">Courses &amp; Lessons</div>
+      <div class="tab" data-tab="orders">Marketplace orders</div>
+      <div class="tab" data-tab="students">Students</div>
+    </div>
+
+    <!-- PROGRESS / ACCOUNTABILITY TAB -->
+    <div class="tab-panel active" id="panel-progress">
+      <div id="progressContainer"></div>
+    </div>
+
+    <!-- COURSES TAB -->
+    <div class="tab-panel" id="panel-courses">
+      <div class="space-between">
+        <div>
+          <h2 class="section-title" style="margin-top:0">Courses</h2>
+          <p class="muted" style="margin-top:-8px;">Create courses here, add lessons, then publish them to the marketplace.</p>
+        </div>
+        <button id="newCourseBtn">+ New course</button>
+      </div>
+      <div id="coursesContainer"></div>
+    </div>
+
+    <!-- MARKETPLACE ORDERS TAB -->
+    <div class="tab-panel" id="panel-orders">
+      <div id="ordersContainer"></div>
+    </div>
+
+    <!-- STUDENTS TAB -->
+    <div class="tab-panel" id="panel-students">
+      <div class="space-between">
+        <h2 class="section-title" style="margin-top:0">Students</h2>
+        <button id="newStudentBtn">+ New student</button>
+      </div>
+      <div id="studentsContainer"></div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" id="modalContent"></div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

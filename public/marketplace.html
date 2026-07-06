@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Marketplace - Digital Bridge Academy</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a class="brand brand-link" href="marketplace.html">Digital Bridge <span>Academy</span></a>
+      <div class="topbar-right" id="marketNav">
+        <a class="btn secondary" href="login.html">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap marketplace-wrap">
+    <div class="marketplace-head">
+      <div>
+        <h1 class="marketplace-title">Digital Bridge Academy Marketplace</h1>
+        <p class="marketplace-sub">Browse published courses and request enrollment.</p>
+      </div>
+      <div id="marketplaceActions"></div>
+    </div>
+    <div class="market-filter-row">
+      <input id="courseSearch" placeholder="Search courses, teachers, categories..." />
+    </div>
+    <div id="marketplaceGrid" class="marketplace-grid"></div>
+  </main>
+
+  <script src="marketplace.js"></script>
+</body>
+</html>

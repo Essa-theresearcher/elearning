@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign in - Digital Bridge Academy</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="login-screen">
+    <div class="card login-card">
+      <h1 class="login-title">Digital Bridge <span>Academy</span></h1>
+      <p class="login-sub">Sign in with the username and password you were given.</p>
+      <div class="error-msg" id="errorMsg"></div>
+      <form id="loginForm">
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" name="username" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required />
+        </div>
+        <button type="submit" style="width:100%">Sign in</button>
+      </form>
+      <p class="marketplace-login-link">Sign in to browse available courses.</p>
+    </div>
+  </div>
+  <script src="login.js"></script>
+</body>
+</html>
