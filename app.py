@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parent
 DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = "postgresql://" + DATABASE_URL[len("postgres://") :]
-APP_HOST = os.environ.get("APP_HOST", "127.0.0.1")
+APP_HOST = os.environ.get("APP_HOST", "0.0.0.0")
 PORT = int(os.environ.get("PORT", "8765"))
 USE_POSTGRES = bool(DATABASE_URL)
 LESSON_SLUG = os.environ.get("LESSON_SLUG", "cs-fundamentals-lesson-1")

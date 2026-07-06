@@ -48,3 +48,14 @@ LESSON_SLUG=cs-fundamentals-lesson-1
 ```
 
 When `DATABASE_URL` is present, the app uses PostgreSQL and creates the needed tables automatically. When `DATABASE_URL` is missing, it uses SQLite.
+
+## Bad Gateway Checklist
+
+If the deployed app shows Bad Gateway, check the application service:
+
+- Start command is `python app.py` or the platform detects `Procfile`.
+- `PORT` matches the port your platform gives the app.
+- `APP_HOST=0.0.0.0`.
+- `DATABASE_URL` is set on the application service.
+- The build installs dependencies with `pip install -r requirements.txt`.
+- The database service is running and the app uses the internal database URL when available.
