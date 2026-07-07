@@ -37,6 +37,50 @@ ADMIN_DISPLAY_NAME = os.environ.get("ADMIN_DISPLAY_NAME", "Teacher").strip() or 
 PASSWORD_ITERATIONS = 260_000
 MIN_PASSWORD_LENGTH = 8
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v", ".webm", ".ogg"}
+RECORDING_SEGMENTS = [
+    {
+        "part": 1,
+        "title": "Welcome & Why This Lesson Matters",
+        "duration": "~4 min",
+        "slug": "welcome-why-this-lesson-matters",
+    },
+    {
+        "part": 2,
+        "title": "What Is a Computer, Really?",
+        "duration": "~9 min",
+        "slug": "what-is-a-computer-really",
+    },
+    {
+        "part": 3,
+        "title": "Everything Is Just Numbers: Binary",
+        "duration": "~11 min",
+        "slug": "binary",
+    },
+    {
+        "part": 4,
+        "title": "From Your Code to a Running Program",
+        "duration": "~11 min",
+        "slug": "code-to-running-program",
+    },
+    {
+        "part": 5,
+        "title": "How Python Actually Stores Your Variables",
+        "duration": "~12 min",
+        "slug": "python-variables-memory",
+    },
+    {
+        "part": 6,
+        "title": "The Operating System's Role",
+        "duration": "~9 min",
+        "slug": "operating-system-role",
+    },
+    {
+        "part": 7,
+        "title": "Wrap-Up: The Full Journey",
+        "duration": "~5 min",
+        "slug": "wrap-up-full-journey",
+    },
+]
 
 
 def sqlite_db_path():
@@ -134,20 +178,47 @@ def display_name_from_file(path):
 
 
 def list_lesson_recordings():
+    files = []
     if not VIDEO_PATH.exists() or not VIDEO_PATH.is_dir():
-        return []
-    if ROOT not in VIDEO_PATH.parents and VIDEO_PATH != ROOT:
-        return []
+        files = []
+    elif ROOT in VIDEO_PATH.parents or VIDEO_PATH == ROOT:
+        files = [
+            path
+            for path in sorted(VIDEO_PATH.iterdir(), key=lambda item: item.name.lower())
+            if path.is_file() and path.suffix.lower() in VIDEO_EXTENSIONS
+        ]
 
     recordings = []
-    for path in sorted(VIDEO_PATH.iterdir(), key=lambda item: item.name.lower()):
-        if not path.is_file() or path.suffix.lower() not in VIDEO_EXTENSIONS:
-            continue
+    for index, segment in enumerate(RECORDING_SEGMENTS):
+        item = dict(segment)
+        path = files[index] if index < len(files) else None
+        item["name"] = f"Part {segment['part']}: {segment['title']}"
+        item["uploaded"] = bool(path)
+        item["fileName"] = None
+        item["url"] = None
+        item["size"] = None
+
+        if path:
+            relative_path = path.relative_to(ROOT).as_posix()
+            item["fileName"] = path.name
+            item["url"] = "/" + relative_path
+            item["size"] = path.stat().st_size
+
+        recordings.append(item)
+
+    for path in files[len(RECORDING_SEGMENTS) :]:
         relative_path = path.relative_to(ROOT).as_posix()
+        part = len(recordings) + 1
+        title = display_name_from_file(path)
         recordings.append(
             {
+                "part": part,
+                "title": title,
+                "duration": "",
+                "slug": title.lower().replace(" ", "-"),
+                "name": f"Part {part}: {title}",
+                "uploaded": True,
                 "fileName": path.name,
-                "name": display_name_from_file(path),
                 "url": "/" + relative_path,
                 "size": path.stat().st_size,
             }

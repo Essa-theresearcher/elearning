@@ -709,6 +709,16 @@
       background: var(--teal-soft);
     }
 
+    .recording-item:disabled {
+      cursor: not-allowed;
+      opacity: 0.62;
+    }
+
+    .recording-item:disabled:hover {
+      border-color: var(--line);
+      background: var(--paper);
+    }
+
     .recording-item strong {
       color: var(--navy-dark);
       font-size: 13px;
@@ -1215,7 +1225,7 @@
             <div class="section-title">
               <span class="eyebrow">Lesson videos</span>
               <h2>Class Recordings</h2>
-              <p>Use one recording or split the lesson into multiple parts.</p>
+              <p>Lesson 1 is split into seven focused recordings from the teacher script.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="video">Mark complete</button>
           </div>
@@ -1230,7 +1240,7 @@
               </div>
               <div class="video-panel">
                 <h3>Recording parts</h3>
-                <p>Upload videos into the Lesson 1 video folder or preview multiple local files here.</p>
+                <p>Upload the seven Lesson 1 videos into the video folder, or preview multiple local files here.</p>
                 <div class="recording-list" id="recordingList"></div>
                 <label class="file-label" for="videoInput">Choose video files</label>
                 <input class="video-file" id="videoInput" type="file" accept="video/*" multiple>
@@ -1760,6 +1770,10 @@ print(a)  # [1, 2, 3, 4]</code></pre>
       function setActiveRecording(index) {
         const item = recordingItems[index];
         if (!item) return;
+        if (!item.url) {
+          videoStatus.textContent = "Part " + item.part + " is not uploaded yet.";
+          return;
+        }
         activeRecordingIndex = index;
         video.src = item.url;
         video.load();
@@ -1777,18 +1791,38 @@ print(a)  # [1, 2, 3, 4]</code></pre>
           const button = document.createElement("button");
           button.className = "recording-item";
           button.type = "button";
-          button.innerHTML = "<strong>Part " + (index + 1) + "</strong><span></span>";
-          button.querySelector("span").textContent = item.name + (item.size ? " - " + formatFileSize(item.size) : "");
-          button.addEventListener("click", function () {
-            setActiveRecording(index);
-          });
+          button.disabled = !item.url;
+
+          const title = document.createElement("strong");
+          title.textContent = item.name || "Part " + (item.part || index + 1);
+
+          const detail = document.createElement("span");
+          if (item.url) {
+            detail.textContent = [item.duration, item.fileName, formatFileSize(item.size)]
+              .filter(Boolean)
+              .join(" - ");
+          } else {
+            detail.textContent = [item.duration, "Not uploaded yet"].filter(Boolean).join(" - ");
+          }
+
+          button.appendChild(title);
+          button.appendChild(detail);
+
+          if (item.url) {
+            button.addEventListener("click", function () {
+              setActiveRecording(index);
+            });
+          }
           recordingList.appendChild(button);
         });
 
-        if (recordingItems.length) {
-          setActiveRecording(0);
+        const firstUploadedIndex = recordingItems.findIndex(function (item) {
+          return Boolean(item.url);
+        });
+        if (firstUploadedIndex >= 0) {
+          setActiveRecording(firstUploadedIndex);
         } else {
-          videoStatus.textContent = "No recordings selected yet.";
+          videoStatus.textContent = "Upload Lesson 1 recordings into assets/videos/lesson1.";
         }
       }
 
