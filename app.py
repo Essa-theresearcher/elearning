@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
+import hashlib
+import hmac
 import json
 import mimetypes
 import os
+import secrets
 import sqlite3
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
 from http.cookies import SimpleCookie
 from http.server import SimpleHTTPRequestHandler
@@ -21,8 +24,19 @@ APP_HOST = os.environ.get("APP_HOST", "0.0.0.0")
 PORT = int(os.environ.get("PORT", "8765"))
 USE_POSTGRES = bool(DATABASE_URL)
 LESSON_SLUG = os.environ.get("LESSON_SLUG", "cs-fundamentals-lesson-1")
+VIDEO_DIR = os.environ.get("VIDEO_DIR", "assets/videos/lesson1")
 COOKIE_NAME = os.environ.get("COOKIE_NAME", "dba_student_id")
+AUTH_COOKIE_NAME = os.environ.get("AUTH_COOKIE_NAME", "dba_session")
 COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "").lower() in {"1", "true", "yes"}
+REQUIRE_LOGIN = os.environ.get("REQUIRE_LOGIN", "1").lower() not in {"0", "false", "no"}
+ALLOW_SIGNUP = os.environ.get("ALLOW_SIGNUP", "1").lower() not in {"0", "false", "no"}
+SESSION_DAYS = int(os.environ.get("SESSION_DAYS", "30"))
+ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "teacher").strip().lower()
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "changeme123")
+ADMIN_DISPLAY_NAME = os.environ.get("ADMIN_DISPLAY_NAME", "Teacher").strip() or "Teacher"
+PASSWORD_ITERATIONS = 260_000
+MIN_PASSWORD_LENGTH = 8
+VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v", ".webm", ".ogg"}
 
 
 def sqlite_db_path():
@@ -36,8 +50,109 @@ def sqlite_db_path():
 DB_PATH = sqlite_db_path()
 
 
+def video_dir_path():
+    path = Path(VIDEO_DIR)
+    if not path.is_absolute():
+        path = ROOT / path
+    return path.resolve()
+
+
+VIDEO_PATH = video_dir_path()
+
+
 def utc_now():
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def utc_from_now(days):
+    return (datetime.now(timezone.utc) + timedelta(days=days)).isoformat(
+        timespec="seconds"
+    )
+
+
+def normalize_username(username):
+    return (username or "").strip().lower()
+
+
+def public_user(row):
+    if not row:
+        return None
+    return {
+        "id": row["id"],
+        "username": row["username"],
+        "displayName": row["display_name"],
+        "role": row["role"],
+    }
+
+
+def hash_password(password):
+    salt = secrets.token_hex(16)
+    digest = hashlib.pbkdf2_hmac(
+        "sha256",
+        password.encode("utf-8"),
+        salt.encode("utf-8"),
+        PASSWORD_ITERATIONS,
+    ).hex()
+    return f"pbkdf2_sha256${PASSWORD_ITERATIONS}${salt}${digest}"
+
+
+def verify_password(password, stored_hash):
+    try:
+        algorithm, iterations, salt, expected = stored_hash.split("$", 3)
+        if algorithm != "pbkdf2_sha256":
+            return False
+        digest = hashlib.pbkdf2_hmac(
+            "sha256",
+            password.encode("utf-8"),
+            salt.encode("utf-8"),
+            int(iterations),
+        ).hex()
+    except (AttributeError, TypeError, ValueError):
+        return False
+    return hmac.compare_digest(digest, expected)
+
+
+def validate_new_user(username, display_name, password):
+    username = normalize_username(username)
+    display_name = (display_name or username).strip()
+    password = password or ""
+
+    if len(username) < 3 or len(username) > 80:
+        return None, None, "Username must be between 3 and 80 characters."
+    if not all(char.isalnum() or char in {"_", "-", ".", "@"} for char in username):
+        return None, None, "Username can only use letters, numbers, _, -, ., and @."
+    if len(display_name) < 1 or len(display_name) > 120:
+        return None, None, "Display name must be between 1 and 120 characters."
+    if len(password) < MIN_PASSWORD_LENGTH:
+        return None, None, f"Password must be at least {MIN_PASSWORD_LENGTH} characters."
+    return username, display_name, None
+
+
+def display_name_from_file(path):
+    name = path.stem.replace("_", " ").replace("-", " ").strip()
+    return " ".join(word.capitalize() for word in name.split()) or path.name
+
+
+def list_lesson_recordings():
+    if not VIDEO_PATH.exists() or not VIDEO_PATH.is_dir():
+        return []
+    if ROOT not in VIDEO_PATH.parents and VIDEO_PATH != ROOT:
+        return []
+
+    recordings = []
+    for path in sorted(VIDEO_PATH.iterdir(), key=lambda item: item.name.lower()):
+        if not path.is_file() or path.suffix.lower() not in VIDEO_EXTENSIONS:
+            continue
+        relative_path = path.relative_to(ROOT).as_posix()
+        recordings.append(
+            {
+                "fileName": path.name,
+                "name": display_name_from_file(path),
+                "url": "/" + relative_path,
+                "size": path.stat().st_size,
+            }
+        )
+    return recordings
 
 
 def db_sql(sql):
@@ -69,9 +184,68 @@ def connect_db():
     return conn
 
 
+def seed_default_admin(conn):
+    user_count = db_execute(conn, "SELECT COUNT(*) AS count FROM app_users").fetchone()[
+        "count"
+    ]
+    if user_count:
+        return
+
+    username, display_name, error = validate_new_user(
+        ADMIN_USERNAME,
+        ADMIN_DISPLAY_NAME,
+        ADMIN_PASSWORD,
+    )
+    if error:
+        raise RuntimeError(f"Invalid default admin account: {error}")
+
+    db_execute(
+        conn,
+        """
+        INSERT INTO app_users (
+            id, username, display_name, password_hash, role, created_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (
+            str(uuid.uuid4()),
+            username,
+            display_name,
+            hash_password(ADMIN_PASSWORD),
+            "teacher",
+            utc_now(),
+        ),
+    )
+    print(f"Seeded teacher account. Username: {username}")
+    if ADMIN_PASSWORD == "changeme123":
+        print("Default teacher password is changeme123. Change ADMIN_PASSWORD in production.")
+
+
 def init_db():
     if USE_POSTGRES:
         with connect_db() as conn:
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS app_users (
+                    id TEXT PRIMARY KEY,
+                    username TEXT UNIQUE NOT NULL,
+                    display_name TEXT NOT NULL,
+                    password_hash TEXT NOT NULL,
+                    role TEXT NOT NULL DEFAULT 'student',
+                    created_at TEXT NOT NULL
+                )
+                """
+            )
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS auth_sessions (
+                    token TEXT PRIMARY KEY,
+                    user_id TEXT NOT NULL REFERENCES app_users(id) ON DELETE CASCADE,
+                    created_at TEXT NOT NULL,
+                    expires_at TEXT NOT NULL
+                )
+                """
+            )
             conn.execute(
                 """
                 CREATE TABLE IF NOT EXISTS lesson_progress (
@@ -107,11 +281,28 @@ def init_db():
                 )
                 """
             )
+            seed_default_admin(conn)
         return
 
     with connect_db() as conn:
         conn.executescript(
             """
+            CREATE TABLE IF NOT EXISTS app_users (
+                id TEXT PRIMARY KEY,
+                username TEXT UNIQUE NOT NULL,
+                display_name TEXT NOT NULL,
+                password_hash TEXT NOT NULL,
+                role TEXT NOT NULL DEFAULT 'student',
+                created_at TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS auth_sessions (
+                token TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL REFERENCES app_users(id) ON DELETE CASCADE,
+                created_at TEXT NOT NULL,
+                expires_at TEXT NOT NULL
+            );
+
             CREATE TABLE IF NOT EXISTS lesson_progress (
                 student_id TEXT NOT NULL,
                 lesson_slug TEXT NOT NULL,
@@ -139,6 +330,7 @@ def init_db():
             );
             """
         )
+        seed_default_admin(conn)
 
 
 class LearningHandler(SimpleHTTPRequestHandler):
@@ -162,6 +354,12 @@ class LearningHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urlparse(self.path)
+        if parsed.path == "/api/auth/me":
+            self.handle_auth_me()
+            return
+        if parsed.path == "/api/recordings":
+            self.handle_get_recordings()
+            return
         if parsed.path == "/api/progress/lesson":
             self.handle_get_lesson_progress(parsed)
             return
@@ -172,6 +370,15 @@ class LearningHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urlparse(self.path)
+        if parsed.path == "/api/auth/login":
+            self.handle_auth_login()
+            return
+        if parsed.path == "/api/auth/register":
+            self.handle_auth_register()
+            return
+        if parsed.path == "/api/auth/logout":
+            self.handle_auth_logout()
+            return
         if parsed.path == "/api/progress/lesson":
             self.handle_post_lesson_progress()
             return
@@ -190,7 +397,70 @@ class LearningHandler(SimpleHTTPRequestHandler):
             return "text/javascript"
         return mimetypes.guess_type(path)[0] or "application/octet-stream"
 
+    def current_session_token(self):
+        cookie_header = self.headers.get("Cookie", "")
+        cookies = SimpleCookie(cookie_header)
+        morsel = cookies.get(AUTH_COOKIE_NAME)
+        if morsel and morsel.value:
+            return morsel.value
+        return None
+
+    def current_user(self):
+        token = self.current_session_token()
+        if not token:
+            return None
+
+        now = utc_now()
+        with connect_db() as conn:
+            row = db_execute(
+                conn,
+                """
+                SELECT
+                    app_users.id,
+                    app_users.username,
+                    app_users.display_name,
+                    app_users.role,
+                    auth_sessions.expires_at
+                FROM auth_sessions
+                JOIN app_users ON app_users.id = auth_sessions.user_id
+                WHERE auth_sessions.token = ?
+                """,
+                (token,),
+            ).fetchone()
+            if not row:
+                return None
+            if row["expires_at"] <= now:
+                db_execute(conn, "DELETE FROM auth_sessions WHERE token = ?", (token,))
+                return None
+            return row
+
+    def create_auth_session(self, user_id):
+        token = secrets.token_urlsafe(32)
+        with connect_db() as conn:
+            db_execute(
+                conn,
+                """
+                INSERT INTO auth_sessions (token, user_id, created_at, expires_at)
+                VALUES (?, ?, ?, ?)
+                """,
+                (token, user_id, utc_now(), utc_from_now(SESSION_DAYS)),
+            )
+        return token
+
+    def delete_current_session(self):
+        token = self.current_session_token()
+        if not token:
+            return
+        with connect_db() as conn:
+            db_execute(conn, "DELETE FROM auth_sessions WHERE token = ?", (token,))
+
     def current_student_id(self):
+        user = self.current_user()
+        if user:
+            return user["id"], False
+        if REQUIRE_LOGIN:
+            return None, False
+
         cookie_header = self.headers.get("Cookie", "")
         cookies = SimpleCookie(cookie_header)
         morsel = cookies.get(COOKIE_NAME)
@@ -211,7 +481,15 @@ class LearningHandler(SimpleHTTPRequestHandler):
         except json.JSONDecodeError:
             raise ValueError("Invalid JSON body")
 
-    def send_json(self, payload, status=HTTPStatus.OK, student_id=None, set_cookie=False):
+    def send_json(
+        self,
+        payload,
+        status=HTTPStatus.OK,
+        student_id=None,
+        set_cookie=False,
+        auth_token=None,
+        clear_auth_cookie=False,
+    ):
         body = json.dumps(payload, indent=2).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -223,11 +501,164 @@ class LearningHandler(SimpleHTTPRequestHandler):
                 f"{COOKIE_NAME}={student_id}; Path=/; SameSite=Lax; HttpOnly; "
                 f"Max-Age=31536000{secure}",
             )
+        if auth_token:
+            secure = "; Secure" if COOKIE_SECURE else ""
+            self.send_header(
+                "Set-Cookie",
+                f"{AUTH_COOKIE_NAME}={auth_token}; Path=/; SameSite=Lax; HttpOnly; "
+                f"Max-Age={SESSION_DAYS * 86400}{secure}",
+            )
+        if clear_auth_cookie:
+            secure = "; Secure" if COOKIE_SECURE else ""
+            self.send_header(
+                "Set-Cookie",
+                f"{AUTH_COOKIE_NAME}=; Path=/; SameSite=Lax; HttpOnly; "
+                f"Max-Age=0{secure}",
+            )
         self.end_headers()
         self.wfile.write(body)
 
+    def send_auth_required(self):
+        self.send_json({"error": "Login required"}, HTTPStatus.UNAUTHORIZED)
+
+    def handle_auth_me(self):
+        user = self.current_user()
+        self.send_json(
+            {
+                "authenticated": bool(user),
+                "user": public_user(user),
+                "allowSignup": ALLOW_SIGNUP,
+            }
+        )
+
+    def handle_auth_login(self):
+        try:
+            data = self.read_json_body()
+        except ValueError as exc:
+            self.send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+
+        username = normalize_username(data.get("username"))
+        password = data.get("password") or ""
+        with connect_db() as conn:
+            user = db_execute(
+                conn,
+                """
+                SELECT id, username, display_name, password_hash, role
+                FROM app_users
+                WHERE username = ?
+                """,
+                (username,),
+            ).fetchone()
+
+        if not user or not verify_password(password, user["password_hash"]):
+            self.send_json(
+                {"error": "Incorrect username or password."},
+                HTTPStatus.UNAUTHORIZED,
+            )
+            return
+
+        token = self.create_auth_session(user["id"])
+        self.send_json(
+            {
+                "authenticated": True,
+                "user": public_user(user),
+                "allowSignup": ALLOW_SIGNUP,
+            },
+            auth_token=token,
+        )
+
+    def handle_auth_register(self):
+        if not ALLOW_SIGNUP:
+            self.send_json({"error": "Sign up is disabled."}, HTTPStatus.FORBIDDEN)
+            return
+
+        try:
+            data = self.read_json_body()
+        except ValueError as exc:
+            self.send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+
+        username, display_name, error = validate_new_user(
+            data.get("username"),
+            data.get("displayName"),
+            data.get("password"),
+        )
+        if error:
+            self.send_json({"error": error}, HTTPStatus.BAD_REQUEST)
+            return
+
+        user_id = str(uuid.uuid4())
+        with connect_db() as conn:
+            existing_user = db_execute(
+                conn,
+                "SELECT id FROM app_users WHERE username = ?",
+                (username,),
+            ).fetchone()
+            if existing_user:
+                self.send_json(
+                    {"error": "That username is already in use."},
+                    HTTPStatus.CONFLICT,
+                )
+                return
+
+            db_execute(
+                conn,
+                """
+                INSERT INTO app_users (
+                    id, username, display_name, password_hash, role, created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    user_id,
+                    username,
+                    display_name,
+                    hash_password(data.get("password") or ""),
+                    "student",
+                    utc_now(),
+                ),
+            )
+
+        token = self.create_auth_session(user_id)
+        self.send_json(
+            {
+                "authenticated": True,
+                "user": {
+                    "id": user_id,
+                    "username": username,
+                    "displayName": display_name,
+                    "role": "student",
+                },
+                "allowSignup": ALLOW_SIGNUP,
+            },
+            status=HTTPStatus.CREATED,
+            auth_token=token,
+        )
+
+    def handle_auth_logout(self):
+        self.delete_current_session()
+        self.send_json(
+            {"authenticated": False, "user": None, "allowSignup": ALLOW_SIGNUP},
+            clear_auth_cookie=True,
+        )
+
+    def handle_get_recordings(self):
+        if REQUIRE_LOGIN and not self.current_user():
+            self.send_auth_required()
+            return
+        self.send_json(
+            {
+                "lessonSlug": LESSON_SLUG,
+                "recordings": list_lesson_recordings(),
+            }
+        )
+
     def handle_get_lesson_progress(self, parsed):
         student_id, set_cookie = self.current_student_id()
+        if not student_id:
+            self.send_auth_required()
+            return
         params = parse_qs(parsed.query)
         lesson_slug = params.get("lessonSlug", [LESSON_SLUG])[0] or LESSON_SLUG
 
@@ -261,6 +692,9 @@ class LearningHandler(SimpleHTTPRequestHandler):
 
     def handle_get_progress_summary(self):
         student_id, set_cookie = self.current_student_id()
+        if not student_id:
+            self.send_auth_required()
+            return
         with connect_db() as conn:
             lesson_rows = db_execute(
                 conn,
@@ -315,6 +749,9 @@ class LearningHandler(SimpleHTTPRequestHandler):
 
     def handle_post_lesson_progress(self):
         student_id, set_cookie = self.current_student_id()
+        if not student_id:
+            self.send_auth_required()
+            return
         try:
             data = self.read_json_body()
         except ValueError as exc:
@@ -364,6 +801,9 @@ class LearningHandler(SimpleHTTPRequestHandler):
 
     def handle_post_activity(self):
         student_id, set_cookie = self.current_student_id()
+        if not student_id:
+            self.send_auth_required()
+            return
         try:
             data = self.read_json_body()
         except ValueError as exc:
@@ -419,6 +859,9 @@ class LearningHandler(SimpleHTTPRequestHandler):
 
     def handle_post_quiz(self):
         student_id, set_cookie = self.current_student_id()
+        if not student_id:
+            self.send_auth_required()
+            return
         try:
             data = self.read_json_body()
         except ValueError as exc:

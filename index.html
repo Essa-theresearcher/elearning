@@ -53,6 +53,10 @@
       font: inherit;
     }
 
+    [hidden] {
+      display: none !important;
+    }
+
     code {
       padding: 0.1em 0.35em;
       border-radius: 4px;
@@ -163,6 +167,145 @@
       border-radius: inherit;
       background: var(--teal);
       transition: width 180ms ease;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .account-menu {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .account-name {
+      max-width: 180px;
+      overflow: hidden;
+      color: var(--navy-dark);
+      font-size: 13px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .logout-btn,
+    .auth-switch {
+      border: 0;
+      background: transparent;
+      color: var(--teal);
+      cursor: pointer;
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .logout-btn {
+      padding: 6px 0;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(11, 27, 51, 0.72);
+    }
+
+    .auth-panel {
+      width: min(440px, 100%);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.24);
+      overflow: hidden;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 16px;
+      padding: 28px;
+    }
+
+    .auth-form h2 {
+      margin: 0;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .auth-copy {
+      margin: -6px 0 4px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .auth-field {
+      display: grid;
+      gap: 7px;
+      color: var(--navy-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .auth-field input {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .auth-field input:focus {
+      outline: 3px solid rgba(32, 109, 111, 0.18);
+      border-color: var(--teal);
+    }
+
+    .auth-submit {
+      min-height: 44px;
+      border: 0;
+      border-radius: 6px;
+      background: var(--navy);
+      color: var(--paper);
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .auth-submit:hover {
+      background: var(--navy-dark);
+    }
+
+    .auth-error {
+      min-height: 20px;
+      margin: 0;
+      color: #a33b31;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .auth-footer {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    body.auth-locked .topbar,
+    body.auth-locked .layout {
+      pointer-events: none;
+      user-select: none;
     }
 
     .layout {
@@ -541,6 +684,45 @@
       word-break: break-word;
     }
 
+    .recording-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .recording-item {
+      display: grid;
+      gap: 3px;
+      width: 100%;
+      min-height: 52px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 10px;
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .recording-item:hover,
+    .recording-item.is-active {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+    }
+
+    .recording-item strong {
+      color: var(--navy-dark);
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .recording-item span {
+      color: var(--muted);
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .reader-layout {
       display: grid;
       grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
@@ -758,6 +940,30 @@
         min-width: 0;
       }
 
+      .topbar-actions {
+        align-items: stretch;
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+      }
+
+      .account-menu {
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .account-name {
+        max-width: min(260px, 70vw);
+      }
+
+      .auth-overlay {
+        padding: 14px;
+      }
+
+      .auth-form {
+        padding: 24px 20px;
+      }
+
       .layout {
         padding: 18px 14px 40px;
       }
@@ -807,7 +1013,55 @@
     }
   </style>
 </head>
-<body>
+<body class="auth-locked">
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <form class="auth-form" id="loginForm">
+        <span class="eyebrow">Course access</span>
+        <h2 id="authTitle">Sign in</h2>
+        <p class="auth-copy">Use your Digital Bridge Academy account.</p>
+        <label class="auth-field">
+          Username
+          <input id="loginUsername" name="username" autocomplete="username" required>
+        </label>
+        <label class="auth-field">
+          Password
+          <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <button class="auth-submit" type="submit">Sign in</button>
+        <p class="auth-error" id="loginMessage" role="alert"></p>
+        <p class="auth-footer">
+          New student?
+          <button class="auth-switch" type="button" id="showRegister">Create account</button>
+        </p>
+      </form>
+
+      <form class="auth-form" id="registerForm" hidden>
+        <span class="eyebrow">Student account</span>
+        <h2>Create account</h2>
+        <p class="auth-copy">Your progress and submissions will be saved to this login.</p>
+        <label class="auth-field">
+          Full name
+          <input id="registerDisplayName" name="displayName" autocomplete="name" required>
+        </label>
+        <label class="auth-field">
+          Username
+          <input id="registerUsername" name="username" autocomplete="username" required>
+        </label>
+        <label class="auth-field">
+          Password
+          <input id="registerPassword" name="password" type="password" autocomplete="new-password" minlength="8" required>
+        </label>
+        <button class="auth-submit" type="submit">Create account</button>
+        <p class="auth-error" id="registerMessage" role="alert"></p>
+        <p class="auth-footer">
+          Already have an account?
+          <button class="auth-switch" type="button" id="showLogin">Sign in</button>
+        </p>
+      </form>
+    </div>
+  </div>
+
   <header class="topbar">
     <div class="topbar-inner">
       <a class="brand-lockup" href="#welcome" aria-label="Digital Bridge Academy lesson home">
@@ -817,11 +1071,17 @@
           <span>Computer Fundamentals for Programmers</span>
         </span>
       </a>
-      <div class="progress-wrap" aria-label="Lesson progress">
-        <span class="progress-copy" id="progressCopy">0 of 6 complete</span>
-        <span class="progress-track" aria-hidden="true">
-          <span class="progress-fill" id="progressFill"></span>
-        </span>
+      <div class="topbar-actions">
+        <div class="progress-wrap" aria-label="Lesson progress">
+          <span class="progress-copy" id="progressCopy">0 of 6 complete</span>
+          <span class="progress-track" aria-hidden="true">
+            <span class="progress-fill" id="progressFill"></span>
+          </span>
+        </div>
+        <div class="account-menu" id="accountMenu" hidden>
+          <span class="account-name" id="accountName"></span>
+          <button class="logout-btn" id="logoutButton" type="button">Log out</button>
+        </div>
       </div>
     </div>
   </header>
@@ -953,9 +1213,9 @@
         <div class="section-surface">
           <div class="section-header">
             <div class="section-title">
-              <span class="eyebrow">Lesson video</span>
-              <h2>Class Recording</h2>
-              <p>Add the recording here when it is ready. The page will preview the selected video locally in your browser.</p>
+              <span class="eyebrow">Lesson videos</span>
+              <h2>Class Recordings</h2>
+              <p>Use one recording or split the lesson into multiple parts.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="video">Mark complete</button>
           </div>
@@ -964,16 +1224,17 @@
               <div class="video-frame" id="videoFrame">
                 <video id="lessonVideo" controls preload="metadata"></video>
                 <div class="video-empty">
-                  <strong>Video will appear here</strong>
-                  <span>Choose the lesson recording after you upload or move it onto this computer.</span>
+                  <strong>Recordings will appear here</strong>
+                  <span>Select a recording part from the list when videos are available.</span>
                 </div>
               </div>
               <div class="video-panel">
-                <h3>Recording slot</h3>
-                <p>Select an MP4, MOV, WEBM, or other browser-supported video file. This keeps the course page ready before the final recording is available.</p>
-                <label class="file-label" for="videoInput">Choose video file</label>
-                <input class="video-file" id="videoInput" type="file" accept="video/*">
-                <div class="video-status" id="videoStatus">No video selected yet.</div>
+                <h3>Recording parts</h3>
+                <p>Upload videos into the Lesson 1 video folder or preview multiple local files here.</p>
+                <div class="recording-list" id="recordingList"></div>
+                <label class="file-label" for="videoInput">Choose video files</label>
+                <input class="video-file" id="videoInput" type="file" accept="video/*" multiple>
+                <div class="video-status" id="videoStatus">No recordings selected yet.</div>
               </div>
             </div>
           </div>
@@ -1220,12 +1481,91 @@ print(a)  # [1, 2, 3, 4]</code></pre>
       const completeButtons = Array.from(document.querySelectorAll("[data-complete]"));
       const progressCopy = document.getElementById("progressCopy");
       const progressFill = document.getElementById("progressFill");
+      const authOverlay = document.getElementById("authOverlay");
+      const accountMenu = document.getElementById("accountMenu");
+      const accountName = document.getElementById("accountName");
+      const logoutButton = document.getElementById("logoutButton");
+      const loginForm = document.getElementById("loginForm");
+      const registerForm = document.getElementById("registerForm");
+      const loginMessage = document.getElementById("loginMessage");
+      const registerMessage = document.getElementById("registerMessage");
+      const showRegisterButton = document.getElementById("showRegister");
+      const showLoginButton = document.getElementById("showLogin");
       const lessonSlug = "cs-fundamentals-lesson-1";
-      const storageKey = "dba-lesson-1-complete";
+      const baseStorageKey = "dba-lesson-1-complete";
       const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
       const total = sections.length;
 
-      let completed = new Set(JSON.parse(localStorage.getItem(storageKey) || "[]"));
+      let currentUser = null;
+      let storageKey = baseStorageKey + "-guest";
+      let completed = readLocalProgress();
+
+      function readLocalProgress() {
+        try {
+          return new Set(JSON.parse(localStorage.getItem(storageKey) || "[]"));
+        } catch (_) {
+          return new Set();
+        }
+      }
+
+      function switchLocalProgress(user) {
+        storageKey = baseStorageKey + "-" + (user ? user.id : "guest");
+        completed = readLocalProgress();
+      }
+
+      function setAuthMessage(element, message) {
+        element.textContent = message || "";
+      }
+
+      function parseJsonResponse(response) {
+        return response.json().catch(function () {
+          return {};
+        }).then(function (data) {
+          if (!response.ok) {
+            throw new Error(data.error || "Request failed.");
+          }
+          return data;
+        });
+      }
+
+      function postJson(url, payload) {
+        return fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload || {})
+        }).then(parseJsonResponse);
+      }
+
+      function renderAuth(user, allowSignup) {
+        currentUser = user || null;
+        switchLocalProgress(currentUser);
+        document.body.classList.toggle("auth-locked", !currentUser && canUseBackend);
+        authOverlay.hidden = Boolean(currentUser) || !canUseBackend;
+        accountMenu.hidden = !currentUser;
+        accountName.textContent = currentUser ? currentUser.displayName || currentUser.username : "";
+        showRegisterButton.hidden = allowSignup === false;
+        renderProgress();
+      }
+
+      function loadAuth() {
+        if (!canUseBackend) {
+          renderAuth(null, false);
+          return;
+        }
+
+        fetch("/api/auth/me")
+          .then(parseJsonResponse)
+          .then(function (data) {
+            renderAuth(data.user, data.allowSignup);
+            if (data.authenticated) {
+              loadProgressFromBackend();
+              loadRecordingsFromBackend();
+            }
+          })
+          .catch(function () {
+            renderAuth(null, true);
+          });
+      }
 
       function saveProgress() {
         localStorage.setItem(storageKey, JSON.stringify(Array.from(completed)));
@@ -1242,6 +1582,10 @@ print(a)  # [1, 2, 3, 4]</code></pre>
             lessonSlug: lessonSlug,
             completedSections: Array.from(completed)
           })
+        }).then(function (response) {
+          if (response.status === 401) {
+            renderAuth(null, true);
+          }
         }).catch(function () {
           // Keep local progress if the backend is temporarily unavailable.
         });
@@ -1255,6 +1599,10 @@ print(a)  # [1, 2, 3, 4]</code></pre>
 
         fetch("/api/progress/lesson?lessonSlug=" + encodeURIComponent(lessonSlug))
           .then(function (response) {
+            if (response.status === 401) {
+              renderAuth(null, true);
+              throw new Error("Login required");
+            }
             if (!response.ok) throw new Error("Could not load progress");
             return response.json();
           })
@@ -1301,6 +1649,67 @@ print(a)  # [1, 2, 3, 4]</code></pre>
         });
       });
 
+      showRegisterButton.addEventListener("click", function () {
+        setAuthMessage(loginMessage, "");
+        setAuthMessage(registerMessage, "");
+        loginForm.hidden = true;
+        registerForm.hidden = false;
+        document.getElementById("registerDisplayName").focus();
+      });
+
+      showLoginButton.addEventListener("click", function () {
+        setAuthMessage(loginMessage, "");
+        setAuthMessage(registerMessage, "");
+        registerForm.hidden = true;
+        loginForm.hidden = false;
+        document.getElementById("loginUsername").focus();
+      });
+
+      loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setAuthMessage(loginMessage, "");
+
+        postJson("/api/auth/login", {
+          username: loginForm.elements.username.value,
+          password: loginForm.elements.password.value
+        }).then(function (data) {
+          loginForm.reset();
+          renderAuth(data.user, data.allowSignup);
+          loadProgressFromBackend();
+          loadRecordingsFromBackend();
+        }).catch(function (error) {
+          setAuthMessage(loginMessage, error.message);
+        });
+      });
+
+      registerForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setAuthMessage(registerMessage, "");
+
+        postJson("/api/auth/register", {
+          displayName: registerForm.elements.displayName.value,
+          username: registerForm.elements.username.value,
+          password: registerForm.elements.password.value
+        }).then(function (data) {
+          registerForm.reset();
+          renderAuth(data.user, data.allowSignup);
+          loadProgressFromBackend();
+          loadRecordingsFromBackend();
+        }).catch(function (error) {
+          setAuthMessage(registerMessage, error.message);
+        });
+      });
+
+      logoutButton.addEventListener("click", function () {
+        postJson("/api/auth/logout", {}).finally(function () {
+          renderAuth(null, true);
+          loginForm.hidden = false;
+          registerForm.hidden = true;
+          clearRecordings();
+          document.getElementById("loginUsername").focus();
+        });
+      });
+
       const observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           if (!entry.isIntersecting) return;
@@ -1322,20 +1731,106 @@ print(a)  # [1, 2, 3, 4]</code></pre>
       const video = document.getElementById("lessonVideo");
       const videoFrame = document.getElementById("videoFrame");
       const videoStatus = document.getElementById("videoStatus");
-      let currentVideoUrl = null;
+      const recordingList = document.getElementById("recordingList");
+      let recordingItems = [];
+      let localVideoUrls = [];
+      let activeRecordingIndex = -1;
+
+      function clearRecordings() {
+        localVideoUrls.forEach(function (url) {
+          URL.revokeObjectURL(url);
+        });
+        localVideoUrls = [];
+        recordingItems = [];
+        activeRecordingIndex = -1;
+        video.removeAttribute("src");
+        video.load();
+        videoFrame.classList.remove("has-video");
+        recordingList.innerHTML = "";
+        videoStatus.textContent = "No recordings selected yet.";
+      }
+
+      function formatFileSize(bytes) {
+        if (!bytes) return "";
+        const mb = bytes / (1024 * 1024);
+        if (mb >= 1) return mb.toFixed(mb >= 10 ? 0 : 1) + " MB";
+        return Math.max(1, Math.round(bytes / 1024)) + " KB";
+      }
+
+      function setActiveRecording(index) {
+        const item = recordingItems[index];
+        if (!item) return;
+        activeRecordingIndex = index;
+        video.src = item.url;
+        video.load();
+        videoFrame.classList.add("has-video");
+        videoStatus.textContent = "Selected: " + item.name;
+
+        Array.from(recordingList.querySelectorAll(".recording-item")).forEach(function (button, buttonIndex) {
+          button.classList.toggle("is-active", buttonIndex === index);
+        });
+      }
+
+      function renderRecordingList() {
+        recordingList.innerHTML = "";
+        recordingItems.forEach(function (item, index) {
+          const button = document.createElement("button");
+          button.className = "recording-item";
+          button.type = "button";
+          button.innerHTML = "<strong>Part " + (index + 1) + "</strong><span></span>";
+          button.querySelector("span").textContent = item.name + (item.size ? " - " + formatFileSize(item.size) : "");
+          button.addEventListener("click", function () {
+            setActiveRecording(index);
+          });
+          recordingList.appendChild(button);
+        });
+
+        if (recordingItems.length) {
+          setActiveRecording(0);
+        } else {
+          videoStatus.textContent = "No recordings selected yet.";
+        }
+      }
+
+      function loadRecordingsFromBackend() {
+        if (!canUseBackend || !currentUser) return;
+
+        fetch("/api/recordings")
+          .then(function (response) {
+            if (!response.ok) throw new Error("Could not load recordings");
+            return response.json();
+          })
+          .then(function (data) {
+            if (Array.isArray(data.recordings) && data.recordings.length) {
+              clearRecordings();
+              recordingItems = data.recordings;
+              renderRecordingList();
+            }
+          })
+          .catch(function () {
+            if (!recordingItems.length) {
+              videoStatus.textContent = "No recordings selected yet.";
+            }
+          });
+      }
 
       videoInput.addEventListener("change", function () {
-        const file = videoInput.files && videoInput.files[0];
-        if (!file) return;
+        const files = Array.from(videoInput.files || []);
+        if (!files.length) return;
 
-        if (currentVideoUrl) {
-          URL.revokeObjectURL(currentVideoUrl);
-        }
+        clearRecordings();
+        localVideoUrls = files.map(function (file) {
+          return URL.createObjectURL(file);
+        });
+        recordingItems = files.map(function (file, index) {
+          return {
+            name: file.name,
+            size: file.size,
+            url: localVideoUrls[index]
+          };
+        });
 
-        currentVideoUrl = URL.createObjectURL(file);
-        video.src = currentVideoUrl;
-        videoFrame.classList.add("has-video");
-        videoStatus.textContent = "Selected: " + file.name;
+        renderRecordingList();
       });
 
       function resizeEmbeddedFrame(frame) {
@@ -1361,7 +1856,7 @@ print(a)  # [1, 2, 3, 4]</code></pre>
       });
 
       renderProgress();
-      loadProgressFromBackend();
+      loadAuth();
     })();
   </script>
 </body>
