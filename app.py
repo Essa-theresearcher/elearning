@@ -24,12 +24,11 @@ APP_HOST = os.environ.get("APP_HOST", "0.0.0.0")
 PORT = int(os.environ.get("PORT", "8765"))
 USE_POSTGRES = bool(DATABASE_URL)
 LESSON_SLUG = os.environ.get("LESSON_SLUG", "cs-fundamentals-lesson-1")
-VIDEO_DIR = os.environ.get("VIDEO_DIR", "assets/videos/lesson1")
 COOKIE_NAME = os.environ.get("COOKIE_NAME", "dba_student_id")
 AUTH_COOKIE_NAME = os.environ.get("AUTH_COOKIE_NAME", "dba_session")
 COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "").lower() in {"1", "true", "yes"}
 REQUIRE_LOGIN = os.environ.get("REQUIRE_LOGIN", "1").lower() not in {"0", "false", "no"}
-ALLOW_SIGNUP = os.environ.get("ALLOW_SIGNUP", "1").lower() not in {"0", "false", "no"}
+ALLOW_SIGNUP = os.environ.get("ALLOW_SIGNUP", "0").lower() not in {"0", "false", "no"}
 SESSION_DAYS = int(os.environ.get("SESSION_DAYS", "30"))
 ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "teacher").strip().lower()
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "changeme123")
@@ -37,50 +36,102 @@ ADMIN_DISPLAY_NAME = os.environ.get("ADMIN_DISPLAY_NAME", "Teacher").strip() or 
 PASSWORD_ITERATIONS = 260_000
 MIN_PASSWORD_LENGTH = 8
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v", ".webm", ".ogg"}
-RECORDING_SEGMENTS = [
-    {
-        "part": 1,
-        "title": "Welcome & Why This Lesson Matters",
-        "duration": "~4 min",
-        "slug": "welcome-why-this-lesson-matters",
+LESSONS = {
+    "cs-fundamentals-lesson-1": {
+        "video_dir": os.environ.get("LESSON1_VIDEO_DIR", "assets/videos/lesson1"),
+        "recording_segments": [
+            {
+                "part": 1,
+                "title": "Welcome & Why This Lesson Matters",
+                "duration": "~4 min",
+                "slug": "welcome-why-this-lesson-matters",
+            },
+            {
+                "part": 2,
+                "title": "What Is a Computer, Really?",
+                "duration": "~9 min",
+                "slug": "what-is-a-computer-really",
+            },
+            {
+                "part": 3,
+                "title": "Everything Is Just Numbers: Binary",
+                "duration": "~11 min",
+                "slug": "binary",
+            },
+            {
+                "part": 4,
+                "title": "From Your Code to a Running Program",
+                "duration": "~11 min",
+                "slug": "code-to-running-program",
+            },
+            {
+                "part": 5,
+                "title": "How Python Actually Stores Your Variables",
+                "duration": "~12 min",
+                "slug": "python-variables-memory",
+            },
+            {
+                "part": 6,
+                "title": "The Operating System's Role",
+                "duration": "~9 min",
+                "slug": "operating-system-role",
+            },
+            {
+                "part": 7,
+                "title": "Wrap-Up: The Full Journey",
+                "duration": "~5 min",
+                "slug": "wrap-up-full-journey",
+            },
+        ],
     },
-    {
-        "part": 2,
-        "title": "What Is a Computer, Really?",
-        "duration": "~9 min",
-        "slug": "what-is-a-computer-really",
+    "internet-fundamentals-lesson-2": {
+        "video_dir": os.environ.get("LESSON2_VIDEO_DIR", "assets/videos/lesson2"),
+        "recording_segments": [
+            {
+                "part": 1,
+                "title": "Welcome & Framing",
+                "duration": "~5 min",
+                "slug": "welcome-framing",
+            },
+            {
+                "part": 2,
+                "title": "Names & Addresses: IP Addresses and DNS",
+                "duration": "~20 min",
+                "slug": "names-addresses-dns",
+            },
+            {
+                "part": 3,
+                "title": "The Request-Response Cycle",
+                "duration": "~20 min",
+                "slug": "request-response-cycle",
+            },
+            {
+                "part": 4,
+                "title": "Data Travels in Packets",
+                "duration": "~20 min",
+                "slug": "packets-routing",
+            },
+            {
+                "part": 5,
+                "title": "Servers, Ports, and APIs",
+                "duration": "~15 min",
+                "slug": "servers-ports-apis",
+            },
+            {
+                "part": 6,
+                "title": "HTTPS and Encryption",
+                "duration": "~15 min",
+                "slug": "https-encryption",
+            },
+            {
+                "part": 7,
+                "title": "Summary: The Full Journey",
+                "duration": "~15 min",
+                "slug": "summary-full-journey",
+            },
+        ],
     },
-    {
-        "part": 3,
-        "title": "Everything Is Just Numbers: Binary",
-        "duration": "~11 min",
-        "slug": "binary",
-    },
-    {
-        "part": 4,
-        "title": "From Your Code to a Running Program",
-        "duration": "~11 min",
-        "slug": "code-to-running-program",
-    },
-    {
-        "part": 5,
-        "title": "How Python Actually Stores Your Variables",
-        "duration": "~12 min",
-        "slug": "python-variables-memory",
-    },
-    {
-        "part": 6,
-        "title": "The Operating System's Role",
-        "duration": "~9 min",
-        "slug": "operating-system-role",
-    },
-    {
-        "part": 7,
-        "title": "Wrap-Up: The Full Journey",
-        "duration": "~5 min",
-        "slug": "wrap-up-full-journey",
-    },
-]
+}
 
 
 def sqlite_db_path():
@@ -92,16 +143,6 @@ def sqlite_db_path():
 
 
 DB_PATH = sqlite_db_path()
-
-
-def video_dir_path():
-    path = Path(VIDEO_DIR)
-    if not path.is_absolute():
-        path = ROOT / path
-    return path.resolve()
-
-
-VIDEO_PATH = video_dir_path()
 
 
 def utc_now():
@@ -177,19 +218,36 @@ def display_name_from_file(path):
     return " ".join(word.capitalize() for word in name.split()) or path.name
 
 
-def list_lesson_recordings():
+def lesson_config(lesson_slug):
+    return (
+        LESSONS.get(lesson_slug)
+        or LESSONS.get(LESSON_SLUG)
+        or next(iter(LESSONS.values()))
+    )
+
+
+def video_dir_path(lesson_slug):
+    path = Path(lesson_config(lesson_slug)["video_dir"])
+    if not path.is_absolute():
+        path = ROOT / path
+    return path.resolve()
+
+
+def list_lesson_recordings(lesson_slug):
+    video_path = video_dir_path(lesson_slug)
+    recording_segments = lesson_config(lesson_slug)["recording_segments"]
     files = []
-    if not VIDEO_PATH.exists() or not VIDEO_PATH.is_dir():
+    if not video_path.exists() or not video_path.is_dir():
         files = []
-    elif ROOT in VIDEO_PATH.parents or VIDEO_PATH == ROOT:
+    elif ROOT in video_path.parents or video_path == ROOT:
         files = [
             path
-            for path in sorted(VIDEO_PATH.iterdir(), key=lambda item: item.name.lower())
+            for path in sorted(video_path.iterdir(), key=lambda item: item.name.lower())
             if path.is_file() and path.suffix.lower() in VIDEO_EXTENSIONS
         ]
 
     recordings = []
-    for index, segment in enumerate(RECORDING_SEGMENTS):
+    for index, segment in enumerate(recording_segments):
         item = dict(segment)
         path = files[index] if index < len(files) else None
         item["name"] = f"Part {segment['part']}: {segment['title']}"
@@ -206,7 +264,7 @@ def list_lesson_recordings():
 
         recordings.append(item)
 
-    for path in files[len(RECORDING_SEGMENTS) :]:
+    for path in files[len(recording_segments) :]:
         relative_path = path.relative_to(ROOT).as_posix()
         part = len(recordings) + 1
         title = display_name_from_file(path)
@@ -429,7 +487,7 @@ class LearningHandler(SimpleHTTPRequestHandler):
             self.handle_auth_me()
             return
         if parsed.path == "/api/recordings":
-            self.handle_get_recordings()
+            self.handle_get_recordings(parsed)
             return
         if parsed.path == "/api/progress/lesson":
             self.handle_get_lesson_progress(parsed)
@@ -714,14 +772,16 @@ class LearningHandler(SimpleHTTPRequestHandler):
             clear_auth_cookie=True,
         )
 
-    def handle_get_recordings(self):
+    def handle_get_recordings(self, parsed):
         if REQUIRE_LOGIN and not self.current_user():
             self.send_auth_required()
             return
+        params = parse_qs(parsed.query)
+        lesson_slug = params.get("lessonSlug", [LESSON_SLUG])[0] or LESSON_SLUG
         self.send_json(
             {
-                "lessonSlug": LESSON_SLUG,
-                "recordings": list_lesson_recordings(),
+                "lessonSlug": lesson_slug,
+                "recordings": list_lesson_recordings(lesson_slug),
             }
         )
 

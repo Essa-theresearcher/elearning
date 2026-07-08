@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lesson 1 - How Computers Actually Work</title>
+  <title>Lesson 2 - How the Internet Actually Works</title>
   <link rel="icon" href="data:,">
   <style>
     :root {
@@ -1128,12 +1128,12 @@
   <div class="layout">
     <aside class="sidebar" aria-label="Lesson contents">
       <div class="sidebar-head">
-        <span class="eyebrow">Lesson 1</span>
-        <h1>How Computers Actually Work</h1>
+        <span class="eyebrow">Lesson 2</span>
+        <h1>How the Internet Actually Works</h1>
         <div class="sidebar-meta">2-hour session with notes, video, activity, quiz, and wrap-up</div>
         <div class="course-links" aria-label="Course lessons">
-          <a class="course-link is-current" href="index.html">Lesson 1</a>
-          <a class="course-link" href="lesson2.html">Lesson 2</a>
+          <a class="course-link" href="index.html">Lesson 1</a>
+          <a class="course-link is-current" href="lesson2.html">Lesson 2</a>
         </div>
       </div>
       <nav class="lesson-nav" id="lessonNav">
@@ -1145,7 +1145,7 @@
         <a href="#video" data-section="video">
           <span class="nav-dot" aria-hidden="true"></span>
           <span>Video</span>
-          <span class="duration">2 hr</span>
+          <span class="duration">7 parts</span>
         </a>
         <a href="#reading" data-section="reading">
           <span class="nav-dot" aria-hidden="true"></span>
@@ -1176,23 +1176,22 @@
           <div class="section-header">
             <div class="section-title">
               <span class="eyebrow">Welcome and framing</span>
-              <h2>Welcome to Computer Fundamentals</h2>
-              <p>The missing layer behind the Python you already know.</p>
+              <h2>How the Internet Actually Works</h2>
+              <p>What really happens between typing a URL and a page loading on your screen.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="welcome">Mark complete</button>
           </div>
           <div class="section-body">
             <div class="welcome-grid">
               <div>
-                <p class="lead">You have learned Python basics: variables, loops, functions, and maybe a few small projects. This lesson fills the layer underneath that work: what is happening inside the machine when your code runs.</p>
+                <p class="lead">Last lesson, we went inside one machine. This lesson zooms out to what happens when that machine talks to another one anywhere in the world, usually in under a second.</p>
                 <ul class="objective-list" aria-label="Learning objectives">
-                  <li>A clear mental model of the four core hardware components inside any computer.</li>
-                  <li>How data becomes patterns of 1s and 0s, and how encoding turns those patterns into meaning.</li>
-                  <li>What happens between starting a Python script and seeing output on screen.</li>
-                  <li>How Python stores variables in memory, and why references and mutability matter.</li>
-                  <li>How the operating system juggles many programs on limited hardware.</li>
-                  <li>A hands-on activity that turns the concepts into predictions, observations, and notes.</li>
-                  <li>The vocabulary to explain this clearly in interviews, reviews, and debugging.</li>
+                  <li>What happens step by step between typing a URL and seeing a page load.</li>
+                  <li>How a domain name like google.com becomes an IP address a computer can connect to.</li>
+                  <li>What HTTP requests and responses contain, including common status codes.</li>
+                  <li>Why internet data travels in packets instead of as one big chunk.</li>
+                  <li>What servers, ports, APIs, and webhooks really are underneath the terms.</li>
+                  <li>What HTTPS protects, why the TLS handshake matters, and where the padlock still has limits.</li>
                 </ul>
 
                 <table class="session-plan" aria-label="Session plan">
@@ -1210,42 +1209,42 @@
                       <td>Why this lesson matters and what students will walk away with.</td>
                     </tr>
                     <tr>
-                      <td>15 min</td>
-                      <td>Hardware basics</td>
-                      <td>CPU, RAM, storage, I/O, buses, and how components talk.</td>
+                      <td>20 min</td>
+                      <td>Names and addresses</td>
+                      <td>IP addresses, domain names, and how DNS resolves names.</td>
                     </tr>
                     <tr>
                       <td>20 min</td>
-                      <td>Binary and encoding</td>
-                      <td>Bits, bytes, place values, ASCII, Unicode, and hands-on demos.</td>
+                      <td>Request and response</td>
+                      <td>Client-server model, HTTP methods, status codes, and a live API demo.</td>
                     </tr>
                     <tr>
                       <td>20 min</td>
-                      <td>Code to execution</td>
-                      <td>Source, bytecode, PVM, machine code, compiled vs interpreted.</td>
-                    </tr>
-                    <tr>
-                      <td>20 min</td>
-                      <td>Variables and memory</td>
-                      <td>References, <code>id()</code>, mutability, stack, heap, and predictions.</td>
+                      <td>Packets and routing</td>
+                      <td>TCP/IP, packets, routers, and traceroute.</td>
                     </tr>
                     <tr>
                       <td>15 min</td>
-                      <td>Operating system</td>
-                      <td>Processes, threads, scheduling, context switching, and the GIL.</td>
+                      <td>Servers, ports, and APIs</td>
+                      <td>Listening servers, common ports, APIs, and webhooks.</td>
                     </tr>
                     <tr>
-                      <td>30 min</td>
-                      <td>Class activity</td>
-                      <td>Binary detective, bytecode explorer, reference predictions, and reflection notes.</td>
+                      <td>15 min</td>
+                      <td>HTTPS and encryption</td>
+                      <td>TLS handshake, encrypted transit, and why secure endpoints matter.</td>
+                    </tr>
+                    <tr>
+                      <td>15 min</td>
+                      <td>Wrap-up and Q&A</td>
+                      <td>Key terms recap, homework, and next lesson preview.</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
               <figure class="notes-cover">
-                <img src="assets/lesson1-notes-cover.png" alt="Cover page preview of the Lesson 1 reading notes">
-                <figcaption>Reading notes attached below as the full 12-page PDF.</figcaption>
+                <img src="assets/lesson2-notes-cover.png" alt="Cover page preview of the Lesson 2 reading notes">
+                <figcaption>Reading notes attached below as the full 11-page PDF.</figcaption>
               </figure>
             </div>
           </div>
@@ -1258,7 +1257,7 @@
             <div class="section-title">
               <span class="eyebrow">Lesson videos</span>
               <h2>Class Recordings</h2>
-              <p>Lesson 1 is split into seven focused recordings from the teacher script.</p>
+              <p>Lesson 2 is organized into seven focused recordings that follow the reading notes.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="video">Mark complete</button>
           </div>
@@ -1268,12 +1267,12 @@
                 <video id="lessonVideo" controls preload="metadata"></video>
                 <div class="video-empty">
                   <strong>Recordings will appear here</strong>
-                  <span>Select a recording part from the list when videos are available.</span>
+                  <span>Select a Lesson 2 recording part from the list when videos are available.</span>
                 </div>
               </div>
               <div class="video-panel">
                 <h3>Recording parts</h3>
-                <p>Upload the seven Lesson 1 videos into the video folder, or preview multiple local files here.</p>
+                <p>Upload the seven Lesson 2 videos into the Lesson 2 video folder, or preview multiple local files here.</p>
                 <div class="recording-list" id="recordingList"></div>
                 <label class="file-label" for="videoInput">Choose video files</label>
                 <input class="video-file" id="videoInput" type="file" accept="video/*" multiple>
@@ -1300,133 +1299,154 @@
                 <h3>Full PDF</h3>
                 <p>Open the student handbook supplement or keep reading the structured notes on this page.</p>
                 <div class="button-row">
-                  <a class="primary-link" href="assets/lesson1-notes.pdf" target="_blank" rel="noopener">Open PDF</a>
-                  <a class="secondary-link" href="assets/lesson1-notes.pdf" download>Download</a>
+                  <a class="primary-link" href="assets/lesson2-notes.pdf" target="_blank" rel="noopener">Open PDF</a>
+                  <a class="secondary-link" href="assets/lesson2-notes.pdf" download>Download</a>
                 </div>
               </div>
 
               <div class="topic-stack">
                 <article class="topic">
-                  <h3>1. What Is a Computer, Really?</h3>
-                  <p>Every computer is built from four core parts working together. Understanding them explains why programs run out of memory, why disk access feels slow, and why some tasks are CPU-bound while others are I/O-bound.</p>
-                  <table class="note-table" aria-label="Core computer components">
+                  <h3>1. Names vs. Addresses: IP Addresses and DNS</h3>
+                  <p>Computers use numerical addresses to find each other. Humans use names. DNS is the system that turns a domain like <code>google.com</code> into an IP address that a browser can actually connect to.</p>
+                  <table class="note-table" aria-label="DNS lookup steps">
                     <thead>
                       <tr>
-                        <th>Component</th>
-                        <th>Job</th>
-                        <th>Analogy</th>
+                        <th>Step</th>
+                        <th>What happens</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>CPU</td>
-                        <td>Executes instructions, one at a time.</td>
-                        <td>The chef doing the cooking.</td>
+                        <td>Device asks</td>
+                        <td>Your browser asks a DNS resolver for the address behind a domain name.</td>
                       </tr>
                       <tr>
-                        <td>RAM</td>
-                        <td>Holds data the CPU is actively working with.</td>
-                        <td>The kitchen counter: fast, but cleared later.</td>
+                        <td>Cache check</td>
+                        <td>The resolver answers quickly if it has seen that domain recently.</td>
                       </tr>
                       <tr>
-                        <td>Storage</td>
-                        <td>Holds files permanently, even when powered off.</td>
-                        <td>The pantry: slower to reach, but persistent.</td>
+                        <td>Root and TLD</td>
+                        <td>If not cached, servers point the resolver closer to the authoritative answer.</td>
                       </tr>
                       <tr>
-                        <td>I/O</td>
-                        <td>Moves data in and out through keyboard, screen, network, and disk.</td>
-                        <td>Waiters carrying orders in and dishes out.</td>
+                        <td>Connection</td>
+                        <td>Once the browser has an IP address, it can open a connection to the server.</td>
                       </tr>
                     </tbody>
                   </table>
-                  <div class="callout"><strong>Quick check:</strong> Your saved Python file does not disappear after shutdown because it lives in storage. It is only loaded into RAM while the program is running.</div>
+                  <pre class="code-sample"><code>$ nslookup google.com
+
+&gt;&gt;&gt; import socket
+&gt;&gt;&gt; socket.gethostbyname('google.com')</code></pre>
                 </article>
 
                 <article class="topic">
-                  <h3>2. Everything Is Just Numbers: Binary</h3>
-                  <p>At the lowest level, a computer recognizes two electrical states: on and off. We represent them as 1 and 0. Text, photos, numbers, and Python scripts are ultimately long sequences of those bits.</p>
-                  <ul>
-                    <li><strong>Bit:</strong> one 1 or 0, the smallest unit of data.</li>
-                    <li><strong>Byte:</strong> 8 bits, enough for 256 possible values from 0 to 255.</li>
-                    <li><strong>Encoding:</strong> a rule for turning bytes into meaning, such as text.</li>
-                  </ul>
-                  <pre class="code-sample"><code>&gt;&gt;&gt; ord('A')
-65
-&gt;&gt;&gt; bin(65)
-'0b1000001'
-&gt;&gt;&gt; chr(65)
-'A'
-&gt;&gt;&gt; ord('a')
-97</code></pre>
-                  <p>ASCII covers basic English letters, digits, and punctuation. Unicode expands this to cover writing systems such as Somali and Arabic, plus symbols and emoji. Python 3 strings are Unicode by default.</p>
-                </article>
-
-                <article class="topic">
-                  <h3>3. From Your Code to a Running Program</h3>
-                  <p>Readable Python has to be transformed before the CPU can execute it. The journey is source code -> interpreter -> bytecode -> Python Virtual Machine -> machine code and CPU.</p>
-                  <table class="note-table" aria-label="Compiled and interpreted languages">
+                  <h3>2. The Request-Response Cycle</h3>
+                  <p>HTTP is the shared language browsers and servers use. The client asks for something, and the server answers with a status code, headers, and a body.</p>
+                  <table class="note-table" aria-label="Common HTTP status codes">
                     <thead>
                       <tr>
-                        <th>Question</th>
-                        <th>Compiled languages</th>
-                        <th>Interpreted languages</th>
+                        <th>Code</th>
+                        <th>Meaning</th>
+                        <th>What it tells you</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>Before running</td>
-                        <td>Translated to machine code ahead of time.</td>
-                        <td>Translated to bytecode as it runs or just before.</td>
+                        <td>200</td>
+                        <td>OK</td>
+                        <td>The request succeeded.</td>
                       </tr>
                       <tr>
-                        <td>Speed</td>
-                        <td>Generally faster at runtime.</td>
-                        <td>Generally slower because translation is part of execution.</td>
+                        <td>301 / 302</td>
+                        <td>Redirect</td>
+                        <td>The resource moved somewhere else.</td>
                       </tr>
                       <tr>
-                        <td>Flexibility</td>
-                        <td>Must rebuild after many code changes.</td>
-                        <td>Run immediately after a change, useful for fast iteration.</td>
+                        <td>404</td>
+                        <td>Not Found</td>
+                        <td>The server exists, but that path does not.</td>
+                      </tr>
+                      <tr>
+                        <td>401 / 403</td>
+                        <td>Unauthorized / Forbidden</td>
+                        <td>You need to log in, or you are not allowed.</td>
+                      </tr>
+                      <tr>
+                        <td>500</td>
+                        <td>Server Error</td>
+                        <td>Something broke on the server side.</td>
                       </tr>
                     </tbody>
                   </table>
-                  <pre class="code-sample"><code>import dis
-
-def add(a, b):
-    return a + b
-
-dis.dis(add)</code></pre>
+                  <pre class="code-sample"><code>&gt;&gt;&gt; import requests
+&gt;&gt;&gt; response = requests.get('https://api.github.com')
+&gt;&gt;&gt; response.status_code
+200
+&gt;&gt;&gt; response.headers['content-type']</code></pre>
                 </article>
 
                 <article class="topic">
-                  <h3>4. How Python Stores Variables</h3>
-                  <p>In Python, a variable is a name pointing to an object in memory. It is not a labeled box that holds a value. This is why assigning one list to another name can make both names point to the same list.</p>
-                  <pre class="code-sample"><code>a = [1, 2, 3]
-b = a
-b.append(4)
-print(a)  # [1, 2, 3, 4]</code></pre>
-                  <p><code>==</code> checks whether values are equal. <code>is</code> checks whether two names point to the exact same object. Lists, dictionaries, and sets are mutable; integers, floats, strings, tuples, and booleans are immutable.</p>
-                  <div class="callout"><strong>Prediction exercise:</strong> Work out what <code>x = 10; y = x; y = y + 5; print(x, y)</code> prints before running it. Then explain why numbers behave differently from lists.</div>
+                  <h3>3. Data Travels in Packets</h3>
+                  <p>Your data does not travel as one continuous stream. It is split into packets, routed across machines, and reassembled when it arrives.</p>
+                  <table class="note-table" aria-label="TCP and UDP comparison">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>TCP</th>
+                        <th>UDP</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Delivery</td>
+                        <td>Reliable, confirms packets arrive.</td>
+                        <td>Best effort, no confirmation.</td>
+                      </tr>
+                      <tr>
+                        <td>Order</td>
+                        <td>Guaranteed.</td>
+                        <td>Not guaranteed.</td>
+                      </tr>
+                      <tr>
+                        <td>Used for</td>
+                        <td>Web pages, APIs, downloads.</td>
+                        <td>Video calls and live streaming.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <pre class="code-sample"><code>$ traceroute google.com
+# Windows: tracert google.com</code></pre>
                 </article>
 
                 <article class="topic">
-                  <h3>5. The Operating System's Role</h3>
-                  <p>The operating system decides which process gets CPU time and for how long. It switches between programs so quickly that many tasks feel simultaneous even when hardware is limited.</p>
+                  <h3>4. Servers, Ports, and APIs</h3>
+                  <p>A server is a program listening for incoming requests. A port is the specific door that request goes through. APIs use the same request-response model, but return data for programs instead of pages for humans.</p>
                   <ul>
-                    <li><strong>Process:</strong> a running instance of a program with its own private memory.</li>
-                    <li><strong>Thread:</strong> a smaller unit of work inside a process; threads share memory.</li>
-                    <li><strong>Scheduling:</strong> the OS choosing what runs next.</li>
-                    <li><strong>Context switching:</strong> saving one process state and loading another.</li>
-                    <li><strong>GIL:</strong> CPython's lock that allows only one thread to execute Python bytecode at a time.</li>
+                    <li><strong>Port 80:</strong> standard plain HTTP traffic.</li>
+                    <li><strong>Port 443:</strong> standard HTTPS traffic.</li>
+                    <li><strong>Webhook:</strong> an API call triggered by an event, such as a payment confirmation.</li>
                   </ul>
-                  <div class="callout"><strong>Full journey:</strong> You type Python source -> the interpreter turns it into bytecode -> the OS creates a process and loads it into RAM -> the CPU executes instructions -> output appears and can be saved to storage.</div>
+                  <pre class="code-sample"><code>$ lsof -i -P | grep LISTEN
+python3   ... TCP *:8000 (LISTEN)
+node      ... TCP *:3000 (LISTEN)</code></pre>
+                </article>
+
+                <article class="topic">
+                  <h3>5. HTTPS and Encryption</h3>
+                  <p>HTTPS adds encryption so packets are unreadable to machines they pass through. Before the real HTTP request is sent, the browser and server perform a TLS handshake to agree on secure communication.</p>
+                  <div class="callout"><strong>Practical rule:</strong> Never enter passwords or payment details on a page that is not using HTTPS. Payment integrations require HTTPS because sensitive data must be encrypted in transit.</div>
+                </article>
+
+                <article class="topic">
+                  <h3>6. The Full Journey</h3>
+                  <p>You type a URL -> DNS translates the domain to an IP address -> the browser connects to the right port -> HTTPS performs a TLS handshake if needed -> the browser sends an HTTP request as packets -> routers move those packets -> the server replies -> the browser reassembles and renders the page.</p>
                 </article>
               </div>
             </div>
 
             <div class="callout">
-              <strong>Full handbook:</strong> Use the Open PDF or Download buttons above when you want the original 12-page student supplement.
+              <strong>Full handbook:</strong> Use the Open PDF or Download buttons above when you want the original 11-page student supplement.
             </div>
           </div>
         </div>
@@ -1438,12 +1458,12 @@ print(a)  # [1, 2, 3, 4]</code></pre>
             <div class="section-title">
               <span class="eyebrow">Hands-on practice</span>
               <h2>Class Activity</h2>
-              <p>Six short exercises for binary, bytecode, references, mutability, processes, and your own explanation of the full journey.</p>
+              <p>Six short activities for status codes, TCP vs UDP, traceroute, ports, HTTPS, and your own full-journey explanation.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="activity">Mark complete</button>
           </div>
           <div class="section-body">
-            <iframe class="embedded-frame activity-frame" src="assets/lesson1_class_activity-2.html" title="Lesson 1 class activity"></iframe>
+            <iframe class="embedded-frame activity-frame" src="assets/lesson2_class_activity.html" title="Lesson 2 class activity"></iframe>
           </div>
         </div>
       </section>
@@ -1454,12 +1474,12 @@ print(a)  # [1, 2, 3, 4]</code></pre>
             <div class="section-title">
               <span class="eyebrow">Post-lesson check</span>
               <h2>Practice Quiz</h2>
-              <p>Twenty-one questions across hardware, binary, code execution, memory, and the operating system.</p>
+              <p>Questions across DNS, HTTP, packets, routing, servers, ports, APIs, HTTPS, and encryption.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="quiz">Mark complete</button>
           </div>
           <div class="section-body">
-            <iframe class="embedded-frame quiz-frame" src="assets/lesson1_quiz-2.html" title="Lesson 1 practice quiz"></iframe>
+            <iframe class="embedded-frame quiz-frame" src="assets/lesson2_quiz.html" title="Lesson 2 practice quiz"></iframe>
           </div>
         </div>
       </section>
@@ -1470,7 +1490,7 @@ print(a)  # [1, 2, 3, 4]</code></pre>
             <div class="section-title">
               <span class="eyebrow">Wrap-up and next steps</span>
               <h2>Before the Next Meetup</h2>
-              <p>Use the homework to turn the concepts into things you can explain without reading from notes.</p>
+              <p>Use the homework to make the internet journey explainable in your own words.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="wrapup">Mark complete</button>
           </div>
@@ -1478,38 +1498,39 @@ print(a)  # [1, 2, 3, 4]</code></pre>
             <div class="wrapup-grid">
               <div>
                 <ol class="homework-list">
-                  <li>Run the <code>ord()</code>, <code>chr()</code>, and <code>bin()</code> examples yourself, then try a few other letters and characters.</li>
-                  <li>Run the <code>dis.dis()</code> example on one of your own functions and inspect the bytecode.</li>
-                  <li>Work through the mutability prediction exercise and explain the result in your own words.</li>
-                  <li>Write 2-3 sentences explaining what happens between running <code>python app.py</code> and seeing output appear.</li>
+                  <li>Run <code>nslookup</code> or <code>socket.gethostbyname()</code> on three websites and note the IP addresses.</li>
+                  <li>Run <code>requests.get()</code> against a public API and print the status code plus one field from the response.</li>
+                  <li>Run <code>traceroute</code> or <code>tracert</code> to a website and count how many hops your data takes.</li>
+                  <li>Write 2-3 sentences explaining what the browser padlock guarantees, and what it does not guarantee.</li>
                 </ol>
 
                 <div class="term-cloud" aria-label="Key terms">
-                  <span>CPU</span>
-                  <span>RAM</span>
-                  <span>Storage</span>
-                  <span>I/O</span>
-                  <span>Bus</span>
-                  <span>Bit</span>
-                  <span>Byte</span>
-                  <span>Binary</span>
-                  <span>Encoding</span>
-                  <span>Bytecode</span>
-                  <span>PVM</span>
-                  <span>Reference</span>
-                  <span>Mutable</span>
-                  <span>Stack</span>
-                  <span>Heap</span>
-                  <span>Process</span>
-                  <span>Thread</span>
-                  <span>GIL</span>
+                  <span>IP address</span>
+                  <span>Domain name</span>
+                  <span>DNS</span>
+                  <span>Resolver</span>
+                  <span>HTTP</span>
+                  <span>Request</span>
+                  <span>Response</span>
+                  <span>Status code</span>
+                  <span>TCP</span>
+                  <span>UDP</span>
+                  <span>Packet</span>
+                  <span>Router</span>
+                  <span>Traceroute</span>
+                  <span>Server</span>
+                  <span>Port</span>
+                  <span>API</span>
+                  <span>Webhook</span>
+                  <span>HTTPS</span>
+                  <span>TLS</span>
+                  <span>Encryption</span>
                 </div>
               </div>
 
               <div class="next-lesson">
                 <h3>Next lesson</h3>
-                <p>How the Internet Actually Works - what really happens between typing a URL and a page loading on your screen.</p>
-                <p><a class="secondary-link" href="lesson2.html">Open Lesson 2</a></p>
+                <p>How Databases Actually Store Your Data - what really happens to information after your program hits save.</p>
               </div>
             </div>
           </div>
@@ -1535,8 +1556,8 @@ print(a)  # [1, 2, 3, 4]</code></pre>
       const registerMessage = document.getElementById("registerMessage");
       const showRegisterButton = document.getElementById("showRegister");
       const showLoginButton = document.getElementById("showLogin");
-      const lessonSlug = "cs-fundamentals-lesson-1";
-      const baseStorageKey = "dba-lesson-1-complete";
+      const lessonSlug = "internet-fundamentals-lesson-2";
+      const baseStorageKey = "dba-lesson-2-complete";
       const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
       const total = sections.length;
 
@@ -1856,7 +1877,7 @@ print(a)  # [1, 2, 3, 4]</code></pre>
         if (firstUploadedIndex >= 0) {
           setActiveRecording(firstUploadedIndex);
         } else {
-          videoStatus.textContent = "Upload Lesson 1 recordings into assets/videos/lesson1.";
+          videoStatus.textContent = "Upload Lesson 2 recordings into assets/videos/lesson2.";
         }
       }
 

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lesson 2 Class Activity — Digital Bridge Academy</title>
+<style>
+  :root{
+    --navy:#132A4C;
+    --navy-dark:#0B1B33;
+    --gold:#C9A227;
+    --ivory:#FAF6EC;
+    --charcoal:#2B2B2B;
+    --soft-grey:#6E6E6E;
+    --line:#E3D9BE;
+    --correct:#2F6B52;
+    --correct-bg:#EAF3EE;
+    --code-bg:#0F1F38;
+    --code-text:#E8E3D3;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ivory);
+    color:var(--charcoal);
+    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .topbar{
+    background:var(--navy);
+    border-bottom:3px solid var(--gold);
+    padding:14px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .topbar .brand{ color:#fff; font-weight:700; font-size:14px; letter-spacing:0.03em; }
+  .topbar .lesson-tag{ color:#D9CDA3; font-size:12.5px; }
+
+  .wrap{ max-width:720px; margin:0 auto; padding:28px 18px 70px; }
+
+  .hero{ text-align:center; margin-bottom:8px; }
+  .hero .kicker{ color:var(--gold); font-weight:700; font-size:11.5px; letter-spacing:0.08em; text-transform:uppercase; }
+  .hero h1{ font-family:Georgia, "Times New Roman", serif; color:var(--navy); font-size:26px; margin:6px 0 4px; }
+  .hero p{ color:var(--soft-grey); font-size:14px; margin:0 0 8px; max-width:520px; margin-left:auto; margin-right:auto; }
+
+  .runtime-note{
+    text-align:center;
+    font-size:12px;
+    color:var(--soft-grey);
+    background:#fff;
+    border:1px dashed var(--line);
+    border-radius:5px;
+    padding:8px 14px;
+    margin:18px 0 30px;
+  }
+
+  .activity{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:24px 24px 22px;
+    margin-bottom:22px;
+    box-shadow:0 1px 3px rgba(19,42,76,0.06);
+  }
+  .activity-num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:26px; height:26px;
+    background:var(--navy);
+    color:var(--gold);
+    font-family:"Courier New", monospace;
+    font-weight:700;
+    font-size:12.5px;
+    border-radius:3px;
+    margin-right:10px;
+  }
+  .activity-title{
+    display:flex;
+    align-items:center;
+    font-family:Georgia, serif;
+    font-size:17px;
+    color:var(--navy-dark);
+    margin:0 0 6px;
+  }
+  .activity-sub{
+    color:var(--soft-grey);
+    font-size:13px;
+    margin:0 0 16px;
+    padding-left:36px;
+  }
+  .activity-body{ padding-left:0; }
+
+  .code-block{
+    background:var(--code-bg);
+    color:var(--code-text);
+    font-family:"Courier New", Courier, monospace;
+    font-size:13px;
+    padding:14px 16px;
+    border-radius:4px;
+    margin-bottom:14px;
+    white-space:pre;
+    overflow-x:auto;
+  }
+
+  label.field-label{
+    display:block;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--navy);
+    margin-bottom:6px;
+  }
+  input[type="text"], textarea{
+    width:100%;
+    border:1.5px solid var(--line);
+    border-radius:5px;
+    padding:10px 12px;
+    font-size:14px;
+    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:var(--charcoal);
+    background:#fff;
+    margin-bottom:12px;
+  }
+  textarea{ min-height:70px; resize:vertical; font-family:inherit; }
+  input[type="text"]:focus, textarea:focus{
+    outline:2px solid var(--gold);
+    outline-offset:1px;
+    border-color:var(--gold);
+  }
+
+  .btn{
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    font-size:13.5px;
+    font-weight:700;
+    border-radius:5px;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .btn:hover{ background:var(--navy-dark); }
+  .btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .btn-outline{
+    background:none;
+    border:1.5px solid var(--navy);
+    color:var(--navy);
+    padding:9px 16px;
+    font-size:13px;
+    font-weight:700;
+    border-radius:5px;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .btn-outline:hover{ background:var(--navy); color:#fff; }
+  .btn-outline:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+  .reveal{
+    display:none;
+    margin-top:14px;
+    padding:14px 16px;
+    background:var(--correct-bg);
+    border:1px solid var(--correct);
+    border-radius:5px;
+    font-size:13.5px;
+    line-height:1.55;
+    color:var(--correct);
+  }
+  .reveal.show{ display:block; }
+  .reveal b{ color:var(--navy-dark); }
+  .reveal .explain{ color:var(--charcoal); display:block; margin-top:6px; }
+
+  .live-output{
+    display:none;
+    margin-top:14px;
+  }
+  .live-output.show{ display:block; }
+  .live-output .code-block{ margin-bottom:0; }
+
+  .closing{
+    text-align:center;
+    margin-top:8px;
+  }
+  .closing p{
+    color:var(--soft-grey);
+    font-size:13px;
+    margin-bottom:16px;
+  }
+
+  @media (max-width:420px){
+    .hero h1{ font-size:22px; }
+    .activity{ padding:18px 16px 18px; }
+    .activity-sub{ padding-left:0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand">DIGITAL BRIDGE ACADEMY</span>
+  <span class="lesson-tag">Computer Fundamentals · Lesson 2 Class Activity</span>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="kicker">Hands-on · Do this after watching the recording</div>
+    <h1 id="heroTitle">Class Activity: How the Internet Actually Works</h1>
+    <p id="heroSub">This is the hands-on portion you'd normally do live in class, adapted so you can work through it on your own. Take your time — nothing here is timed or graded.</p>
+  </div>
+
+  <div class="runtime-note">
+    Six short activities · ~25–30 minutes total · A terminal and this week's recording nearby is useful here
+  </div>
+
+  <!-- ACTIVITY 1 -->
+  <div class="activity" data-day="tue">
+    <p class="activity-title"><span class="activity-num">1</span>HTTP Status Sleuth</p>
+    <p class="activity-sub">Read the scenario, guess the status code, then reveal it.</p>
+    <div class="activity-body">
+      <div class="code-block">Scenario: You call an API for a product page that was deleted
+last month. The server responds fine — it just has nothing
+at that address anymore.</div>
+      <label class="field-label" for="httpInput">Which status code fits this scenario?</label>
+      <input type="text" id="httpInput" placeholder="e.g. 200, 404, 500..." />
+      <button class="btn" id="revealHttpBtn">Reveal the answer</button>
+      <div class="reveal" id="httpReveal">
+        <b>404 Not Found</b>
+        <span class="explain">The server itself is working fine — it responded — there's just nothing left at that specific path. That's exactly what separates a 404 from a 500, where the server itself fails.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 2 -->
+  <div class="activity" data-day="wed">
+    <p class="activity-title"><span class="activity-num">2</span>TCP or UDP?</p>
+    <p class="activity-sub">Predict which protocol fits, and why, before revealing.</p>
+    <div class="activity-body">
+      <div class="code-block">Scenario: You're building a live video call feature. A dropped
+frame here and there is fine — nobody wants the call to
+freeze for a second just to guarantee every frame arrives.</div>
+      <label class="field-label" for="tcpInput">TCP or UDP — and why?</label>
+      <textarea id="tcpInput" placeholder="Your prediction and reasoning"></textarea>
+      <button class="btn" id="revealTcpBtn">Reveal the answer</button>
+      <div class="reveal" id="tcpReveal">
+        <b>UDP</b>
+        <span class="explain">Speed matters more than a perfect copy here. TCP's confirm-and-resend overhead would make the call feel laggy — better to drop an occasional frame than freeze waiting for it to be resent.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 3 -->
+  <div class="activity" data-day="wed">
+    <p class="activity-title"><span class="activity-num">3</span>Field Notes: Trace Your Own Route</p>
+    <p class="activity-sub">A real-world task using your own machine — no reveal, just observation.</p>
+    <div class="activity-body">
+      <div class="code-block">Terminal command:
+macOS/Linux:  traceroute google.com
+Windows:      tracert google.com</div>
+      <label class="field-label" for="tracerouteInput">How many hops did it take, and did any single hop take noticeably longer than the rest?</label>
+      <textarea id="tracerouteInput" placeholder="e.g. 11 hops — hop 4 jumped from 8ms to 45ms"></textarea>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 4 -->
+  <div class="activity" data-day="thu">
+    <p class="activity-title"><span class="activity-num">4</span>Port Checker</p>
+    <p class="activity-sub">Type any port number and see what actually runs there.</p>
+    <div class="activity-body">
+      <label class="field-label" for="portInput">Type a port number (e.g. 443, 22, 3306)</label>
+      <input type="text" id="portInput" placeholder="443" />
+      <button class="btn" id="revealPortBtn">Check this port</button>
+      <div class="live-output" id="portOutput">
+        <div class="code-block" id="portCode"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 5 -->
+  <div class="activity" data-day="fri">
+    <p class="activity-title"><span class="activity-num">5</span>HTTPS Checker</p>
+    <p class="activity-sub">Type any web address and see what it actually tells you.</p>
+    <div class="activity-body">
+      <label class="field-label" for="urlInput">Paste or type a URL (e.g. http://example.com or https://example.com)</label>
+      <input type="text" id="urlInput" placeholder="https://example.com" />
+      <button class="btn" id="revealUrlBtn">Check this URL</button>
+      <div class="live-output" id="urlOutput">
+        <div class="code-block" id="urlCode"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 6 -->
+  <div class="activity" data-day="fri">
+    <p class="activity-title"><span class="activity-num">6</span>In Your Own Words</p>
+    <p class="activity-sub">The real test of whether this clicked.</p>
+    <div class="activity-body">
+      <label class="field-label" for="reflectionInput">In 2–3 sentences: what actually happens between typing a URL and seeing the page load?</label>
+      <textarea id="reflectionInput" placeholder="No need to be perfect — write it in your own words"></textarea>
+    </div>
+  </div>
+
+  <div class="closing">
+    <p>Save your answers before you close this tab — nothing here is stored automatically.</p>
+    <button class="btn-outline" id="downloadBtn">Download my activity notes</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  // ---- Day filtering ----
+  // Link students to e.g. ?day=tue on Tuesday to show just that day's activity.
+  // No param (or an unrecognized one) shows every activity — useful for testing
+  // or for a student who wants to work ahead.
+  const DAY_LABELS = {
+    tue: "Tuesday — HTTP Status Sleuth",
+    wed: "Wednesday — TCP or UDP? and Traceroute Field Notes",
+    thu: "Thursday — Port Checker",
+    fri: "Friday — HTTPS Checker and Reflection",
+  };
+  const urlParams = new URLSearchParams(window.location.search);
+  const dayParam = (urlParams.get('day') || '').toLowerCase();
+
+  if(DAY_LABELS[dayParam]){
+    document.querySelectorAll('.activity').forEach(function(card){
+      if(card.getAttribute('data-day') !== dayParam){
+        card.style.display = 'none';
+      }
+    });
+    document.getElementById('heroTitle').textContent = `Today's Activity: ${DAY_LABELS[dayParam]}`;
+    document.getElementById('heroSub').textContent = "This is today's hands-on piece, adapted from the live version of this class. Take your time — nothing here is timed or graded.";
+  }
+
+  // Activity 4 — Port Checker: real computation, no faking
+  const WELL_KNOWN_PORTS = {
+    20: "FTP (data transfer)", 21: "FTP (control)", 22: "SSH (secure remote login)",
+    25: "SMTP (sending email)", 53: "DNS", 80: "HTTP (plain web traffic)",
+    110: "POP3 (email retrieval)", 143: "IMAP (email retrieval)",
+    443: "HTTPS (encrypted web traffic)", 3306: "MySQL database",
+    5432: "PostgreSQL database", 6379: "Redis", 8080: "Common alt-HTTP dev port",
+    3000: "Common Node.js/React dev port",
+  };
+  document.getElementById('revealPortBtn').addEventListener('click', function(){
+    const raw = document.getElementById('portInput').value.trim();
+    const out = document.getElementById('portOutput');
+    const code = document.getElementById('portCode');
+    const num = parseInt(raw, 10);
+    if(!raw || isNaN(num) || num < 0 || num > 65535){
+      code.textContent = "That's not a valid port number. Ports range from 0 to 65535.";
+    } else if(WELL_KNOWN_PORTS[num]){
+      code.textContent = `Port ${num}  →  commonly used for: ${WELL_KNOWN_PORTS[num]}`;
+    } else if(num < 1024){
+      code.textContent = `Port ${num}  →  in the "well-known" range (0–1023), reserved for standard system services.`;
+    } else {
+      code.textContent = `Port ${num}  →  not one of the common reserved ports. Free for any app to use, e.g. your own dev server.`;
+    }
+    out.classList.add('show');
+  });
+
+  // Activity 5 — HTTPS Checker: real computation, no faking
+  document.getElementById('revealUrlBtn').addEventListener('click', function(){
+    const raw = document.getElementById('urlInput').value.trim();
+    const out = document.getElementById('urlOutput');
+    const code = document.getElementById('urlCode');
+    if(!raw){
+      code.textContent = "Type a URL first.";
+    } else if(raw.toLowerCase().startsWith('https://')){
+      code.textContent = `"${raw}"  →  HTTPS. Encrypted in transit — safe for passwords and payment details.`;
+    } else if(raw.toLowerCase().startsWith('http://')){
+      code.textContent = `"${raw}"  →  Plain HTTP. NOT encrypted — anything typed here could be readable at any hop along the way.`;
+    } else {
+      code.textContent = `"${raw}"  →  No scheme detected. Browsers usually assume https:// by default today, but it's worth typing it explicitly to be sure.`;
+    }
+    out.classList.add('show');
+  });
+
+  function wireReveal(btnId, revealId){
+    document.getElementById(btnId).addEventListener('click', function(){
+      document.getElementById(revealId).classList.add('show');
+    });
+  }
+  wireReveal('revealHttpBtn', 'httpReveal');
+  wireReveal('revealTcpBtn', 'tcpReveal');
+
+  function saveActivityNotes(answers){
+    fetch('/api/progress/activity', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lessonSlug: 'internet-fundamentals-lesson-2', day: dayParam || 'all', answers: answers }),
+    }).catch(function(){ /* no backend wired up yet - that's fine */ });
+  }
+
+  document.getElementById('downloadBtn').addEventListener('click', function(){
+    const http = document.getElementById('httpInput').value || '(not answered)';
+    const tcp = document.getElementById('tcpInput').value || '(not answered)';
+    const traceroute = document.getElementById('tracerouteInput').value || '(not answered)';
+    const port = document.getElementById('portInput').value || '(not answered)';
+    const url = document.getElementById('urlInput').value || '(not answered)';
+    const reflection = document.getElementById('reflectionInput').value || '(not answered)';
+
+    saveActivityNotes({
+      httpStatusSleuth: http,
+      tcpOrUdp: tcp,
+      tracerouteNotes: traceroute,
+      portChecker: port,
+      httpsChecker: url,
+      reflection: reflection
+    });
+
+    const notes = `DIGITAL BRIDGE ACADEMY — Lesson 2 Class Activity Notes
+========================================================
+
+1. HTTP Status Sleuth — your guess: ${http}
+
+2. TCP or UDP? — your prediction/reasoning: ${tcp}
+
+3. Field Notes: Trace Your Own Route — your observation: ${traceroute}
+
+4. Port Checker — port you tried: ${port}
+
+5. HTTPS Checker — URL you tried: ${url}
+
+6. In Your Own Words — your reflection: ${reflection}
+`;
+    const blob = new Blob([notes], {type: 'text/plain'});
+    const url2 = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url2;
+    a.download = 'lesson2_activity_notes.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url2);
+  });
+})();
+</script>
+
+</body>
+</html>

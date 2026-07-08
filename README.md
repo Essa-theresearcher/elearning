@@ -47,25 +47,28 @@ PORT=8765
 COOKIE_SECURE=1
 AUTH_COOKIE_NAME=dba_session
 REQUIRE_LOGIN=1
-ALLOW_SIGNUP=1
+ALLOW_SIGNUP=0
 SESSION_DAYS=30
 ADMIN_USERNAME=teacher
 ADMIN_PASSWORD=change_this_teacher_password
 ADMIN_DISPLAY_NAME=Teacher
 COOKIE_NAME=dba_student_id
 LESSON_SLUG=cs-fundamentals-lesson-1
-VIDEO_DIR=assets/videos/lesson1
+LESSON1_VIDEO_DIR=assets/videos/lesson1
+LESSON2_VIDEO_DIR=assets/videos/lesson2
 ```
 
 When `DATABASE_URL` is present, the app uses PostgreSQL and creates the needed tables automatically. When `DATABASE_URL` is missing, it uses SQLite.
 
 The app creates the first teacher account when the users table is empty. Set `ADMIN_PASSWORD` to a strong password before the first production start. If the default account already exists, update the password in the database or recreate the account intentionally.
 
-`ALLOW_SIGNUP=1` lets students create their own accounts from the login screen. Set `ALLOW_SIGNUP=0` if you only want manually created accounts.
+`ALLOW_SIGNUP=0` keeps student self-registration disabled. Set `ALLOW_SIGNUP=1` only if you want students to create their own accounts from the login screen.
 
 ## Lesson Recordings
 
-Lesson 1 is segmented from the teacher recording script into seven focused videos. Upload browser-playable video files such as `.mp4`, `.mov`, `.m4v`, or `.webm` into:
+Lessons use separate recording folders. Upload browser-playable video files such as `.mp4`, `.mov`, `.m4v`, or `.webm`.
+
+Lesson 1 recordings go into:
 
 ```text
 assets/videos/lesson1/
@@ -94,6 +97,36 @@ The portal labels those files as:
 | 5 | How Python Actually Stores Your Variables | ~12 min |
 | 6 | The Operating System's Role | ~9 min |
 | 7 | Wrap-Up: The Full Journey | ~5 min |
+
+Lesson 2 recordings go into:
+
+```text
+assets/videos/lesson2/
+```
+
+Use filenames that sort in recording order:
+
+```text
+01-welcome-framing.mp4
+02-names-addresses-dns.mp4
+03-request-response-cycle.mp4
+04-packets-routing.mp4
+05-servers-ports-apis.mp4
+06-https-encryption.mp4
+07-summary-full-journey.mp4
+```
+
+The portal labels those files as:
+
+| Part | Title | Runtime |
+| --- | --- | --- |
+| 1 | Welcome & Framing | ~5 min |
+| 2 | Names & Addresses: IP Addresses and DNS | ~20 min |
+| 3 | The Request-Response Cycle | ~20 min |
+| 4 | Data Travels in Packets | ~20 min |
+| 5 | Servers, Ports, and APIs | ~15 min |
+| 6 | HTTPS and Encryption | ~15 min |
+| 7 | Summary: The Full Journey | ~15 min |
 
 You do not need to restart the app after adding videos. Refresh the lesson page and uploaded parts will become playable.
 
