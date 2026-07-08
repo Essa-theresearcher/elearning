@@ -38,6 +38,9 @@ MIN_PASSWORD_LENGTH = 8
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v", ".webm", ".ogg"}
 LESSONS = {
     "cs-fundamentals-lesson-1": {
+        "title": "How Computers Actually Work",
+        "section_ids": ["welcome", "video", "reading", "activity", "quiz", "wrapup"],
+        "prerequisite": None,
         "video_dir": os.environ.get("LESSON1_VIDEO_DIR", "assets/videos/lesson1"),
         "recording_segments": [
             {
@@ -85,6 +88,9 @@ LESSONS = {
         ],
     },
     "internet-fundamentals-lesson-2": {
+        "title": "How the Internet Actually Works",
+        "section_ids": ["welcome", "video", "reading", "activity", "quiz", "wrapup"],
+        "prerequisite": "cs-fundamentals-lesson-1",
         "video_dir": os.environ.get("LESSON2_VIDEO_DIR", "assets/videos/lesson2"),
         "recording_segments": [
             {
@@ -282,6 +288,66 @@ def list_lesson_recordings(lesson_slug):
             }
         )
     return recordings
+
+
+def lesson_access_status(conn, student_id, lesson_slug):
+    config = lesson_config(lesson_slug)
+    prerequisite_slug = config.get("prerequisite")
+    if not prerequisite_slug:
+        return {
+            "lessonSlug": lesson_slug,
+            "unlocked": True,
+            "prerequisite": None,
+        }
+
+    prerequisite = lesson_config(prerequisite_slug)
+    required_sections = prerequisite.get("section_ids", [])
+    progress_row = db_execute(
+        conn,
+        """
+        SELECT completed_sections, updated_at
+        FROM lesson_progress
+        WHERE student_id = ? AND lesson_slug = ?
+        """,
+        (student_id, prerequisite_slug),
+    ).fetchone()
+
+    completed_sections = []
+    updated_at = None
+    if progress_row:
+        completed_sections = json.loads(progress_row["completed_sections"])
+        updated_at = progress_row["updated_at"]
+
+    completed_set = set(completed_sections)
+    missing_sections = [
+        section for section in required_sections if section not in completed_set
+    ]
+    quiz_count = db_execute(
+        conn,
+        """
+        SELECT COUNT(*) AS count
+        FROM quiz_results
+        WHERE student_id = ? AND lesson_slug = ?
+        """,
+        (student_id, prerequisite_slug),
+    ).fetchone()["count"]
+    quiz_completed = quiz_count > 0
+    unlocked = not missing_sections and quiz_completed
+
+    return {
+        "lessonSlug": lesson_slug,
+        "unlocked": unlocked,
+        "prerequisite": {
+            "lessonSlug": prerequisite_slug,
+            "title": prerequisite.get("title", prerequisite_slug),
+            "completedSections": completed_sections,
+            "requiredSections": required_sections,
+            "missingSections": missing_sections,
+            "quizCompleted": quiz_completed,
+            "quizResultCount": quiz_count,
+            "updatedAt": updated_at,
+        },
+    }
 
 
 def db_sql(sql):
@@ -489,6 +555,9 @@ class LearningHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/recordings":
             self.handle_get_recordings(parsed)
             return
+        if parsed.path == "/api/lesson-access":
+            self.handle_get_lesson_access(parsed)
+            return
         if parsed.path == "/api/progress/lesson":
             self.handle_get_lesson_progress(parsed)
             return
@@ -650,6 +719,20 @@ class LearningHandler(SimpleHTTPRequestHandler):
     def send_auth_required(self):
         self.send_json({"error": "Login required"}, HTTPStatus.UNAUTHORIZED)
 
+    def send_lesson_locked(self, status):
+        self.send_json(
+            {
+                "error": "Lesson locked",
+                "lessonSlug": status["lessonSlug"],
+                "prerequisite": status["prerequisite"],
+            },
+            HTTPStatus.LOCKED,
+        )
+
+    def is_lesson_unlocked(self, student_id, lesson_slug):
+        with connect_db() as conn:
+            return lesson_access_status(conn, student_id, lesson_slug)
+
     def handle_auth_me(self):
         user = self.current_user()
         self.send_json(
@@ -778,11 +861,39 @@ class LearningHandler(SimpleHTTPRequestHandler):
             return
         params = parse_qs(parsed.query)
         lesson_slug = params.get("lessonSlug", [LESSON_SLUG])[0] or LESSON_SLUG
+        student_id, set_cookie = self.current_student_id()
+        if not student_id:
+            self.send_auth_required()
+            return
+        access_status = self.is_lesson_unlocked(student_id, lesson_slug)
+        if not access_status["unlocked"]:
+            self.send_lesson_locked(access_status)
+            return
+
         self.send_json(
             {
                 "lessonSlug": lesson_slug,
                 "recordings": list_lesson_recordings(lesson_slug),
-            }
+            },
+            student_id=student_id,
+            set_cookie=set_cookie,
+        )
+
+    def handle_get_lesson_access(self, parsed):
+        student_id, set_cookie = self.current_student_id()
+        if not student_id:
+            self.send_auth_required()
+            return
+
+        params = parse_qs(parsed.query)
+        lesson_slug = params.get("lessonSlug", [LESSON_SLUG])[0] or LESSON_SLUG
+        with connect_db() as conn:
+            status = lesson_access_status(conn, student_id, lesson_slug)
+
+        self.send_json(
+            status,
+            student_id=student_id,
+            set_cookie=set_cookie,
         )
 
     def handle_get_lesson_progress(self, parsed):
@@ -792,6 +903,10 @@ class LearningHandler(SimpleHTTPRequestHandler):
             return
         params = parse_qs(parsed.query)
         lesson_slug = params.get("lessonSlug", [LESSON_SLUG])[0] or LESSON_SLUG
+        access_status = self.is_lesson_unlocked(student_id, lesson_slug)
+        if not access_status["unlocked"]:
+            self.send_lesson_locked(access_status)
+            return
 
         with connect_db() as conn:
             row = db_execute(
@@ -890,6 +1005,11 @@ class LearningHandler(SimpleHTTPRequestHandler):
             return
 
         lesson_slug = data.get("lessonSlug") or LESSON_SLUG
+        access_status = self.is_lesson_unlocked(student_id, lesson_slug)
+        if not access_status["unlocked"]:
+            self.send_lesson_locked(access_status)
+            return
+
         completed_sections = data.get("completedSections")
         if not isinstance(completed_sections, list) or not all(
             isinstance(item, str) for item in completed_sections
@@ -942,6 +1062,11 @@ class LearningHandler(SimpleHTTPRequestHandler):
             return
 
         lesson_slug = data.get("lessonSlug") or LESSON_SLUG
+        access_status = self.is_lesson_unlocked(student_id, lesson_slug)
+        if not access_status["unlocked"]:
+            self.send_lesson_locked(access_status)
+            return
+
         answers = data.get("answers")
         if not isinstance(answers, dict):
             self.send_json({"error": "answers must be an object"}, HTTPStatus.BAD_REQUEST)
@@ -1000,6 +1125,11 @@ class LearningHandler(SimpleHTTPRequestHandler):
             return
 
         lesson_slug = data.get("lessonSlug") or LESSON_SLUG
+        access_status = self.is_lesson_unlocked(student_id, lesson_slug)
+        if not access_status["unlocked"]:
+            self.send_lesson_locked(access_status)
+            return
+
         try:
             score = int(data.get("score"))
             total_questions = int(data.get("totalQuestions"))
