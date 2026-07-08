@@ -272,9 +272,28 @@
 
     .dashboard-grid {
       display: grid;
-      grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+      grid-template-columns: minmax(0, 860px);
       gap: 20px;
       align-items: start;
+    }
+
+    .function-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 0 18px;
+    }
+
+    .tab-button {
+      border-color: var(--line-strong);
+      background: var(--paper);
+      color: var(--navy);
+    }
+
+    .tab-button.is-active {
+      border-color: var(--navy);
+      background: var(--navy);
+      color: var(--paper);
     }
 
     .panel {
@@ -319,6 +338,34 @@
       word-break: break-word;
     }
 
+    .password-reset-form {
+      display: grid;
+      grid-template-columns: minmax(160px, 1fr) auto;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .password-reset-form input {
+      min-height: 38px;
+    }
+
+    .password-reset-form button {
+      min-height: 38px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .inline-status {
+      min-height: 18px;
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .inline-status.error {
+      color: var(--rose);
+    }
+
     .resource-type {
       color: var(--teal);
       font-size: 12px;
@@ -354,6 +401,10 @@
       .panel {
         padding: 18px;
       }
+
+      .password-reset-form {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -388,7 +439,7 @@
   <div id="adminApp" hidden>
     <header class="topbar">
       <div class="topbar-inner">
-        <a class="brand-lockup" href="prework.html" aria-label="Digital Bridge Academy home">
+        <a class="brand-lockup" href="admin.html" aria-label="Digital Bridge Academy management home">
           <span class="brand-mark">DB</span>
           <span class="brand-text">
             <strong>Digital Bridge Academy</strong>
@@ -397,9 +448,9 @@
         </a>
         <div class="topbar-actions">
           <nav class="nav-row" aria-label="Course pages">
-            <a class="nav-link" href="prework.html">Week 0</a>
-            <a class="nav-link" href="index.html">Lesson 1</a>
-            <a class="nav-link" href="lesson2.html">Lesson 2</a>
+            <a class="nav-link" href="prework.html?preview=1">Preview Week 0</a>
+            <a class="nav-link" href="index.html?preview=1">Preview Lesson 1</a>
+            <a class="nav-link" href="lesson2.html?preview=1">Preview Lesson 2</a>
           </nav>
           <div class="account-menu">
             <span class="account-name" id="accountName"></span>
@@ -416,8 +467,15 @@
         <p>Admin oversees teachers and students. Teachers add the class links, lesson files, assignments, videos, and other resources students need.</p>
       </section>
 
+      <div class="function-tabs" id="functionTabs" aria-label="Management functions">
+        <button class="tab-button" type="button" data-admin-tab="teachers" data-admin-only>Teachers</button>
+        <button class="tab-button" type="button" data-admin-tab="students" data-admin-only>Students</button>
+        <button class="tab-button" type="button" data-admin-tab="resources">Classes & resources</button>
+        <button class="tab-button" type="button" data-admin-tab="password">My password</button>
+      </div>
+
       <div class="dashboard-grid">
-        <section class="panel" data-admin-only>
+        <section class="panel" data-admin-section="teachers" data-admin-only>
           <div class="panel-head">
             <div>
               <span class="eyebrow">Teachers</span>
@@ -444,7 +502,7 @@
           <div class="compact-list" id="teacherList" aria-live="polite"></div>
         </section>
 
-        <section class="panel" data-admin-only>
+        <section class="panel" data-admin-section="students" data-admin-only>
           <div class="panel-head">
             <div>
               <span class="eyebrow">Students</span>
@@ -471,7 +529,7 @@
           <div class="compact-list" id="studentList" aria-live="polite"></div>
         </section>
 
-        <section class="panel">
+        <section class="panel" data-admin-section="resources">
           <div class="panel-head">
             <div>
               <span class="eyebrow">Classes and resources</span>
@@ -517,6 +575,27 @@
 
           <div class="compact-list" id="resourceList" aria-live="polite"></div>
         </section>
+
+        <section class="panel" data-admin-section="password">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Account</span>
+              <h2>Change my password</h2>
+            </div>
+          </div>
+          <form class="admin-form" id="ownPasswordForm">
+            <label>
+              Current password
+              <input name="currentPassword" type="password" autocomplete="current-password" required>
+            </label>
+            <label>
+              New password
+              <input name="newPassword" type="password" autocomplete="new-password" minlength="8" required>
+            </label>
+            <button type="submit">Update password</button>
+            <p class="status" id="ownPasswordStatus" role="status"></p>
+          </form>
+        </section>
       </div>
     </main>
   </div>
@@ -529,7 +608,9 @@
       const loginMessage = document.getElementById("loginMessage");
       const accountName = document.getElementById("accountName");
       const logoutButton = document.getElementById("logoutButton");
-      const adminOnlyPanels = Array.from(document.querySelectorAll("[data-admin-only]"));
+      const adminOnlyElements = Array.from(document.querySelectorAll("[data-admin-only]"));
+      const tabButtons = Array.from(document.querySelectorAll("[data-admin-tab]"));
+      const adminSections = Array.from(document.querySelectorAll("[data-admin-section]"));
       const teacherForm = document.getElementById("teacherForm");
       const teacherStatus = document.getElementById("teacherStatus");
       const teacherList = document.getElementById("teacherList");
@@ -540,6 +621,8 @@
       const resourceStatus = document.getElementById("resourceStatus");
       const resourceList = document.getElementById("resourceList");
       const resourceLesson = document.getElementById("resourceLesson");
+      const ownPasswordForm = document.getElementById("ownPasswordForm");
+      const ownPasswordStatus = document.getElementById("ownPasswordStatus");
       const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
 
       let lessonsLoaded = false;
@@ -556,6 +639,28 @@
       function setStatus(element, message, isError) {
         element.textContent = message || "";
         element.classList.toggle("error", Boolean(isError));
+      }
+
+      function roleCanSeeTab(tabId) {
+        if (tabId === "teachers" || tabId === "students") {
+          return isSystemAdmin(currentUser);
+        }
+        return isStaff(currentUser);
+      }
+
+      function showTab(tabId) {
+        const fallback = isSystemAdmin(currentUser) ? "teachers" : "resources";
+        const activeTab = roleCanSeeTab(tabId) ? tabId : fallback;
+
+        tabButtons.forEach(function (button) {
+          const visible = roleCanSeeTab(button.dataset.adminTab);
+          button.hidden = !visible;
+          button.classList.toggle("is-active", visible && button.dataset.adminTab === activeTab);
+        });
+
+        adminSections.forEach(function (section) {
+          section.hidden = section.dataset.adminSection !== activeTab || !roleCanSeeTab(section.dataset.adminSection);
+        });
       }
 
       function parseJsonResponse(response) {
@@ -583,9 +688,10 @@
           authOverlay.hidden = true;
           adminApp.hidden = false;
           accountName.textContent = currentUser.displayName || currentUser.username;
-          adminOnlyPanels.forEach(function (panel) {
-            panel.hidden = !isSystemAdmin(currentUser);
+          adminOnlyElements.forEach(function (element) {
+            element.hidden = !isSystemAdmin(currentUser);
           });
+          showTab(isSystemAdmin(currentUser) ? "teachers" : "resources");
           loadDashboard();
           return;
         }
@@ -653,9 +759,12 @@
           const created = document.createElement("span");
           created.textContent = "Created: " + student.createdAt;
 
+          const resetForm = createPasswordResetForm(student.id, "student");
+
           item.appendChild(name);
           item.appendChild(username);
           item.appendChild(created);
+          item.appendChild(resetForm);
           studentList.appendChild(item);
         });
       }
@@ -683,11 +792,40 @@
           const created = document.createElement("span");
           created.textContent = "Created: " + teacher.createdAt;
 
+          const resetForm = createPasswordResetForm(teacher.id, "teacher");
+
           item.appendChild(name);
           item.appendChild(username);
           item.appendChild(created);
+          item.appendChild(resetForm);
           teacherList.appendChild(item);
         });
+      }
+
+      function createPasswordResetForm(userId, roleLabel) {
+        const wrap = document.createElement("form");
+        wrap.className = "password-reset-form";
+        wrap.dataset.userId = userId;
+
+        const input = document.createElement("input");
+        input.name = "password";
+        input.type = "text";
+        input.minLength = 8;
+        input.placeholder = "New " + roleLabel + " password";
+        input.required = true;
+
+        const button = document.createElement("button");
+        button.type = "submit";
+        button.textContent = "Reset password";
+
+        const status = document.createElement("span");
+        status.className = "inline-status";
+        status.setAttribute("role", "status");
+
+        wrap.appendChild(input);
+        wrap.appendChild(button);
+        wrap.appendChild(status);
+        return wrap;
       }
 
       function resourceTypeLabel(type) {
@@ -807,6 +945,56 @@
         postJson("/api/auth/logout", {}).finally(function () {
           renderAuth(null);
           document.getElementById("loginUsername").focus();
+        });
+      });
+
+      tabButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          showTab(button.dataset.adminTab);
+        });
+      });
+
+      function handlePasswordReset(event, listName) {
+        const form = event.target.closest(".password-reset-form");
+        if (!form) return;
+        event.preventDefault();
+
+        const status = form.querySelector(".inline-status");
+        status.textContent = "";
+        status.classList.remove("error");
+
+        postJson("/api/admin/users/password", {
+          userId: form.dataset.userId,
+          password: form.elements.password.value
+        }).then(function () {
+          form.reset();
+          status.textContent = "Password updated.";
+        }).catch(function (error) {
+          status.textContent = error.message;
+          status.classList.add("error");
+        });
+      }
+
+      teacherList.addEventListener("submit", function (event) {
+        handlePasswordReset(event, "teacher");
+      });
+
+      studentList.addEventListener("submit", function (event) {
+        handlePasswordReset(event, "student");
+      });
+
+      ownPasswordForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setStatus(ownPasswordStatus, "");
+
+        postJson("/api/auth/change-password", {
+          currentPassword: ownPasswordForm.elements.currentPassword.value,
+          newPassword: ownPasswordForm.elements.newPassword.value
+        }).then(function () {
+          ownPasswordForm.reset();
+          setStatus(ownPasswordStatus, "Your password was updated.");
+        }).catch(function (error) {
+          setStatus(ownPasswordStatus, error.message, true);
         });
       });
 

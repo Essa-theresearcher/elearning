@@ -78,7 +78,7 @@ When `DATABASE_URL` is present, the app uses PostgreSQL and creates the needed t
 
 The app creates an admin account, a teacher account, and a student account when those usernames are missing. Set `SYSTEM_ADMIN_PASSWORD`, `TEACHER_PASSWORD`, and `STUDENT_PASSWORD` to strong passwords before sharing the public link. If an account already exists, changing the environment variable will not change that saved password automatically.
 
-Open `/admin.html` for management. Admin accounts can create teachers and students. Teacher accounts can add class links, readings, videos, assignments, downloads, and other resources to lessons.
+Open `/admin.html` for management. Staff accounts are sent there when they sign in from the course pages. Admin accounts can use the Teachers and Students tabs to create accounts and reset teacher/student passwords. Teacher accounts can use the Classes & resources tab to add class links, readings, videos, assignments, downloads, and other resources to lessons. Staff can also change their own password from the My password tab.
 
 Older deployments that already use `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_DISPLAY_NAME` will still use those values for the default teacher account unless the newer `TEACHER_*` variables are set.
 

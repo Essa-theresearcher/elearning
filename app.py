@@ -285,6 +285,13 @@ def validate_new_user(username, display_name, password):
     return username, display_name, None
 
 
+def validate_password(password):
+    password = password or ""
+    if len(password) < MIN_PASSWORD_LENGTH:
+        return f"Password must be at least {MIN_PASSWORD_LENGTH} characters."
+    return None
+
+
 def validate_resource_payload(data):
     lesson_slug = (data.get("lessonSlug") or "").strip()
     title = (data.get("title") or "").strip()
@@ -770,11 +777,17 @@ class LearningHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/auth/logout":
             self.handle_auth_logout()
             return
+        if parsed.path == "/api/auth/change-password":
+            self.handle_auth_change_password()
+            return
         if parsed.path == "/api/admin/students":
             self.handle_admin_create_student()
             return
         if parsed.path == "/api/admin/teachers":
             self.handle_admin_create_teacher()
+            return
+        if parsed.path == "/api/admin/users/password":
+            self.handle_admin_update_user_password()
             return
         if parsed.path == "/api/admin/resources":
             self.handle_admin_create_resource()
@@ -1109,6 +1122,52 @@ class LearningHandler(SimpleHTTPRequestHandler):
             clear_auth_cookie=True,
         )
 
+    def handle_auth_change_password(self):
+        user = self.current_user()
+        if not user:
+            self.send_auth_required()
+            return
+
+        try:
+            data = self.read_json_body()
+        except ValueError as exc:
+            self.send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+
+        current_password = data.get("currentPassword") or ""
+        new_password = data.get("newPassword") or ""
+        error = validate_password(new_password)
+        if error:
+            self.send_json({"error": error}, HTTPStatus.BAD_REQUEST)
+            return
+
+        token = self.current_session_token()
+        with connect_db() as conn:
+            row = db_execute(
+                conn,
+                "SELECT password_hash FROM app_users WHERE id = ?",
+                (user["id"],),
+            ).fetchone()
+            if not row or not verify_password(current_password, row["password_hash"]):
+                self.send_json(
+                    {"error": "Current password is incorrect."},
+                    HTTPStatus.UNAUTHORIZED,
+                )
+                return
+
+            db_execute(
+                conn,
+                "UPDATE app_users SET password_hash = ? WHERE id = ?",
+                (hash_password(new_password), user["id"]),
+            )
+            db_execute(
+                conn,
+                "DELETE FROM auth_sessions WHERE user_id = ? AND token != ?",
+                (user["id"], token),
+            )
+
+        self.send_json({"ok": True, "user": public_user(user)})
+
     def handle_admin_students(self):
         admin = self.current_admin_user()
         if not admin:
@@ -1224,6 +1283,57 @@ class LearningHandler(SimpleHTTPRequestHandler):
             },
             status=HTTPStatus.CREATED,
         )
+
+    def handle_admin_update_user_password(self):
+        admin = self.current_admin_user()
+        if not admin:
+            self.send_admin_required()
+            return
+
+        try:
+            data = self.read_json_body()
+        except ValueError as exc:
+            self.send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+
+        user_id = (data.get("userId") or "").strip()
+        new_password = data.get("password") or ""
+        error = validate_password(new_password)
+        if error:
+            self.send_json({"error": error}, HTTPStatus.BAD_REQUEST)
+            return
+        if not user_id:
+            self.send_json({"error": "User is required."}, HTTPStatus.BAD_REQUEST)
+            return
+
+        with connect_db() as conn:
+            target = db_execute(
+                conn,
+                """
+                SELECT id, username, display_name, role, created_at
+                FROM app_users
+                WHERE id = ?
+                """,
+                (user_id,),
+            ).fetchone()
+            if not target:
+                self.send_json({"error": "User not found."}, HTTPStatus.NOT_FOUND)
+                return
+            if target["role"] not in {"teacher", "student"}:
+                self.send_json(
+                    {"error": "Only teacher and student passwords can be reset here."},
+                    HTTPStatus.FORBIDDEN,
+                )
+                return
+
+            db_execute(
+                conn,
+                "UPDATE app_users SET password_hash = ? WHERE id = ?",
+                (hash_password(new_password), user_id),
+            )
+            db_execute(conn, "DELETE FROM auth_sessions WHERE user_id = ?", (user_id,))
+
+        self.send_json({"ok": True, "user": public_student(target)})
 
     def handle_admin_create_teacher(self):
         admin = self.current_admin_user()

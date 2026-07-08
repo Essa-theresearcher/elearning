@@ -1695,6 +1695,14 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
         }).then(parseJsonResponse);
       }
 
+      function shouldRedirectStaff(user) {
+        const params = new URLSearchParams(window.location.search);
+        return canUseBackend
+          && user
+          && (user.role === "admin" || user.role === "teacher")
+          && params.get("preview") !== "1";
+      }
+
       function resourceTypeLabel(type) {
         const labels = {
           class: "Class link",
@@ -1766,6 +1774,10 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
       }
 
       function renderAuth(user, allowSignup) {
+        if (shouldRedirectStaff(user)) {
+          window.location.href = "admin.html";
+          return;
+        }
         currentUser = user || null;
         switchLocalProgress(currentUser);
         document.body.classList.toggle("auth-locked", !currentUser && canUseBackend);
