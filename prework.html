@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Week 0 - Python Placement Assessment</title>
+  <title>Week 0 - Python Readiness Assessment</title>
   <link rel="icon" href="data:,">
   <style>
     :root {
@@ -258,7 +258,8 @@
       font-weight: 800;
     }
 
-    .auth-field input {
+    .auth-field input,
+    .auth-field select {
       width: 100%;
       min-height: 44px;
       border: 1px solid var(--line-strong);
@@ -576,6 +577,64 @@
       color: var(--navy-dark);
     }
 
+    .teacher-resources {
+      margin-top: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: #fffdf7;
+    }
+
+    .teacher-resources h3 {
+      margin: 0 0 6px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .teacher-resources p {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .teacher-resource-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .teacher-resource-link {
+      display: grid;
+      gap: 4px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px 14px;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .teacher-resource-link:hover {
+      border-color: var(--teal);
+    }
+
+    .teacher-resource-type {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .teacher-resource-link strong {
+      color: var(--navy-dark);
+      font-size: 15px;
+    }
+
+    .teacher-resource-link span:last-child {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
     .embedded-frame {
       width: 100%;
       min-height: 760px;
@@ -648,7 +707,15 @@
       <form class="auth-form" id="loginForm">
         <span class="eyebrow">Course access</span>
         <h2 id="authTitle">Sign in</h2>
-        <p class="auth-copy">Use the account your teacher gave you.</p>
+        <p class="auth-copy">Choose your login type, then use the account you were given.</p>
+        <label class="auth-field">
+          Login type
+          <select id="loginRole" name="loginRole" required>
+            <option value="student">Student login</option>
+            <option value="teacher">Teacher login</option>
+            <option value="admin">Admin login</option>
+          </select>
+        </label>
         <label class="auth-field">
           Username
           <input id="loginUsername" name="username" autocomplete="username" required>
@@ -691,7 +758,7 @@
     <aside class="sidebar" aria-label="Week 0 contents">
       <div class="sidebar-head">
         <span class="eyebrow">Week 0</span>
-        <h1>Python Placement Assessment</h1>
+        <h1>Python Readiness Assessment</h1>
         <div class="sidebar-meta">Diagnostic quiz and coding review before Week 1 begins</div>
         <div class="course-links" aria-label="Course lessons">
           <a class="course-link is-current" href="prework.html">Week 0</a>
@@ -722,7 +789,7 @@
         </a>
         <a href="#wrapup" data-section="wrapup">
           <span class="nav-dot" aria-hidden="true"></span>
-          <span>Placement</span>
+          <span>Readiness</span>
           <span class="duration">20 min</span>
         </a>
       </nav>
@@ -734,8 +801,8 @@
           <div class="section-header">
             <div class="section-title">
               <span class="eyebrow">Start here</span>
-              <h2>Prove the student is really intermediate</h2>
-              <p>Week 0 checks whether the student has enough Python skill to enter the intermediate track before Week 1 begins.</p>
+              <h2>Complete the Python readiness work</h2>
+              <p>Week 0 helps you confirm that your Python foundation is strong enough for the intermediate track before Week 1 begins.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="welcome">Mark complete</button>
           </div>
@@ -743,22 +810,22 @@
             <div class="intro-band">
               <div>
                 <p>
-                  A student may say they are intermediate, but the useful question is whether they can explain their thinking, debug small problems, use data structures, and ship a small working result without being carried by step-by-step instructions.
+                  This readiness week is about evidence you can build from. You will explain your thinking, debug small problems, use data structures, and ship a small working result without step-by-step instructions.
                 </p>
                 <p>
-                  This placement assessment is not meant to punish anyone. It helps you place the student correctly. Strong students move into Week 1 with confidence. Students with gaps get a clear map of what to review first.
+                  This work is not meant to punish mistakes. It helps you see what is already solid and what needs review before the lessons move faster.
                 </p>
                 <div class="callout">
                   Week 1 Lesson 1 unlocks only after this Week 0 page is completed, the Python diagnostic quiz is submitted, and the coding review is submitted.
                 </div>
               </div>
               <div class="intro-panel">
-                <h3>What you are looking for</h3>
+                <h3>What this checks</h3>
                 <ul>
-                  <li>Can they explain code instead of only copying it?</li>
-                  <li>Can they use variables, loops, functions, lists, dictionaries, and conditionals?</li>
-                  <li>Can they read an error message and make a reasonable debugging attempt?</li>
-                  <li>Can they organize a tiny project and describe tradeoffs?</li>
+                  <li>Can you explain code instead of only copying it?</li>
+                  <li>Can you use variables, loops, functions, lists, dictionaries, and conditionals?</li>
+                  <li>Can you read an error message and make a reasonable debugging attempt?</li>
+                  <li>Can you organize a tiny project and describe tradeoffs?</li>
                 </ul>
               </div>
             </div>
@@ -778,11 +845,11 @@
               </div>
               <div class="day-tile">
                 <strong>Part 4</strong>
-                <span>Open-ended coding prompts for instructor review.</span>
+                <span>Open-ended coding prompts that show your Python thinking.</span>
               </div>
               <div class="day-tile">
                 <strong>Part 5</strong>
-                <span>Placement rubric: intermediate, almost ready, or foundations first.</span>
+                <span>Readiness guide: move forward, review one area, or strengthen foundations.</span>
               </div>
               <div class="day-tile">
                 <strong>Unlock</strong>
@@ -808,10 +875,10 @@
               <div class="reading-block">
                 <h3>1. Intermediate means you can reason, not just remember syntax</h3>
                 <p>
-                  In this course, an intermediate Python student does not need to know every library or every shortcut. They do need to understand how a small program moves from input to processing to output. If they see a block of Python code, they should be able to say what each part is responsible for.
+                  In this course, an intermediate Python learner does not need to know every library or every shortcut. You do need to understand how a small program moves from input to processing to output. If you see a block of Python code, you should be able to say what each part is responsible for.
                 </p>
                 <p>
-                  A useful test is this: can the student change a working example without breaking the whole thing? If the answer is yes, they are probably ready for faster lessons. If every small change feels mysterious, the student needs more practice with fundamentals.
+                  A useful test is this: can you change a working example without breaking the whole thing? If the answer is yes, you are probably ready for faster lessons. If every small change feels mysterious, spend more time with the fundamentals before rushing.
                 </p>
               </div>
 
@@ -835,17 +902,17 @@
               <div class="reading-block">
                 <h3>3. Debugging is part of the assessment</h3>
                 <p>
-                  The coding review is allowed to contain mistakes while it is being built. What matters is whether the student can isolate the problem. Good debugging sounds like: "This function receives a list, but I passed a string" or "The loop works, but my condition is too broad."
+                  The coding review is allowed to contain mistakes while it is being built. What matters is whether you can isolate the problem. Good debugging sounds like: "This function receives a list, but I passed a string" or "The loop works, but my condition is too broad."
                 </p>
                 <p>
-                  Weak debugging sounds like: "It does not work" with no attempt to locate where. The course will teach deeper ideas, but the student needs enough patience and structure to investigate small failures.
+                  Weak debugging sounds like: "It does not work" with no attempt to locate where. The course will teach deeper ideas, but you need enough patience and structure to investigate small failures.
                 </p>
               </div>
 
               <div class="reading-block">
                 <h3>4. What to do with the result</h3>
                 <p>
-                  Use the quiz and project together. A high quiz score with a weak project may mean the student recognizes concepts but cannot apply them yet. A modest quiz score with a strong project may mean the student can build but needs vocabulary review. The project reflection is important because it shows how the student thinks.
+                  Use the quiz and project together. A high quiz score with a weak project may mean you recognize concepts but need more practice applying them. A modest quiz score with a strong project may mean you can build but need vocabulary review. The project reflection is important because it shows how you think.
                 </p>
                 <pre><code>Readiness decision:
 - Ready: quiz is solid, project runs, explanation is clear.
@@ -854,9 +921,9 @@
               </div>
 
               <div class="reading-block">
-                <h3>5. How to use the placement result</h3>
+                <h3>5. How to use your readiness result</h3>
                 <p>
-                  Use the auto-scored quiz and the coding review together. Multiple choice can show recognition, but the open-ended prompts show whether the student can actually write Python. The coding review matters most when the student claims to be intermediate.
+                  Use the auto-scored quiz and the coding review together. Multiple choice can show recognition, but the open-ended prompts show whether you can actually write Python in a small realistic task.
                 </p>
                 <ul>
                   <li><strong>Ready:</strong> strong quiz score, working code, and clear explanations of choices.</li>
@@ -867,7 +934,7 @@
 
               <div class="reading-block">
                 <h3>6. Practice drills before the coding review</h3>
-                <p>Before submitting the coding review, the student should be able to do these in their own editor:</p>
+                <p>Before submitting the coding review, you should be able to do these in your own editor:</p>
                 <ul>
                   <li>Write a function that accepts a list of numbers and returns the average.</li>
                   <li>Loop through a dictionary and print formatted summary lines.</li>
@@ -877,6 +944,12 @@
                   <li>Use <code>try</code>/<code>except</code> to handle a bad input cleanly.</li>
                 </ul>
               </div>
+            </div>
+
+            <div class="teacher-resources" id="teacherResources" hidden>
+              <h3>Teacher resources</h3>
+              <p>Use these extra links and files with this week's work.</p>
+              <div class="teacher-resource-list" id="teacherResourceList"></div>
             </div>
           </div>
         </div>
@@ -893,7 +966,7 @@
             <button class="complete-btn" type="button" data-complete="quiz">Mark complete</button>
           </div>
           <div class="section-body">
-            <iframe class="embedded-frame" src="assets/week0_readiness_quiz.html" title="Week 0 Python placement quiz"></iframe>
+            <iframe class="embedded-frame" src="assets/week0_readiness_quiz.html" title="Week 0 Python readiness quiz"></iframe>
           </div>
         </div>
       </section>
@@ -903,8 +976,8 @@
           <div class="section-header">
             <div class="section-title">
               <span class="eyebrow">Coding review</span>
-              <h2>Write Python for instructor review</h2>
-              <p>The open-ended coding prompts give stronger evidence than a quiz alone.</p>
+              <h2>Write Python for review</h2>
+              <p>The open-ended coding prompts show how you build, explain, and debug.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="project">Mark complete</button>
           </div>
@@ -919,14 +992,14 @@
           <div class="section-header">
             <div class="section-title">
               <span class="eyebrow">Decision</span>
-              <h2>Decide the student placement</h2>
-              <p>Use the evidence from the diagnostic to decide whether the student should move forward, review basics, or receive a short bridge task.</p>
+              <h2>Review your readiness</h2>
+              <p>Use your quiz, coding review, and notes to decide whether to move forward or review one more area first.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="wrapup">Mark complete</button>
           </div>
           <div class="section-body">
             <div class="project-rubric">
-              <h3>Placement rubric</h3>
+              <h3>Readiness guide</h3>
               <ul>
                 <li><strong>Ready for Week 1:</strong> completes the quiz, submits working Python, and can explain choices in plain language.</li>
                 <li><strong>Almost ready:</strong> understands core Python but needs one focused review on OOP, files, comprehensions, or error handling.</li>
@@ -935,7 +1008,7 @@
             </div>
             <div class="next-lesson">
               <h3>Next step</h3>
-              <p>After the diagnostic map, quiz, coding review, and placement decision are complete, Week 1 Lesson 1 will unlock for this student.</p>
+              <p>After the diagnostic map, quiz, coding review, and readiness check are complete, Week 1 Lesson 1 will unlock.</p>
               <p><a class="secondary-link" href="index.html">Open Week 1 Lesson 1</a></p>
             </div>
           </div>
@@ -957,6 +1030,8 @@
       const logoutButton = document.getElementById("logoutButton");
       const loginForm = document.getElementById("loginForm");
       const loginMessage = document.getElementById("loginMessage");
+      const teacherResources = document.getElementById("teacherResources");
+      const teacherResourceList = document.getElementById("teacherResourceList");
       const lessonSlug = "intermediate-readiness-week";
       const baseStorageKey = "dba-week-0-complete";
       const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
@@ -1002,6 +1077,70 @@
         }).then(parseJsonResponse);
       }
 
+      function resourceTypeLabel(type) {
+        const labels = {
+          class: "Class link",
+          reading: "Reading",
+          video: "Video",
+          link: "Link",
+          assignment: "Assignment",
+          download: "Download",
+          other: "Resource"
+        };
+        return labels[type] || "Resource";
+      }
+
+      function renderTeacherResources(resources) {
+        teacherResourceList.innerHTML = "";
+        teacherResources.hidden = !resources.length;
+
+        resources.forEach(function (resource) {
+          const link = document.createElement("a");
+          link.className = "teacher-resource-link";
+          link.href = resource.url;
+          link.target = "_blank";
+          link.rel = "noopener";
+
+          const type = document.createElement("span");
+          type.className = "teacher-resource-type";
+          type.textContent = resourceTypeLabel(resource.resourceType);
+
+          const title = document.createElement("strong");
+          title.textContent = resource.title;
+
+          const description = document.createElement("span");
+          description.textContent = resource.description || resource.url;
+
+          link.appendChild(type);
+          link.appendChild(title);
+          link.appendChild(description);
+          teacherResourceList.appendChild(link);
+        });
+      }
+
+      function loadTeacherResources() {
+        if (!canUseBackend || !currentUser) {
+          renderTeacherResources([]);
+          return;
+        }
+
+        fetch("/api/resources?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(function (response) {
+            if (response.status === 401) {
+              renderAuth(null);
+              throw new Error("Login required");
+            }
+            if (!response.ok) throw new Error("Could not load resources");
+            return response.json();
+          })
+          .then(function (data) {
+            renderTeacherResources(Array.isArray(data.resources) ? data.resources : []);
+          })
+          .catch(function () {
+            renderTeacherResources([]);
+          });
+      }
+
       function renderAuth(user) {
         currentUser = user || null;
         switchLocalProgress(currentUser);
@@ -1024,6 +1163,7 @@
             renderAuth(data.user);
             if (data.authenticated) {
               loadProgressFromBackend();
+              loadTeacherResources();
             }
           })
           .catch(function () {
@@ -1118,12 +1258,14 @@
         setAuthMessage("");
 
         postJson("/api/auth/login", {
+          loginRole: loginForm.elements.loginRole.value,
           username: loginForm.elements.username.value,
           password: loginForm.elements.password.value
         }).then(function (data) {
           loginForm.reset();
           renderAuth(data.user);
           loadProgressFromBackend();
+          loadTeacherResources();
         }).catch(function (error) {
           setAuthMessage(error.message);
         });
@@ -1132,6 +1274,7 @@
       logoutButton.addEventListener("click", function () {
         postJson("/api/auth/logout", {}).finally(function () {
           renderAuth(null);
+          renderTeacherResources([]);
           document.getElementById("loginUsername").focus();
         });
       });

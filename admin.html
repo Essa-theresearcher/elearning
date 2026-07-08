@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Digital Bridge Academy</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --navy: #132a4c;
+      --navy-dark: #0b1b33;
+      --gold: #c9a227;
+      --paper: #ffffff;
+      --canvas: #f4f5f0;
+      --ivory: #faf6ec;
+      --line: #ded9c9;
+      --line-strong: #c8bea3;
+      --ink: #202633;
+      --muted: #66707d;
+      --teal: #206d6f;
+      --teal-soft: #e2f0ec;
+      --rose: #9b594c;
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(11, 27, 51, 0.72);
+    }
+
+    .auth-panel,
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: 0 16px 34px rgba(19, 42, 76, 0.08);
+    }
+
+    .auth-panel {
+      width: min(440px, 100%);
+      padding: 26px;
+    }
+
+    .auth-form,
+    .admin-form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.05;
+    }
+
+    h2 {
+      font-size: 25px;
+    }
+
+    h3 {
+      font-size: 19px;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--navy-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    button,
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    button {
+      background: var(--navy);
+      color: var(--paper);
+    }
+
+    button.secondary,
+    .nav-link {
+      border-color: var(--line-strong);
+      background: var(--paper);
+      color: var(--navy);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.62;
+    }
+
+    .status {
+      min-height: 22px;
+      color: var(--teal);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .status.error {
+      color: var(--rose);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 14px 24px;
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--navy);
+      color: var(--gold);
+      font-weight: 800;
+    }
+
+    .brand-text strong,
+    .brand-text span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .brand-text strong {
+      color: var(--navy-dark);
+      font-size: 14px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .brand-text span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .topbar-actions,
+    .account-menu,
+    .nav-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .account-name {
+      max-width: 180px;
+      overflow: hidden;
+      color: var(--navy-dark);
+      font-size: 13px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .layout {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 30px 24px 48px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 14px;
+      max-width: 780px;
+      margin-bottom: 24px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .compact-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .list-item {
+      display: grid;
+      gap: 4px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px 14px;
+      background: #fbfcfb;
+    }
+
+    .list-item strong {
+      color: var(--navy-dark);
+    }
+
+    .list-item span {
+      color: var(--muted);
+      font-size: 13px;
+      word-break: break-word;
+    }
+
+    .resource-type {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .empty-state {
+      border: 1px dashed var(--line-strong);
+      border-radius: 6px;
+      padding: 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 860px) {
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .layout {
+        padding: 22px 14px 40px;
+      }
+
+      .panel {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <form class="auth-form" id="loginForm">
+        <span class="eyebrow">Management access</span>
+        <h2 id="authTitle">Sign in</h2>
+        <p>Admin manages people. Teacher manages classes and resources.</p>
+        <label>
+          Login type
+          <select name="loginRole" required>
+            <option value="admin">Admin login</option>
+            <option value="teacher">Teacher login</option>
+          </select>
+        </label>
+        <label>
+          Username
+          <input id="loginUsername" name="username" autocomplete="username" required>
+        </label>
+        <label>
+          Password
+          <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <button type="submit">Sign in</button>
+        <p class="status error" id="loginMessage" role="alert"></p>
+      </form>
+    </div>
+  </div>
+
+  <div id="adminApp" hidden>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand-lockup" href="prework.html" aria-label="Digital Bridge Academy home">
+          <span class="brand-mark">DB</span>
+          <span class="brand-text">
+            <strong>Digital Bridge Academy</strong>
+            <span>Management workspace</span>
+          </span>
+        </a>
+        <div class="topbar-actions">
+          <nav class="nav-row" aria-label="Course pages">
+            <a class="nav-link" href="prework.html">Week 0</a>
+            <a class="nav-link" href="index.html">Lesson 1</a>
+            <a class="nav-link" href="lesson2.html">Lesson 2</a>
+          </nav>
+          <div class="account-menu">
+            <span class="account-name" id="accountName"></span>
+            <button class="secondary" id="logoutButton" type="button">Log out</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="hero">
+        <span class="eyebrow">Course management</span>
+        <h1>People, classes, and resources</h1>
+        <p>Admin oversees teachers and students. Teachers add the class links, lesson files, assignments, videos, and other resources students need.</p>
+      </section>
+
+      <div class="dashboard-grid">
+        <section class="panel" data-admin-only>
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Teachers</span>
+              <h2>Add teacher</h2>
+            </div>
+          </div>
+          <form class="admin-form" id="teacherForm">
+            <label>
+              Teacher name
+              <input name="displayName" autocomplete="name" required>
+            </label>
+            <label>
+              Username
+              <input name="username" autocomplete="username" required>
+            </label>
+            <label>
+              Temporary password
+              <input name="password" type="text" autocomplete="off" minlength="8" required>
+            </label>
+            <button type="submit">Create teacher</button>
+            <p class="status" id="teacherStatus" role="status"></p>
+          </form>
+
+          <div class="compact-list" id="teacherList" aria-live="polite"></div>
+        </section>
+
+        <section class="panel" data-admin-only>
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Students</span>
+              <h2>Add student</h2>
+            </div>
+          </div>
+          <form class="admin-form" id="studentForm">
+            <label>
+              Student name
+              <input name="displayName" autocomplete="name" required>
+            </label>
+            <label>
+              Username
+              <input name="username" autocomplete="username" required>
+            </label>
+            <label>
+              Temporary password
+              <input name="password" type="text" autocomplete="off" minlength="8" required>
+            </label>
+            <button type="submit">Create student</button>
+            <p class="status" id="studentStatus" role="status"></p>
+          </form>
+
+          <div class="compact-list" id="studentList" aria-live="polite"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Classes and resources</span>
+              <h2>Add class resource</h2>
+            </div>
+          </div>
+          <form class="admin-form" id="resourceForm">
+            <label>
+              Lesson
+              <select name="lessonSlug" id="resourceLesson" required>
+                <option value="intermediate-readiness-week">Week 0 Python Readiness</option>
+                <option value="cs-fundamentals-lesson-1">Week 1 Lesson 1</option>
+                <option value="internet-fundamentals-lesson-2">Week 1 Lesson 2</option>
+              </select>
+            </label>
+            <label>
+              Type
+              <select name="resourceType" required>
+                <option value="class">Class link</option>
+                <option value="reading">Reading</option>
+                <option value="video">Video</option>
+                <option value="assignment">Assignment</option>
+                <option value="download">Download</option>
+                <option value="link">Link</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label>
+              Title
+              <input name="title" required>
+            </label>
+            <label>
+              URL
+              <input name="url" placeholder="https://..." required>
+            </label>
+            <label>
+              Short description
+              <textarea name="description" maxlength="500"></textarea>
+            </label>
+            <button type="submit">Add resource</button>
+            <p class="status" id="resourceStatus" role="status"></p>
+          </form>
+
+          <div class="compact-list" id="resourceList" aria-live="polite"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const authOverlay = document.getElementById("authOverlay");
+      const adminApp = document.getElementById("adminApp");
+      const loginForm = document.getElementById("loginForm");
+      const loginMessage = document.getElementById("loginMessage");
+      const accountName = document.getElementById("accountName");
+      const logoutButton = document.getElementById("logoutButton");
+      const adminOnlyPanels = Array.from(document.querySelectorAll("[data-admin-only]"));
+      const teacherForm = document.getElementById("teacherForm");
+      const teacherStatus = document.getElementById("teacherStatus");
+      const teacherList = document.getElementById("teacherList");
+      const studentForm = document.getElementById("studentForm");
+      const studentStatus = document.getElementById("studentStatus");
+      const studentList = document.getElementById("studentList");
+      const resourceForm = document.getElementById("resourceForm");
+      const resourceStatus = document.getElementById("resourceStatus");
+      const resourceList = document.getElementById("resourceList");
+      const resourceLesson = document.getElementById("resourceLesson");
+      const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
+
+      let lessonsLoaded = false;
+      let currentUser = null;
+
+      function isStaff(user) {
+        return user && (user.role === "admin" || user.role === "teacher");
+      }
+
+      function isSystemAdmin(user) {
+        return user && user.role === "admin";
+      }
+
+      function setStatus(element, message, isError) {
+        element.textContent = message || "";
+        element.classList.toggle("error", Boolean(isError));
+      }
+
+      function parseJsonResponse(response) {
+        return response.json().catch(function () {
+          return {};
+        }).then(function (data) {
+          if (!response.ok) {
+            throw new Error(data.error || "Request failed.");
+          }
+          return data;
+        });
+      }
+
+      function postJson(url, payload) {
+        return fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload || {})
+        }).then(parseJsonResponse);
+      }
+
+      function renderAuth(user) {
+        currentUser = user || null;
+        if (isStaff(currentUser)) {
+          authOverlay.hidden = true;
+          adminApp.hidden = false;
+          accountName.textContent = currentUser.displayName || currentUser.username;
+          adminOnlyPanels.forEach(function (panel) {
+            panel.hidden = !isSystemAdmin(currentUser);
+          });
+          loadDashboard();
+          return;
+        }
+
+        authOverlay.hidden = false;
+        adminApp.hidden = true;
+        accountName.textContent = "";
+      }
+
+      function loadAuth() {
+        if (!canUseBackend) {
+          setStatus(loginMessage, "Open this page through the backend URL, not as a file.", true);
+          return;
+        }
+
+        fetch("/api/auth/me")
+          .then(parseJsonResponse)
+          .then(function (data) {
+            renderAuth(data.user);
+            if (data.authenticated && !isStaff(data.user)) {
+              setStatus(loginMessage, "Teacher or admin login required for this page.", true);
+            }
+          })
+          .catch(function () {
+            renderAuth(null);
+          });
+      }
+
+      function renderLessonOptions(lessons) {
+        if (lessonsLoaded || !Array.isArray(lessons) || !lessons.length) return;
+        const selected = resourceLesson.value;
+        resourceLesson.innerHTML = "";
+        lessons.forEach(function (lesson) {
+          const option = document.createElement("option");
+          option.value = lesson.slug;
+          option.textContent = lesson.title;
+          resourceLesson.appendChild(option);
+        });
+        if (lessons.some(function (lesson) { return lesson.slug === selected; })) {
+          resourceLesson.value = selected;
+        }
+        lessonsLoaded = true;
+      }
+
+      function renderStudents(students) {
+        studentList.innerHTML = "";
+        if (!students.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.textContent = "No student accounts yet.";
+          studentList.appendChild(empty);
+          return;
+        }
+
+        students.forEach(function (student) {
+          const item = document.createElement("div");
+          item.className = "list-item";
+
+          const name = document.createElement("strong");
+          name.textContent = student.displayName;
+
+          const username = document.createElement("span");
+          username.textContent = "Username: " + student.username;
+
+          const created = document.createElement("span");
+          created.textContent = "Created: " + student.createdAt;
+
+          item.appendChild(name);
+          item.appendChild(username);
+          item.appendChild(created);
+          studentList.appendChild(item);
+        });
+      }
+
+      function renderTeachers(teachers) {
+        teacherList.innerHTML = "";
+        if (!teachers.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.textContent = "No teacher accounts yet.";
+          teacherList.appendChild(empty);
+          return;
+        }
+
+        teachers.forEach(function (teacher) {
+          const item = document.createElement("div");
+          item.className = "list-item";
+
+          const name = document.createElement("strong");
+          name.textContent = teacher.displayName;
+
+          const username = document.createElement("span");
+          username.textContent = "Username: " + teacher.username;
+
+          const created = document.createElement("span");
+          created.textContent = "Created: " + teacher.createdAt;
+
+          item.appendChild(name);
+          item.appendChild(username);
+          item.appendChild(created);
+          teacherList.appendChild(item);
+        });
+      }
+
+      function resourceTypeLabel(type) {
+        const labels = {
+          class: "Class link",
+          reading: "Reading",
+          video: "Video",
+          link: "Link",
+          assignment: "Assignment",
+          download: "Download",
+          other: "Resource"
+        };
+        return labels[type] || "Resource";
+      }
+
+      function renderResources(resources) {
+        resourceList.innerHTML = "";
+        if (!resources.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.textContent = "No resources added for this lesson yet.";
+          resourceList.appendChild(empty);
+          return;
+        }
+
+        resources.forEach(function (resource) {
+          const link = document.createElement("a");
+          link.className = "list-item";
+          link.href = resource.url;
+          link.target = "_blank";
+          link.rel = "noopener";
+
+          const type = document.createElement("span");
+          type.className = "resource-type";
+          type.textContent = resourceTypeLabel(resource.resourceType);
+
+          const title = document.createElement("strong");
+          title.textContent = resource.title;
+
+          const detail = document.createElement("span");
+          detail.textContent = resource.description || resource.url;
+
+          link.appendChild(type);
+          link.appendChild(title);
+          link.appendChild(detail);
+          resourceList.appendChild(link);
+        });
+      }
+
+      function loadStudents() {
+        return fetch("/api/admin/students")
+          .then(parseJsonResponse)
+          .then(function (data) {
+            renderLessonOptions(data.lessons);
+            renderStudents(Array.isArray(data.students) ? data.students : []);
+          })
+          .catch(function (error) {
+            setStatus(studentStatus, error.message, true);
+          });
+      }
+
+      function loadTeachers() {
+        return fetch("/api/admin/teachers")
+          .then(parseJsonResponse)
+          .then(function (data) {
+            renderTeachers(Array.isArray(data.teachers) ? data.teachers : []);
+          })
+          .catch(function (error) {
+            setStatus(teacherStatus, error.message, true);
+          });
+      }
+
+      function loadResources() {
+        const lessonSlug = resourceLesson.value;
+        return fetch("/api/admin/resources?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(parseJsonResponse)
+          .then(function (data) {
+            renderLessonOptions(data.lessons);
+            renderResources(Array.isArray(data.resources) ? data.resources : []);
+          })
+          .catch(function (error) {
+            setStatus(resourceStatus, error.message, true);
+          });
+      }
+
+      function loadDashboard() {
+        setStatus(studentStatus, "");
+        setStatus(teacherStatus, "");
+        setStatus(resourceStatus, "");
+        if (isSystemAdmin(currentUser)) {
+          loadTeachers();
+          loadStudents();
+        }
+        loadResources();
+      }
+
+      loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setStatus(loginMessage, "");
+
+        postJson("/api/auth/login", {
+          loginRole: loginForm.elements.loginRole.value,
+          username: loginForm.elements.username.value,
+          password: loginForm.elements.password.value
+        }).then(function (data) {
+          if (!isStaff(data.user)) {
+            throw new Error("Teacher or admin login required for this page.");
+          }
+          loginForm.reset();
+          renderAuth(data.user);
+        }).catch(function (error) {
+          setStatus(loginMessage, error.message, true);
+        });
+      });
+
+      logoutButton.addEventListener("click", function () {
+        postJson("/api/auth/logout", {}).finally(function () {
+          renderAuth(null);
+          document.getElementById("loginUsername").focus();
+        });
+      });
+
+      teacherForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setStatus(teacherStatus, "");
+
+        postJson("/api/admin/teachers", {
+          displayName: teacherForm.elements.displayName.value,
+          username: teacherForm.elements.username.value,
+          password: teacherForm.elements.password.value
+        }).then(function (data) {
+          const username = data.teacher ? data.teacher.username : "teacher";
+          teacherForm.reset();
+          setStatus(teacherStatus, "Created teacher login: " + username);
+          loadTeachers();
+        }).catch(function (error) {
+          setStatus(teacherStatus, error.message, true);
+        });
+      });
+
+      studentForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setStatus(studentStatus, "");
+
+        postJson("/api/admin/students", {
+          displayName: studentForm.elements.displayName.value,
+          username: studentForm.elements.username.value,
+          password: studentForm.elements.password.value
+        }).then(function (data) {
+          const username = data.student ? data.student.username : "student";
+          studentForm.reset();
+          setStatus(studentStatus, "Created student login: " + username);
+          loadStudents();
+        }).catch(function (error) {
+          setStatus(studentStatus, error.message, true);
+        });
+      });
+
+      resourceForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setStatus(resourceStatus, "");
+
+        postJson("/api/admin/resources", {
+          lessonSlug: resourceForm.elements.lessonSlug.value,
+          resourceType: resourceForm.elements.resourceType.value,
+          title: resourceForm.elements.title.value,
+          url: resourceForm.elements.url.value,
+          description: resourceForm.elements.description.value
+        }).then(function () {
+          const lessonSlug = resourceForm.elements.lessonSlug.value;
+          resourceForm.reset();
+          resourceLesson.value = lessonSlug;
+          setStatus(resourceStatus, "Resource added to this lesson.");
+          loadResources();
+        }).catch(function (error) {
+          setStatus(resourceStatus, error.message, true);
+        });
+      });
+
+      resourceLesson.addEventListener("change", function () {
+        setStatus(resourceStatus, "");
+        loadResources();
+      });
+
+      loadAuth();
+    })();
+  </script>
+</body>
+</html>

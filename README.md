@@ -16,9 +16,9 @@ http://127.0.0.1:8765/
 
 ## Course Sequence
 
-The homepage opens `prework.html`, which is Week 0: Python Placement Assessment.
+The homepage opens `prework.html`, which is Week 0: Python Readiness Assessment.
 
-- Week 0 includes an auto-scored Python placement quiz and an open-ended coding review for instructor assessment.
+- Week 0 includes an auto-scored Python readiness quiz and an open-ended coding review.
 - Week 1 Lesson 1 is reading-based while videos are not ready. Students work through `assets/lesson1-notes.pdf`, then complete the activity and quiz.
 - Week 1 Lesson 1 unlocks after Week 0 sections are complete, the Week 0 quiz is submitted, and the Week 0 coding review is submitted.
 - Week 1 Lesson 2 sits under Week 1 and unlocks after Lesson 1 sections are complete and the Lesson 1 quiz is submitted.
@@ -33,11 +33,12 @@ data/learning_ms.sqlite3
 
 It stores:
 
-- Student and teacher login accounts
+- Admin, teacher, and student login accounts
 - Browser login sessions
 - Lesson section progress
 - Class activity submissions
 - Practice quiz results
+- Teacher-added class links and lesson resources
 
 ## Production PostgreSQL
 
@@ -58,9 +59,15 @@ AUTH_COOKIE_NAME=dba_session
 REQUIRE_LOGIN=1
 ALLOW_SIGNUP=0
 SESSION_DAYS=30
-ADMIN_USERNAME=teacher
-ADMIN_PASSWORD=change_this_teacher_password
-ADMIN_DISPLAY_NAME=Teacher
+SYSTEM_ADMIN_USERNAME=admin
+SYSTEM_ADMIN_PASSWORD=change_this_admin_password
+SYSTEM_ADMIN_DISPLAY_NAME=Admin
+TEACHER_USERNAME=teacher
+TEACHER_PASSWORD=change_this_teacher_password
+TEACHER_DISPLAY_NAME=Teacher
+STUDENT_USERNAME=student
+STUDENT_PASSWORD=change_this_student_password
+STUDENT_DISPLAY_NAME=Student
 COOKIE_NAME=dba_student_id
 LESSON_SLUG=cs-fundamentals-lesson-1
 LESSON1_VIDEO_DIR=assets/videos/lesson1
@@ -69,7 +76,11 @@ LESSON2_VIDEO_DIR=assets/videos/lesson2
 
 When `DATABASE_URL` is present, the app uses PostgreSQL and creates the needed tables automatically. When `DATABASE_URL` is missing, it uses SQLite.
 
-The app creates the first teacher account when the users table is empty. Set `ADMIN_PASSWORD` to a strong password before the first production start. If the default account already exists, update the password in the database or recreate the account intentionally.
+The app creates an admin account, a teacher account, and a student account when those usernames are missing. Set `SYSTEM_ADMIN_PASSWORD`, `TEACHER_PASSWORD`, and `STUDENT_PASSWORD` to strong passwords before sharing the public link. If an account already exists, changing the environment variable will not change that saved password automatically.
+
+Open `/admin.html` for management. Admin accounts can create teachers and students. Teacher accounts can add class links, readings, videos, assignments, downloads, and other resources to lessons.
+
+Older deployments that already use `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_DISPLAY_NAME` will still use those values for the default teacher account unless the newer `TEACHER_*` variables are set.
 
 `ALLOW_SIGNUP=0` keeps student self-registration disabled. Set `ALLOW_SIGNUP=1` only if you want students to create their own accounts from the login screen.
 

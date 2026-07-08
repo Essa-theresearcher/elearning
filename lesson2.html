@@ -258,7 +258,8 @@
       font-weight: 800;
     }
 
-    .auth-field input {
+    .auth-field input,
+    .auth-field select {
       width: 100%;
       min-height: 44px;
       border: 1px solid var(--line-strong);
@@ -268,7 +269,8 @@
       color: var(--ink);
     }
 
-    .auth-field input:focus {
+    .auth-field input:focus,
+    .auth-field select:focus {
       outline: 3px solid rgba(32, 109, 111, 0.18);
       border-color: var(--teal);
     }
@@ -890,6 +892,64 @@
       color: var(--navy-dark);
     }
 
+    .teacher-resources {
+      margin-top: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: #fffdf7;
+    }
+
+    .teacher-resources h3 {
+      margin: 0 0 6px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .teacher-resources p {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .teacher-resource-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .teacher-resource-link {
+      display: grid;
+      gap: 4px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px 14px;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .teacher-resource-link:hover {
+      border-color: var(--teal);
+    }
+
+    .teacher-resource-type {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .teacher-resource-link strong {
+      color: var(--navy-dark);
+      font-size: 15px;
+    }
+
+    .teacher-resource-link span:last-child {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
     .embedded-frame {
       width: 100%;
       border: 1px solid var(--line);
@@ -1079,7 +1139,15 @@
       <form class="auth-form" id="loginForm">
         <span class="eyebrow">Course access</span>
         <h2 id="authTitle">Sign in</h2>
-        <p class="auth-copy">Use your Digital Bridge Academy account.</p>
+        <p class="auth-copy">Choose student, teacher, or admin access.</p>
+        <label class="auth-field">
+          Login type
+          <select id="loginRole" name="loginRole" required>
+            <option value="student">Student login</option>
+            <option value="teacher">Teacher login</option>
+            <option value="admin">Admin login</option>
+          </select>
+        </label>
         <label class="auth-field">
           Username
           <input id="loginUsername" name="username" autocomplete="username" required>
@@ -1090,34 +1158,7 @@
         </label>
         <button class="auth-submit" type="submit">Sign in</button>
         <p class="auth-error" id="loginMessage" role="alert"></p>
-        <p class="auth-footer">
-          New student?
-          <button class="auth-switch" type="button" id="showRegister">Create account</button>
-        </p>
-      </form>
-
-      <form class="auth-form" id="registerForm" hidden>
-        <span class="eyebrow">Student account</span>
-        <h2>Create account</h2>
-        <p class="auth-copy">Your progress and submissions will be saved to this login.</p>
-        <label class="auth-field">
-          Full name
-          <input id="registerDisplayName" name="displayName" autocomplete="name" required>
-        </label>
-        <label class="auth-field">
-          Username
-          <input id="registerUsername" name="username" autocomplete="username" required>
-        </label>
-        <label class="auth-field">
-          Password
-          <input id="registerPassword" name="password" type="password" autocomplete="new-password" minlength="8" required>
-        </label>
-        <button class="auth-submit" type="submit">Create account</button>
-        <p class="auth-error" id="registerMessage" role="alert"></p>
-        <p class="auth-footer">
-          Already have an account?
-          <button class="auth-switch" type="button" id="showLogin">Sign in</button>
-        </p>
+        <p class="auth-footer">Need access? Ask your teacher for your student login.</p>
       </form>
     </div>
   </div>
@@ -1485,6 +1526,12 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
             <div class="callout">
               <strong>Full handbook:</strong> Use the Open PDF or Download buttons above when you want the original 11-page student supplement.
             </div>
+
+            <div class="teacher-resources" id="teacherResources" hidden>
+              <h3>Teacher resources</h3>
+              <p>Use these extra links and files with this lesson's work.</p>
+              <div class="teacher-resource-list" id="teacherResourceList"></div>
+            </div>
           </div>
         </div>
       </section>
@@ -1588,15 +1635,13 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
       const accountName = document.getElementById("accountName");
       const logoutButton = document.getElementById("logoutButton");
       const loginForm = document.getElementById("loginForm");
-      const registerForm = document.getElementById("registerForm");
       const loginMessage = document.getElementById("loginMessage");
-      const registerMessage = document.getElementById("registerMessage");
-      const showRegisterButton = document.getElementById("showRegister");
-      const showLoginButton = document.getElementById("showLogin");
       const lessonLockOverlay = document.getElementById("lessonLockOverlay");
       const lessonLockList = document.getElementById("lessonLockList");
       const lessonLockMessage = document.getElementById("lessonLockMessage");
       const refreshAccessButton = document.getElementById("refreshAccessButton");
+      const teacherResources = document.getElementById("teacherResources");
+      const teacherResourceList = document.getElementById("teacherResourceList");
       const lessonSlug = "internet-fundamentals-lesson-2";
       const baseStorageKey = "dba-lesson-2-complete";
       const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
@@ -1650,6 +1695,76 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
         }).then(parseJsonResponse);
       }
 
+      function resourceTypeLabel(type) {
+        const labels = {
+          class: "Class link",
+          reading: "Reading",
+          video: "Video",
+          link: "Link",
+          assignment: "Assignment",
+          download: "Download",
+          other: "Resource"
+        };
+        return labels[type] || "Resource";
+      }
+
+      function renderTeacherResources(resources) {
+        teacherResourceList.innerHTML = "";
+        teacherResources.hidden = !resources.length;
+
+        resources.forEach(function (resource) {
+          const link = document.createElement("a");
+          link.className = "teacher-resource-link";
+          link.href = resource.url;
+          link.target = "_blank";
+          link.rel = "noopener";
+
+          const type = document.createElement("span");
+          type.className = "teacher-resource-type";
+          type.textContent = resourceTypeLabel(resource.resourceType);
+
+          const title = document.createElement("strong");
+          title.textContent = resource.title;
+
+          const description = document.createElement("span");
+          description.textContent = resource.description || resource.url;
+
+          link.appendChild(type);
+          link.appendChild(title);
+          link.appendChild(description);
+          teacherResourceList.appendChild(link);
+        });
+      }
+
+      function loadTeacherResources() {
+        if (!canUseBackend || !currentUser) {
+          renderTeacherResources([]);
+          return;
+        }
+
+        fetch("/api/resources?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(function (response) {
+            if (response.status === 401) {
+              renderAuth(null, true);
+              throw new Error("Login required");
+            }
+            if (response.status === 423) {
+              response.json().then(lockLesson).catch(function () {
+                checkLessonAccess();
+              });
+              throw new Error("Lesson locked");
+            }
+            if (!response.ok) throw new Error("Could not load resources");
+            return response.json();
+          })
+          .then(function (data) {
+            renderTeacherResources(Array.isArray(data.resources) ? data.resources : []);
+          })
+          .catch(function () {
+            renderTeacherResources([]);
+          });
+      }
+
       function renderAuth(user, allowSignup) {
         currentUser = user || null;
         switchLocalProgress(currentUser);
@@ -1657,7 +1772,6 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
         authOverlay.hidden = Boolean(currentUser) || !canUseBackend;
         accountMenu.hidden = !currentUser;
         accountName.textContent = currentUser ? currentUser.displayName || currentUser.username : "";
-        showRegisterButton.hidden = allowSignup === false;
         renderProgress();
       }
 
@@ -1736,6 +1850,7 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
           if (unlocked) {
             loadProgressFromBackend();
             loadRecordingsFromBackend();
+            loadTeacherResources();
           }
           return unlocked;
         });
@@ -1855,27 +1970,12 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
         });
       });
 
-      showRegisterButton.addEventListener("click", function () {
-        setAuthMessage(loginMessage, "");
-        setAuthMessage(registerMessage, "");
-        loginForm.hidden = true;
-        registerForm.hidden = false;
-        document.getElementById("registerDisplayName").focus();
-      });
-
-      showLoginButton.addEventListener("click", function () {
-        setAuthMessage(loginMessage, "");
-        setAuthMessage(registerMessage, "");
-        registerForm.hidden = true;
-        loginForm.hidden = false;
-        document.getElementById("loginUsername").focus();
-      });
-
       loginForm.addEventListener("submit", function (event) {
         event.preventDefault();
         setAuthMessage(loginMessage, "");
 
         postJson("/api/auth/login", {
+          loginRole: loginForm.elements.loginRole.value,
           username: loginForm.elements.username.value,
           password: loginForm.elements.password.value
         }).then(function (data) {
@@ -1887,30 +1987,12 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
         });
       });
 
-      registerForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        setAuthMessage(registerMessage, "");
-
-        postJson("/api/auth/register", {
-          displayName: registerForm.elements.displayName.value,
-          username: registerForm.elements.username.value,
-          password: registerForm.elements.password.value
-        }).then(function (data) {
-          registerForm.reset();
-          renderAuth(data.user, data.allowSignup);
-          loadUnlockedLessonData();
-        }).catch(function (error) {
-          setAuthMessage(registerMessage, error.message);
-        });
-      });
-
       logoutButton.addEventListener("click", function () {
         postJson("/api/auth/logout", {}).finally(function () {
           unlockLesson();
           renderAuth(null, true);
-          loginForm.hidden = false;
-          registerForm.hidden = true;
           clearRecordings();
+          renderTeacherResources([]);
           document.getElementById("loginUsername").focus();
         });
       });

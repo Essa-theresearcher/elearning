@@ -30,15 +30,32 @@ COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "").lower() in {"1", "true", "ye
 REQUIRE_LOGIN = os.environ.get("REQUIRE_LOGIN", "1").lower() not in {"0", "false", "no"}
 ALLOW_SIGNUP = os.environ.get("ALLOW_SIGNUP", "0").lower() not in {"0", "false", "no"}
 SESSION_DAYS = int(os.environ.get("SESSION_DAYS", "30"))
-ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "teacher").strip().lower()
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "changeme123")
-ADMIN_DISPLAY_NAME = os.environ.get("ADMIN_DISPLAY_NAME", "Teacher").strip() or "Teacher"
+SYSTEM_ADMIN_USERNAME = os.environ.get("SYSTEM_ADMIN_USERNAME", "admin").strip().lower()
+SYSTEM_ADMIN_PASSWORD = os.environ.get("SYSTEM_ADMIN_PASSWORD", "changeme123")
+SYSTEM_ADMIN_DISPLAY_NAME = os.environ.get("SYSTEM_ADMIN_DISPLAY_NAME", "Admin").strip() or "Admin"
+TEACHER_USERNAME = os.environ.get(
+    "TEACHER_USERNAME",
+    os.environ.get("ADMIN_USERNAME", "teacher"),
+).strip().lower()
+TEACHER_PASSWORD = os.environ.get(
+    "TEACHER_PASSWORD",
+    os.environ.get("ADMIN_PASSWORD", "changeme123"),
+)
+TEACHER_DISPLAY_NAME = (
+    os.environ.get("TEACHER_DISPLAY_NAME")
+    or os.environ.get("ADMIN_DISPLAY_NAME")
+    or "Teacher"
+).strip() or "Teacher"
+STUDENT_USERNAME = os.environ.get("STUDENT_USERNAME", "student").strip().lower()
+STUDENT_PASSWORD = os.environ.get("STUDENT_PASSWORD", "changeme123")
+STUDENT_DISPLAY_NAME = os.environ.get("STUDENT_DISPLAY_NAME", "Student").strip() or "Student"
 PASSWORD_ITERATIONS = 260_000
 MIN_PASSWORD_LENGTH = 8
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v", ".webm", ".ogg"}
+RESOURCE_TYPES = {"class", "reading", "video", "link", "assignment", "download", "other"}
 LESSONS = {
     "intermediate-readiness-week": {
-        "title": "Week 0 Python Placement Assessment",
+        "title": "Week 0 Python Readiness Assessment",
         "section_ids": ["welcome", "reading", "quiz", "project", "wrapup"],
         "prerequisite": None,
         "requires_activity_submission": True,
@@ -184,6 +201,47 @@ def public_user(row):
     }
 
 
+def public_student(row):
+    if not row:
+        return None
+    return {
+        "id": row["id"],
+        "username": row["username"],
+        "displayName": row["display_name"],
+        "role": row["role"],
+        "createdAt": row["created_at"],
+    }
+
+
+def public_resource(row):
+    if not row:
+        return None
+    lesson_slug = row["lesson_slug"]
+    return {
+        "id": row["id"],
+        "lessonSlug": lesson_slug,
+        "lessonTitle": lesson_config(lesson_slug).get("title", lesson_slug),
+        "title": row["title"],
+        "resourceType": row["resource_type"],
+        "url": row["url"],
+        "description": row["description"],
+        "createdBy": row["created_by"],
+        "createdAt": row["created_at"],
+    }
+
+
+def is_admin_role(role):
+    return role == "admin"
+
+
+def is_teacher_role(role):
+    return role == "teacher"
+
+
+def is_staff_role(role):
+    return role in {"admin", "teacher"}
+
+
 def hash_password(password):
     salt = secrets.token_hex(16)
     digest = hashlib.pbkdf2_hmac(
@@ -227,6 +285,39 @@ def validate_new_user(username, display_name, password):
     return username, display_name, None
 
 
+def validate_resource_payload(data):
+    lesson_slug = (data.get("lessonSlug") or "").strip()
+    title = (data.get("title") or "").strip()
+    resource_type = (data.get("resourceType") or "link").strip().lower()
+    url = (data.get("url") or "").strip()
+    description = (data.get("description") or "").strip()
+
+    if lesson_slug not in LESSONS:
+        return None, "Choose a valid lesson."
+    if len(title) < 2 or len(title) > 160:
+        return None, "Resource title must be between 2 and 160 characters."
+    if resource_type not in RESOURCE_TYPES:
+        return None, "Choose a valid resource type."
+    if len(url) < 3 or len(url) > 2048:
+        return None, "Resource URL is required."
+
+    parsed = urlparse(url)
+    if parsed.scheme and parsed.scheme not in {"http", "https"}:
+        return None, "Resource URL must use http or https."
+    if not parsed.scheme and not url.startswith("/"):
+        return None, "Use a full https link or a site path that starts with /."
+    if len(description) > 500:
+        return None, "Description must be 500 characters or less."
+
+    return {
+        "lesson_slug": lesson_slug,
+        "title": title,
+        "resource_type": resource_type,
+        "url": url,
+        "description": description,
+    }, None
+
+
 def display_name_from_file(path):
     name = path.stem.replace("_", " ").replace("-", " ").strip()
     return " ".join(word.capitalize() for word in name.split()) or path.name
@@ -238,6 +329,17 @@ def lesson_config(lesson_slug):
         or LESSONS.get(LESSON_SLUG)
         or next(iter(LESSONS.values()))
     )
+
+
+def lesson_summaries():
+    return [
+        {
+            "slug": slug,
+            "title": config.get("title", slug),
+            "prerequisite": config.get("prerequisite"),
+        }
+        for slug, config in LESSONS.items()
+    ]
 
 
 def video_dir_path(lesson_slug):
@@ -403,20 +505,22 @@ def connect_db():
     return conn
 
 
-def seed_default_admin(conn):
-    user_count = db_execute(conn, "SELECT COUNT(*) AS count FROM app_users").fetchone()[
-        "count"
-    ]
-    if user_count:
+def seed_user_if_missing(conn, username, display_name, password, role):
+    existing = db_execute(
+        conn,
+        "SELECT id FROM app_users WHERE username = ?",
+        (username,),
+    ).fetchone()
+    if existing:
         return
 
     username, display_name, error = validate_new_user(
-        ADMIN_USERNAME,
-        ADMIN_DISPLAY_NAME,
-        ADMIN_PASSWORD,
+        username,
+        display_name,
+        password,
     )
     if error:
-        raise RuntimeError(f"Invalid default admin account: {error}")
+        raise RuntimeError(f"Invalid default {role} account: {error}")
 
     db_execute(
         conn,
@@ -430,14 +534,42 @@ def seed_default_admin(conn):
             str(uuid.uuid4()),
             username,
             display_name,
-            hash_password(ADMIN_PASSWORD),
-            "teacher",
+            hash_password(password),
+            role,
             utc_now(),
         ),
     )
-    print(f"Seeded teacher account. Username: {username}")
-    if ADMIN_PASSWORD == "changeme123":
-        print("Default teacher password is changeme123. Change ADMIN_PASSWORD in production.")
+    print(f"Seeded {role} account. Username: {username}")
+
+
+def seed_default_accounts(conn):
+    seed_user_if_missing(
+        conn,
+        SYSTEM_ADMIN_USERNAME,
+        SYSTEM_ADMIN_DISPLAY_NAME,
+        SYSTEM_ADMIN_PASSWORD,
+        "admin",
+    )
+    seed_user_if_missing(
+        conn,
+        TEACHER_USERNAME,
+        TEACHER_DISPLAY_NAME,
+        TEACHER_PASSWORD,
+        "teacher",
+    )
+    seed_user_if_missing(
+        conn,
+        STUDENT_USERNAME,
+        STUDENT_DISPLAY_NAME,
+        STUDENT_PASSWORD,
+        "student",
+    )
+    if SYSTEM_ADMIN_PASSWORD == "changeme123":
+        print("Default admin password is changeme123. Change SYSTEM_ADMIN_PASSWORD in production.")
+    if TEACHER_PASSWORD == "changeme123":
+        print("Default teacher password is changeme123. Change TEACHER_PASSWORD in production.")
+    if STUDENT_PASSWORD == "changeme123":
+        print("Default student password is changeme123. Change STUDENT_PASSWORD in production.")
 
 
 def init_db():
@@ -500,7 +632,21 @@ def init_db():
                 )
                 """
             )
-            seed_default_admin(conn)
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS lesson_resources (
+                    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+                    lesson_slug TEXT NOT NULL,
+                    title TEXT NOT NULL,
+                    resource_type TEXT NOT NULL,
+                    url TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    created_by TEXT NOT NULL REFERENCES app_users(id) ON DELETE CASCADE,
+                    created_at TEXT NOT NULL
+                )
+                """
+            )
+            seed_default_accounts(conn)
         return
 
     with connect_db() as conn:
@@ -547,9 +693,20 @@ def init_db():
                 category_breakdown TEXT NOT NULL,
                 created_at TEXT NOT NULL
             );
+
+            CREATE TABLE IF NOT EXISTS lesson_resources (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                lesson_slug TEXT NOT NULL,
+                title TEXT NOT NULL,
+                resource_type TEXT NOT NULL,
+                url TEXT NOT NULL,
+                description TEXT NOT NULL,
+                created_by TEXT NOT NULL REFERENCES app_users(id) ON DELETE CASCADE,
+                created_at TEXT NOT NULL
+            );
             """
         )
-        seed_default_admin(conn)
+        seed_default_accounts(conn)
 
 
 class LearningHandler(SimpleHTTPRequestHandler):
@@ -576,6 +733,18 @@ class LearningHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/auth/me":
             self.handle_auth_me()
             return
+        if parsed.path == "/api/admin/students":
+            self.handle_admin_students()
+            return
+        if parsed.path == "/api/admin/teachers":
+            self.handle_admin_teachers()
+            return
+        if parsed.path == "/api/admin/resources":
+            self.handle_admin_resources(parsed)
+            return
+        if parsed.path == "/api/resources":
+            self.handle_get_resources(parsed)
+            return
         if parsed.path == "/api/recordings":
             self.handle_get_recordings(parsed)
             return
@@ -600,6 +769,15 @@ class LearningHandler(SimpleHTTPRequestHandler):
             return
         if parsed.path == "/api/auth/logout":
             self.handle_auth_logout()
+            return
+        if parsed.path == "/api/admin/students":
+            self.handle_admin_create_student()
+            return
+        if parsed.path == "/api/admin/teachers":
+            self.handle_admin_create_teacher()
+            return
+        if parsed.path == "/api/admin/resources":
+            self.handle_admin_create_resource()
             return
         if parsed.path == "/api/progress/lesson":
             self.handle_post_lesson_progress()
@@ -655,6 +833,18 @@ class LearningHandler(SimpleHTTPRequestHandler):
                 db_execute(conn, "DELETE FROM auth_sessions WHERE token = ?", (token,))
                 return None
             return row
+
+    def current_admin_user(self):
+        user = self.current_user()
+        if user and is_admin_role(user["role"]):
+            return user
+        return None
+
+    def current_staff_user(self):
+        user = self.current_user()
+        if user and is_staff_role(user["role"]):
+            return user
+        return None
 
     def create_auth_session(self, user_id):
         token = secrets.token_urlsafe(32)
@@ -743,6 +933,12 @@ class LearningHandler(SimpleHTTPRequestHandler):
     def send_auth_required(self):
         self.send_json({"error": "Login required"}, HTTPStatus.UNAUTHORIZED)
 
+    def send_admin_required(self):
+        self.send_json({"error": "Admin login required"}, HTTPStatus.FORBIDDEN)
+
+    def send_staff_required(self):
+        self.send_json({"error": "Teacher or admin login required"}, HTTPStatus.FORBIDDEN)
+
     def send_lesson_locked(self, status):
         self.send_json(
             {
@@ -754,6 +950,14 @@ class LearningHandler(SimpleHTTPRequestHandler):
         )
 
     def is_lesson_unlocked(self, student_id, lesson_slug):
+        user = self.current_user()
+        if user and is_staff_role(user["role"]):
+            return {
+                "lessonSlug": lesson_slug,
+                "unlocked": True,
+                "prerequisite": None,
+                "adminBypass": True,
+            }
         with connect_db() as conn:
             return lesson_access_status(conn, student_id, lesson_slug)
 
@@ -776,6 +980,7 @@ class LearningHandler(SimpleHTTPRequestHandler):
 
         username = normalize_username(data.get("username"))
         password = data.get("password") or ""
+        login_role = (data.get("loginRole") or "").strip().lower()
         with connect_db() as conn:
             user = db_execute(
                 conn,
@@ -791,6 +996,31 @@ class LearningHandler(SimpleHTTPRequestHandler):
             self.send_json(
                 {"error": "Incorrect username or password."},
                 HTTPStatus.UNAUTHORIZED,
+            )
+            return
+
+        if login_role == "student" and user["role"] != "student":
+            self.send_json(
+                {"error": "This is a staff account. Use Teacher or Admin login."},
+                HTTPStatus.FORBIDDEN,
+            )
+            return
+        if login_role == "teacher" and not is_staff_role(user["role"]):
+            self.send_json(
+                {"error": "This is a student account. Use Student login."},
+                HTTPStatus.FORBIDDEN,
+            )
+            return
+        if login_role == "admin" and not is_admin_role(user["role"]):
+            if is_teacher_role(user["role"]):
+                self.send_json(
+                    {"error": "This is a teacher account. Use Teacher login."},
+                    HTTPStatus.FORBIDDEN,
+                )
+                return
+            self.send_json(
+                {"error": "This is a student account. Use Student login."},
+                HTTPStatus.FORBIDDEN,
             )
             return
 
@@ -879,6 +1109,347 @@ class LearningHandler(SimpleHTTPRequestHandler):
             clear_auth_cookie=True,
         )
 
+    def handle_admin_students(self):
+        admin = self.current_admin_user()
+        if not admin:
+            self.send_admin_required()
+            return
+
+        with connect_db() as conn:
+            rows = db_execute(
+                conn,
+                """
+                SELECT id, username, display_name, role, created_at
+                FROM app_users
+                WHERE role = 'student'
+                ORDER BY created_at DESC, username ASC
+                """,
+            ).fetchall()
+
+        self.send_json(
+            {
+                "students": [public_student(row) for row in rows],
+                "lessons": lesson_summaries(),
+                "admin": public_user(admin),
+            }
+        )
+
+    def handle_admin_teachers(self):
+        admin = self.current_admin_user()
+        if not admin:
+            self.send_admin_required()
+            return
+
+        with connect_db() as conn:
+            rows = db_execute(
+                conn,
+                """
+                SELECT id, username, display_name, role, created_at
+                FROM app_users
+                WHERE role = 'teacher'
+                ORDER BY created_at DESC, username ASC
+                """,
+            ).fetchall()
+
+        self.send_json(
+            {
+                "teachers": [public_student(row) for row in rows],
+                "admin": public_user(admin),
+            }
+        )
+
+    def handle_admin_create_student(self):
+        admin = self.current_admin_user()
+        if not admin:
+            self.send_admin_required()
+            return
+
+        try:
+            data = self.read_json_body()
+        except ValueError as exc:
+            self.send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+
+        username, display_name, error = validate_new_user(
+            data.get("username"),
+            data.get("displayName"),
+            data.get("password"),
+        )
+        if error:
+            self.send_json({"error": error}, HTTPStatus.BAD_REQUEST)
+            return
+
+        user_id = str(uuid.uuid4())
+        created_at = utc_now()
+        with connect_db() as conn:
+            existing_user = db_execute(
+                conn,
+                "SELECT id FROM app_users WHERE username = ?",
+                (username,),
+            ).fetchone()
+            if existing_user:
+                self.send_json(
+                    {"error": "That username is already in use."},
+                    HTTPStatus.CONFLICT,
+                )
+                return
+
+            db_execute(
+                conn,
+                """
+                INSERT INTO app_users (
+                    id, username, display_name, password_hash, role, created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    user_id,
+                    username,
+                    display_name,
+                    hash_password(data.get("password") or ""),
+                    "student",
+                    created_at,
+                ),
+            )
+
+        self.send_json(
+            {
+                "student": {
+                    "id": user_id,
+                    "username": username,
+                    "displayName": display_name,
+                    "role": "student",
+                    "createdAt": created_at,
+                }
+            },
+            status=HTTPStatus.CREATED,
+        )
+
+    def handle_admin_create_teacher(self):
+        admin = self.current_admin_user()
+        if not admin:
+            self.send_admin_required()
+            return
+
+        try:
+            data = self.read_json_body()
+        except ValueError as exc:
+            self.send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+
+        username, display_name, error = validate_new_user(
+            data.get("username"),
+            data.get("displayName"),
+            data.get("password"),
+        )
+        if error:
+            self.send_json({"error": error}, HTTPStatus.BAD_REQUEST)
+            return
+
+        user_id = str(uuid.uuid4())
+        created_at = utc_now()
+        with connect_db() as conn:
+            existing_user = db_execute(
+                conn,
+                "SELECT id FROM app_users WHERE username = ?",
+                (username,),
+            ).fetchone()
+            if existing_user:
+                self.send_json(
+                    {"error": "That username is already in use."},
+                    HTTPStatus.CONFLICT,
+                )
+                return
+
+            db_execute(
+                conn,
+                """
+                INSERT INTO app_users (
+                    id, username, display_name, password_hash, role, created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    user_id,
+                    username,
+                    display_name,
+                    hash_password(data.get("password") or ""),
+                    "teacher",
+                    created_at,
+                ),
+            )
+
+        self.send_json(
+            {
+                "teacher": {
+                    "id": user_id,
+                    "username": username,
+                    "displayName": display_name,
+                    "role": "teacher",
+                    "createdAt": created_at,
+                }
+            },
+            status=HTTPStatus.CREATED,
+        )
+
+    def handle_admin_resources(self, parsed):
+        staff = self.current_staff_user()
+        if not staff:
+            self.send_staff_required()
+            return
+
+        params = parse_qs(parsed.query)
+        lesson_slug = (params.get("lessonSlug", [""])[0] or "").strip()
+        where_clause = ""
+        values = ()
+        if lesson_slug:
+            if lesson_slug not in LESSONS:
+                self.send_json({"error": "Choose a valid lesson."}, HTTPStatus.BAD_REQUEST)
+                return
+            where_clause = "WHERE lesson_slug = ?"
+            values = (lesson_slug,)
+
+        with connect_db() as conn:
+            rows = db_execute(
+                conn,
+                f"""
+                SELECT id, lesson_slug, title, resource_type, url, description,
+                    created_by, created_at
+                FROM lesson_resources
+                {where_clause}
+                ORDER BY created_at DESC, id DESC
+                """,
+                values,
+            ).fetchall()
+
+        self.send_json(
+            {
+                "resources": [public_resource(row) for row in rows],
+                "lessons": lesson_summaries(),
+            }
+        )
+
+    def handle_admin_create_resource(self):
+        staff = self.current_staff_user()
+        if not staff:
+            self.send_staff_required()
+            return
+
+        try:
+            data = self.read_json_body()
+        except ValueError as exc:
+            self.send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+
+        resource, error = validate_resource_payload(data)
+        if error:
+            self.send_json({"error": error}, HTTPStatus.BAD_REQUEST)
+            return
+
+        created_at = utc_now()
+        with connect_db() as conn:
+            if USE_POSTGRES:
+                cursor = db_execute(
+                    conn,
+                    """
+                    INSERT INTO lesson_resources (
+                        lesson_slug, title, resource_type, url, description,
+                        created_by, created_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    RETURNING id, lesson_slug, title, resource_type, url,
+                        description, created_by, created_at
+                    """,
+                    (
+                        resource["lesson_slug"],
+                        resource["title"],
+                        resource["resource_type"],
+                        resource["url"],
+                        resource["description"],
+                        staff["id"],
+                        created_at,
+                    ),
+                )
+                row = cursor.fetchone()
+            else:
+                cursor = db_execute(
+                    conn,
+                    """
+                    INSERT INTO lesson_resources (
+                        lesson_slug, title, resource_type, url, description,
+                        created_by, created_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        resource["lesson_slug"],
+                        resource["title"],
+                        resource["resource_type"],
+                        resource["url"],
+                        resource["description"],
+                        staff["id"],
+                        created_at,
+                    ),
+                )
+                row = {
+                    "id": cursor.lastrowid,
+                    "lesson_slug": resource["lesson_slug"],
+                    "title": resource["title"],
+                    "resource_type": resource["resource_type"],
+                    "url": resource["url"],
+                    "description": resource["description"],
+                    "created_by": staff["id"],
+                    "created_at": created_at,
+                }
+
+        self.send_json(
+            {"resource": public_resource(row)},
+            status=HTTPStatus.CREATED,
+        )
+
+    def handle_get_resources(self, parsed):
+        if REQUIRE_LOGIN and not self.current_user():
+            self.send_auth_required()
+            return
+
+        params = parse_qs(parsed.query)
+        lesson_slug = params.get("lessonSlug", [LESSON_SLUG])[0] or LESSON_SLUG
+        if lesson_slug not in LESSONS:
+            self.send_json({"error": "Choose a valid lesson."}, HTTPStatus.BAD_REQUEST)
+            return
+
+        student_id, set_cookie = self.current_student_id()
+        if not student_id:
+            self.send_auth_required()
+            return
+
+        access_status = self.is_lesson_unlocked(student_id, lesson_slug)
+        if not access_status["unlocked"]:
+            self.send_lesson_locked(access_status)
+            return
+
+        with connect_db() as conn:
+            rows = db_execute(
+                conn,
+                """
+                SELECT id, lesson_slug, title, resource_type, url, description,
+                    created_by, created_at
+                FROM lesson_resources
+                WHERE lesson_slug = ?
+                ORDER BY created_at DESC, id DESC
+                """,
+                (lesson_slug,),
+            ).fetchall()
+
+        self.send_json(
+            {
+                "lessonSlug": lesson_slug,
+                "resources": [public_resource(row) for row in rows],
+            },
+            student_id=student_id,
+            set_cookie=set_cookie,
+        )
+
     def handle_get_recordings(self, parsed):
         if REQUIRE_LOGIN and not self.current_user():
             self.send_auth_required()
@@ -911,8 +1482,7 @@ class LearningHandler(SimpleHTTPRequestHandler):
 
         params = parse_qs(parsed.query)
         lesson_slug = params.get("lessonSlug", [LESSON_SLUG])[0] or LESSON_SLUG
-        with connect_db() as conn:
-            status = lesson_access_status(conn, student_id, lesson_slug)
+        status = self.is_lesson_unlocked(student_id, lesson_slug)
 
         self.send_json(
             status,

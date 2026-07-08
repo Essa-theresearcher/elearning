@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Week 0 Python Placement Quiz - Digital Bridge Academy</title>
+  <title>Week 0 Python Readiness Quiz - Digital Bridge Academy</title>
   <style>
     :root {
       --navy: #132a4c;
@@ -187,9 +187,9 @@
 <body>
   <div class="wrap">
     <section class="heading">
-      <span class="lesson-tag">Week 0 Python Placement Quiz</span>
-      <h1>Intermediate Python placement quiz</h1>
-      <p>Plan about 45 minutes. Answer every question, then review the category breakdown before submitting the coding review. This checks whether the student is really ready for the intermediate track.</p>
+      <span class="lesson-tag">Week 0 Python Readiness Quiz</span>
+      <h1>Intermediate Python readiness quiz</h1>
+      <p>Plan about 45 minutes. Answer every question, then review the category breakdown before submitting the coding review. This checks the Python skills you need for the intermediate track.</p>
     </section>
 
     <form id="quizForm" class="quiz"></form>
@@ -371,7 +371,7 @@
       },
       {
         category: "Errors",
-        prompt: "What should a student look at first in a Python traceback?",
+        prompt: "What should you look at first in a Python traceback?",
         choices: [
           "The line number and final error type/message.",
           "Only the first word of the file name.",
@@ -393,10 +393,10 @@
       },
       {
         category: "Reasoning",
-        prompt: "A student copies code that works but cannot explain variables, branches, or function returns. What is the best placement decision?",
+        prompt: "Someone copies code that works but cannot explain variables, branches, or function returns. What is the best next step?",
         choices: [
-          "They may need foundations before the intermediate track.",
-          "They are automatically intermediate.",
+          "Review foundations before the intermediate track.",
+          "Move forward automatically.",
           "Skip all assessments.",
           "Move directly to advanced OOP."
         ],
@@ -487,7 +487,7 @@
 
       const message = document.createElement("p");
       message.textContent = ready
-        ? "Good signal. Use the coding review to confirm that the student can apply these ideas."
+        ? "Good signal. Use the coding review to show that you can apply these ideas."
         : "Review needed. The coding review will show whether the gaps are vocabulary gaps or application gaps.";
       result.appendChild(message);
 
