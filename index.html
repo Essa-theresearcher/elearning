@@ -308,6 +308,27 @@
       user-select: none;
     }
 
+    body.lesson-locked .layout {
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .lesson-lock-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding-left: 20px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .lesson-lock-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
     .layout {
       display: grid;
       grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
@@ -359,7 +380,7 @@
 
     .course-links {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
       margin-top: 14px;
     }
@@ -1101,6 +1122,21 @@
     </div>
   </div>
 
+  <div class="auth-overlay" id="lessonLockOverlay" hidden>
+    <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="lessonLockTitle">
+      <div class="auth-form">
+        <span class="eyebrow">Lesson locked</span>
+        <h2 id="lessonLockTitle">Finish Week 1 first</h2>
+        <p class="auth-copy" id="lessonLockMessage">Lesson 1 unlocks after the Week 1 readiness intensive is complete.</p>
+        <ul class="lesson-lock-list" id="lessonLockList"></ul>
+        <div class="lesson-lock-actions">
+          <a class="primary-link" href="prework.html">Open Week 1</a>
+          <button class="secondary-link" id="refreshAccessButton" type="button">Check again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <header class="topbar">
     <div class="topbar-inner">
       <a class="brand-lockup" href="#welcome" aria-label="Digital Bridge Academy lesson home">
@@ -1132,6 +1168,7 @@
         <h1>How Computers Actually Work</h1>
         <div class="sidebar-meta">2-hour session with notes, video, activity, quiz, and wrap-up</div>
         <div class="course-links" aria-label="Course lessons">
+          <a class="course-link" href="prework.html">Week 1</a>
           <a class="course-link is-current" href="index.html">Lesson 1</a>
           <a class="course-link" href="lesson2.html">Lesson 2</a>
         </div>
@@ -1535,10 +1572,23 @@ print(a)  # [1, 2, 3, 4]</code></pre>
       const registerMessage = document.getElementById("registerMessage");
       const showRegisterButton = document.getElementById("showRegister");
       const showLoginButton = document.getElementById("showLogin");
+      const lessonLockOverlay = document.getElementById("lessonLockOverlay");
+      const lessonLockList = document.getElementById("lessonLockList");
+      const lessonLockMessage = document.getElementById("lessonLockMessage");
+      const refreshAccessButton = document.getElementById("refreshAccessButton");
       const lessonSlug = "cs-fundamentals-lesson-1";
       const baseStorageKey = "dba-lesson-1-complete";
       const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
       const total = sections.length;
+      const sectionLabels = {
+        welcome: "Welcome",
+        reading: "Reading",
+        quiz: "Diagnostic quiz",
+        project: "Mini project",
+        wrapup: "Decision",
+        video: "Video recordings",
+        activity: "Class activity"
+      };
 
       let currentUser = null;
       let storageKey = baseStorageKey + "-guest";
@@ -1591,6 +1641,91 @@ print(a)  # [1, 2, 3, 4]</code></pre>
         renderProgress();
       }
 
+      function unlockLesson() {
+        document.body.classList.remove("lesson-locked");
+        lessonLockOverlay.hidden = true;
+      }
+
+      function lockLesson(data) {
+        const prerequisite = data.prerequisite || {};
+        const title = prerequisite.title || "Week 1";
+        const missingSections = prerequisite.missingSections || [];
+        const items = [];
+
+        document.body.classList.add("lesson-locked");
+        lessonLockOverlay.hidden = false;
+        lessonLockMessage.textContent = "Lesson 1 unlocks after " + title + " is complete, including the quiz and mini project.";
+
+        missingSections.forEach(function (section) {
+          items.push("Complete " + (sectionLabels[section] || section) + ".");
+        });
+        if (!prerequisite.quizCompleted) {
+          items.push("Submit the Week 1 diagnostic quiz.");
+        }
+        if (prerequisite.requiresActivitySubmission && !prerequisite.activityCompleted) {
+          items.push("Submit the Week 1 mini project.");
+        }
+        if (!items.length) {
+          items.push("Return to Week 1 and finish the remaining requirements.");
+        }
+
+        lessonLockList.innerHTML = "";
+        items.forEach(function (item) {
+          const listItem = document.createElement("li");
+          listItem.textContent = item;
+          lessonLockList.appendChild(listItem);
+        });
+      }
+
+      function checkLessonAccess() {
+        if (!canUseBackend || !currentUser) {
+          unlockLesson();
+          return Promise.resolve(true);
+        }
+
+        return fetch("/api/lesson-access?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(function (response) {
+            if (response.status === 401) {
+              renderAuth(null, true);
+              throw new Error("Login required");
+            }
+            if (!response.ok) throw new Error("Could not check lesson access");
+            return response.json();
+          })
+          .then(function (data) {
+            if (data.unlocked) {
+              unlockLesson();
+              return true;
+            }
+            lockLesson(data);
+            return false;
+          })
+          .catch(function () {
+            if (currentUser) {
+              lockLesson({
+                prerequisite: {
+                  title: "Week 1",
+                  missingSections: [],
+                  quizCompleted: false,
+                  requiresActivitySubmission: true,
+                  activityCompleted: false
+                }
+              });
+            }
+            return false;
+          });
+      }
+
+      function loadUnlockedLessonData() {
+        return checkLessonAccess().then(function (unlocked) {
+          if (unlocked) {
+            loadProgressFromBackend();
+            loadRecordingsFromBackend();
+          }
+          return unlocked;
+        });
+      }
+
       function loadAuth() {
         if (!canUseBackend) {
           renderAuth(null, false);
@@ -1602,8 +1737,7 @@ print(a)  # [1, 2, 3, 4]</code></pre>
           .then(function (data) {
             renderAuth(data.user, data.allowSignup);
             if (data.authenticated) {
-              loadProgressFromBackend();
-              loadRecordingsFromBackend();
+              loadUnlockedLessonData();
             }
           })
           .catch(function () {
@@ -1617,7 +1751,7 @@ print(a)  # [1, 2, 3, 4]</code></pre>
       }
 
       function saveProgressToBackend() {
-        if (!canUseBackend) return;
+        if (!canUseBackend || document.body.classList.contains("lesson-locked")) return;
 
         fetch("/api/progress/lesson", {
           method: "POST",
@@ -1629,6 +1763,12 @@ print(a)  # [1, 2, 3, 4]</code></pre>
         }).then(function (response) {
           if (response.status === 401) {
             renderAuth(null, true);
+            return;
+          }
+          if (response.status === 423) {
+            response.json().then(lockLesson).catch(function () {
+              checkLessonAccess();
+            });
           }
         }).catch(function () {
           // Keep local progress if the backend is temporarily unavailable.
@@ -1646,6 +1786,12 @@ print(a)  # [1, 2, 3, 4]</code></pre>
             if (response.status === 401) {
               renderAuth(null, true);
               throw new Error("Login required");
+            }
+            if (response.status === 423) {
+              response.json().then(lockLesson).catch(function () {
+                checkLessonAccess();
+              });
+              throw new Error("Lesson locked");
             }
             if (!response.ok) throw new Error("Could not load progress");
             return response.json();
@@ -1682,6 +1828,7 @@ print(a)  # [1, 2, 3, 4]</code></pre>
 
       completeButtons.forEach(function (button) {
         button.addEventListener("click", function () {
+          if (document.body.classList.contains("lesson-locked")) return;
           const id = button.dataset.complete;
           if (completed.has(id)) {
             completed.delete(id);
@@ -1719,8 +1866,7 @@ print(a)  # [1, 2, 3, 4]</code></pre>
         }).then(function (data) {
           loginForm.reset();
           renderAuth(data.user, data.allowSignup);
-          loadProgressFromBackend();
-          loadRecordingsFromBackend();
+          loadUnlockedLessonData();
         }).catch(function (error) {
           setAuthMessage(loginMessage, error.message);
         });
@@ -1737,8 +1883,7 @@ print(a)  # [1, 2, 3, 4]</code></pre>
         }).then(function (data) {
           registerForm.reset();
           renderAuth(data.user, data.allowSignup);
-          loadProgressFromBackend();
-          loadRecordingsFromBackend();
+          loadUnlockedLessonData();
         }).catch(function (error) {
           setAuthMessage(registerMessage, error.message);
         });
@@ -1746,12 +1891,17 @@ print(a)  # [1, 2, 3, 4]</code></pre>
 
       logoutButton.addEventListener("click", function () {
         postJson("/api/auth/logout", {}).finally(function () {
+          unlockLesson();
           renderAuth(null, true);
           loginForm.hidden = false;
           registerForm.hidden = true;
           clearRecordings();
           document.getElementById("loginUsername").focus();
         });
+      });
+
+      refreshAccessButton.addEventListener("click", function () {
+        loadUnlockedLessonData();
       });
 
       const observer = new IntersectionObserver(function (entries) {
@@ -1865,6 +2015,12 @@ print(a)  # [1, 2, 3, 4]</code></pre>
 
         fetch("/api/recordings?lessonSlug=" + encodeURIComponent(lessonSlug))
           .then(function (response) {
+            if (response.status === 423) {
+              response.json().then(lockLesson).catch(function () {
+                checkLessonAccess();
+              });
+              throw new Error("Lesson locked");
+            }
             if (!response.ok) throw new Error("Could not load recordings");
             return response.json();
           })

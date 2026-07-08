@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 1 - Intermediate Readiness Intensive</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --navy: #132a4c;
+      --navy-dark: #0b1b33;
+      --gold: #c9a227;
+      --paper: #ffffff;
+      --canvas: #f4f5f0;
+      --ivory: #faf6ec;
+      --line: #ded9c9;
+      --line-strong: #c8bea3;
+      --ink: #202633;
+      --muted: #66707d;
+      --teal: #206d6f;
+      --teal-soft: #e2f0ec;
+      --blue: #436a9f;
+      --rose: #9b594c;
+      --shadow: 0 16px 34px rgba(19, 42, 76, 0.08);
+      --radius: 8px;
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    code {
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      background: #eef1f3;
+      color: var(--navy-dark);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.92em;
+      white-space: nowrap;
+    }
+
+    pre {
+      overflow: auto;
+      margin: 16px 0 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      background: #f8faf9;
+      color: var(--navy-dark);
+    }
+
+    pre code {
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      color: inherit;
+      font-size: 13px;
+      white-space: pre;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(19, 42, 76, 0.04);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 14px 24px;
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--navy);
+      color: var(--gold);
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-text strong {
+      display: block;
+      color: var(--navy-dark);
+      font-size: 14px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-text span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 230px;
+    }
+
+    .progress-copy {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      position: relative;
+      flex: 1;
+      height: 8px;
+      min-width: 120px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #e9e3d2;
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--teal);
+      transition: width 180ms ease;
+    }
+
+    .topbar-actions,
+    .account-menu {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .account-name {
+      max-width: 180px;
+      overflow: hidden;
+      color: var(--navy-dark);
+      font-size: 13px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .logout-btn {
+      border: 0;
+      padding: 6px 0;
+      background: transparent;
+      color: var(--teal);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      white-space: nowrap;
+    }
+
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(11, 27, 51, 0.72);
+    }
+
+    .auth-panel {
+      width: min(440px, 100%);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.24);
+      overflow: hidden;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 16px;
+      padding: 28px;
+    }
+
+    .auth-form h2 {
+      margin: 0;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .auth-copy {
+      margin: -6px 0 4px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .auth-field {
+      display: grid;
+      gap: 7px;
+      color: var(--navy-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .auth-field input {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .auth-submit {
+      min-height: 44px;
+      border: 0;
+      border-radius: 6px;
+      background: var(--navy);
+      color: var(--paper);
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .auth-error {
+      min-height: 20px;
+      margin: 0;
+      color: #a33b31;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    body.auth-locked .topbar,
+    body.auth-locked .layout {
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+      gap: 28px;
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 28px 24px 56px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 82px;
+      align-self: start;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 24px rgba(19, 42, 76, 0.05);
+      overflow: hidden;
+    }
+
+    .sidebar-head {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--ivory);
+    }
+
+    .eyebrow {
+      display: block;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .sidebar h1 {
+      margin: 6px 0 8px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .sidebar-meta {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .course-links {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .course-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 7px 9px;
+      background: var(--paper);
+      color: var(--navy);
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .course-link:hover,
+    .course-link.is-current {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+      color: var(--navy-dark);
+    }
+
+    .lesson-nav {
+      display: grid;
+      padding: 8px;
+    }
+
+    .lesson-nav a {
+      display: grid;
+      grid-template-columns: 22px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 10px;
+      border-radius: 7px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .lesson-nav a:hover,
+    .lesson-nav a.active {
+      background: var(--teal-soft);
+      color: var(--navy-dark);
+    }
+
+    .nav-dot {
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--line-strong);
+      border-radius: 50%;
+      background: var(--paper);
+    }
+
+    .lesson-nav a.done .nav-dot {
+      border-color: var(--teal);
+      background: var(--teal);
+      box-shadow: inset 0 0 0 3px var(--paper);
+    }
+
+    .duration {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .main {
+      min-width: 0;
+    }
+
+    .lesson-section {
+      margin-bottom: 26px;
+      scroll-margin-top: 94px;
+    }
+
+    .section-surface {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 28px 30px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-title {
+      max-width: 780px;
+    }
+
+    .section-title h2 {
+      margin: 4px 0 8px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .section-body {
+      padding: 26px 30px 30px;
+    }
+
+    .complete-btn,
+    .primary-link,
+    .secondary-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .complete-btn,
+    .primary-link {
+      background: var(--navy);
+      color: var(--paper);
+    }
+
+    .complete-btn.is-done {
+      background: var(--teal);
+    }
+
+    .secondary-link {
+      border-color: var(--line-strong);
+      background: var(--paper);
+      color: var(--navy);
+    }
+
+    .intro-band {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(240px, 0.9fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .intro-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      background: var(--ivory);
+    }
+
+    .intro-panel h3,
+    .reading-block h3,
+    .project-rubric h3 {
+      margin: 0 0 10px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .week-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .day-tile {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: #fbfcfb;
+    }
+
+    .day-tile strong {
+      display: block;
+      color: var(--teal);
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .day-tile span {
+      display: block;
+      margin-top: 6px;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .reading-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .reading-block {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+    }
+
+    .reading-block:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .reading-block p,
+    .reading-block li,
+    .project-rubric li {
+      color: var(--ink);
+      font-size: 15px;
+    }
+
+    .callout {
+      margin: 18px 0;
+      border-left: 4px solid var(--teal);
+      padding: 14px 16px;
+      background: var(--teal-soft);
+      color: var(--navy-dark);
+    }
+
+    .embedded-frame {
+      width: 100%;
+      min-height: 760px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+    }
+
+    .project-frame {
+      min-height: 900px;
+    }
+
+    .next-lesson {
+      margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      background: var(--ivory);
+    }
+
+    @media (max-width: 980px) {
+      .layout,
+      .intro-band {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .week-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar-inner,
+      .topbar-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .progress-wrap {
+        width: 100%;
+      }
+
+      .layout {
+        padding: 18px 14px 44px;
+      }
+
+      .section-header {
+        flex-direction: column;
+        padding: 22px 20px 16px;
+      }
+
+      .section-body {
+        padding: 20px;
+      }
+
+      .course-links,
+      .week-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="auth-locked">
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <form class="auth-form" id="loginForm">
+        <span class="eyebrow">Course access</span>
+        <h2 id="authTitle">Sign in</h2>
+        <p class="auth-copy">Use the account your teacher gave you.</p>
+        <label class="auth-field">
+          Username
+          <input id="loginUsername" name="username" autocomplete="username" required>
+        </label>
+        <label class="auth-field">
+          Password
+          <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <button class="auth-submit" type="submit">Sign in</button>
+        <p class="auth-error" id="loginMessage" role="alert"></p>
+      </form>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand-lockup" href="#welcome" aria-label="Digital Bridge Academy readiness home">
+        <span class="brand-mark">DB</span>
+        <span class="brand-text">
+          <strong>Digital Bridge Academy</strong>
+          <span>Intermediate Readiness Week</span>
+        </span>
+      </a>
+      <div class="topbar-actions">
+        <div class="progress-wrap" aria-label="Week 1 progress">
+          <span class="progress-copy" id="progressCopy">0 of 5 complete</span>
+          <span class="progress-track" aria-hidden="true">
+            <span class="progress-fill" id="progressFill"></span>
+          </span>
+        </div>
+        <div class="account-menu" id="accountMenu" hidden>
+          <span class="account-name" id="accountName"></span>
+          <button class="logout-btn" id="logoutButton" type="button">Log out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Week 1 contents">
+      <div class="sidebar-head">
+        <span class="eyebrow">Week 1</span>
+        <h1>Intermediate Readiness Intensive</h1>
+        <div class="sidebar-meta">A detailed 6-hour readiness session before Lesson 1</div>
+        <div class="course-links" aria-label="Course lessons">
+          <a class="course-link is-current" href="prework.html">Week 1</a>
+          <a class="course-link" href="index.html">Lesson 1</a>
+          <a class="course-link" href="lesson2.html">Lesson 2</a>
+        </div>
+      </div>
+      <nav class="lesson-nav" id="lessonNav">
+        <a href="#welcome" data-section="welcome">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Welcome</span>
+          <span class="duration">20 min</span>
+        </a>
+        <a href="#reading" data-section="reading">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Reading</span>
+          <span class="duration">2 hr</span>
+        </a>
+        <a href="#quiz" data-section="quiz">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Diagnostic Quiz</span>
+          <span class="duration">45 min</span>
+        </a>
+        <a href="#project" data-section="project">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Mini Project</span>
+          <span class="duration">2 hr 30</span>
+        </a>
+        <a href="#wrapup" data-section="wrapup">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Decision</span>
+          <span class="duration">25 min</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <section class="lesson-section" id="welcome" data-track-section="welcome">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Start here</span>
+              <h2>Spend six hours proving real readiness</h2>
+              <p>This Week 1 intensive checks whether the student can think and work like an intermediate beginner before entering Lesson 1.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="welcome">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="intro-band">
+              <div>
+                <p>
+                  A student may say they are intermediate, but the useful question is whether they can explain their thinking, debug small problems, use data structures, and ship a small working result without being carried by step-by-step instructions.
+                </p>
+                <p>
+                  This 6-hour readiness intensive is not meant to punish anyone. It helps you place the student correctly. Strong students move into Lesson 1 with confidence. Students with gaps get a clear map of what to review.
+                </p>
+                <div class="callout">
+                  Lesson 1 unlocks only after this Week 1 page is completed, the diagnostic quiz is submitted, and the mini project is submitted.
+                </div>
+              </div>
+              <div class="intro-panel">
+                <h3>What you are looking for</h3>
+                <ul>
+                  <li>Can they explain code instead of only copying it?</li>
+                  <li>Can they use variables, loops, functions, lists, dictionaries, and conditionals?</li>
+                  <li>Can they read an error message and make a reasonable debugging attempt?</li>
+                  <li>Can they organize a tiny project and describe tradeoffs?</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="week-grid" aria-label="Six-hour plan">
+              <div class="day-tile">
+                <strong>Hour 1</strong>
+                <span>Orientation, self-rating, command-line confidence, and course expectations.</span>
+              </div>
+              <div class="day-tile">
+                <strong>Hour 2</strong>
+                <span>Variables, data types, conditionals, lists, dictionaries, and clean naming.</span>
+              </div>
+              <div class="day-tile">
+                <strong>Hour 3</strong>
+                <span>Loops, functions, input-output flow, and small program organization.</span>
+              </div>
+              <div class="day-tile">
+                <strong>Hour 4</strong>
+                <span>Debugging drills, diagnostic quiz, and correction notes.</span>
+              </div>
+              <div class="day-tile">
+                <strong>Hour 5</strong>
+                <span>Build the readiness report mini project with functions and data structures.</span>
+              </div>
+              <div class="day-tile">
+                <strong>Hour 6</strong>
+                <span>Submit the project, write the reflection, and make the placement decision.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="reading" data-track-section="reading">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Reading</span>
+              <h2>The detailed intermediate readiness standard</h2>
+              <p>This is the main 2-hour reading and practice block. It defines what "intermediate" means for this course.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="reading">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="reading-grid">
+              <div class="reading-block">
+                <h3>1. Intermediate means you can reason, not just remember</h3>
+                <p>
+                  In this course, an intermediate student does not need to know every library or every shortcut. They do need to understand how a small program moves from input to processing to output. If they see a block of code, they should be able to say what each part is responsible for.
+                </p>
+                <p>
+                  A useful test is this: can the student change a working example without breaking the whole thing? If the answer is yes, they are probably ready for faster lessons. If every small change feels mysterious, the student needs more practice with fundamentals.
+                </p>
+              </div>
+
+              <div class="reading-block">
+                <h3>2. The baseline toolkit</h3>
+                <p>An intermediate beginner should be comfortable with:</p>
+                <ul>
+                  <li>Variables, strings, numbers, booleans, and basic type conversion.</li>
+                  <li>Conditionals such as <code>if</code>, <code>elif</code>, and <code>else</code>.</li>
+                  <li>Loops over lists, strings, or dictionary items.</li>
+                  <li>Functions that accept inputs, return values, and avoid repeated code.</li>
+                  <li>Lists and dictionaries for organizing related data.</li>
+                  <li>Reading error messages and testing one small fix at a time.</li>
+                </ul>
+              </div>
+
+              <div class="reading-block">
+                <h3>3. Debugging is part of the assessment</h3>
+                <p>
+                  The mini project is allowed to contain mistakes while it is being built. What matters is whether the student can isolate the problem. Good debugging sounds like: "This function receives a list, but I passed a string" or "The loop works, but my condition is too broad."
+                </p>
+                <p>
+                  Weak debugging sounds like: "It does not work" with no attempt to locate where. The course will teach deeper ideas, but the student needs enough patience and structure to investigate small failures.
+                </p>
+              </div>
+
+              <div class="reading-block">
+                <h3>4. What to do with the result</h3>
+                <p>
+                  Use the quiz and project together. A high quiz score with a weak project may mean the student recognizes concepts but cannot apply them yet. A modest quiz score with a strong project may mean the student can build but needs vocabulary review. The project reflection is important because it shows how the student thinks.
+                </p>
+                <pre><code>Readiness decision:
+- Ready: quiz is solid, project runs, explanation is clear.
+- Almost ready: project is incomplete but reasoning is visible.
+- Needs foundations: cannot explain code, no working project, or no debugging evidence.</code></pre>
+              </div>
+
+              <div class="reading-block">
+                <h3>5. Six-hour work plan</h3>
+                <p>
+                  The student should not rush this in ten minutes. The point is to observe stamina, independence, and problem-solving habits. A student who is ready for the course should be able to keep working through a structured technical task for several hours without needing every move dictated.
+                </p>
+                <ul>
+                  <li><strong>20 minutes:</strong> read the welcome, rate confidence, and write down what "intermediate" means to them.</li>
+                  <li><strong>120 minutes:</strong> read the standards, review examples, and write small practice snippets for loops, functions, lists, and dictionaries.</li>
+                  <li><strong>45 minutes:</strong> take the diagnostic quiz, review missed categories, and retake only after noting why each mistake happened.</li>
+                  <li><strong>150 minutes:</strong> build the mini project, test it with at least three different learner profiles, and improve the output.</li>
+                  <li><strong>25 minutes:</strong> submit the reflection and decide whether the evidence says ready, almost ready, or needs foundations.</li>
+                </ul>
+              </div>
+
+              <div class="reading-block">
+                <h3>6. Practice drills before the quiz</h3>
+                <p>Before opening the quiz, the student should complete these short drills in their own editor or notebook:</p>
+                <ul>
+                  <li>Create a dictionary for a learner profile with name, goal, claimed level, and weekly study hours.</li>
+                  <li>Create a list of five skills and loop through it to print one review sentence per skill.</li>
+                  <li>Write a function named <code>readiness_label</code> that accepts a score and returns ready, almost ready, or needs foundations.</li>
+                  <li>Intentionally break the function once, read the error message, and write one sentence explaining the fix.</li>
+                  <li>Explain why a dictionary is better than five separate variables for storing related learner data.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="quiz" data-track-section="quiz">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Diagnostic quiz</span>
+              <h2>Check core programming readiness</h2>
+              <p>The quiz focuses on reasoning, data structures, functions, debugging, and small web concepts.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="quiz">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <iframe class="embedded-frame" src="assets/week0_readiness_quiz.html" title="Week 1 readiness quiz"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="project" data-track-section="project">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Mini project</span>
+              <h2>Build a readiness report tool</h2>
+              <p>The project gives you better evidence than a quiz alone because the student has to organize a working solution.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="project">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <iframe class="embedded-frame project-frame" src="assets/week0_mini_project.html" title="Week 1 mini project"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="wrapup" data-track-section="wrapup">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Decision</span>
+              <h2>Decide the student placement</h2>
+              <p>Use the evidence from the week to decide whether the student should move forward, review basics, or receive a short bridge task.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="wrapup">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="project-rubric">
+              <h3>Placement rubric</h3>
+              <ul>
+                <li><strong>Ready for Lesson 1:</strong> completes the quiz, submits a working project, and can explain choices in plain language.</li>
+                <li><strong>Almost ready:</strong> understands most ideas but needs one focused review on functions, loops, dictionaries, or debugging.</li>
+                <li><strong>Needs foundations:</strong> cannot submit a working attempt or cannot explain what the code is doing.</li>
+              </ul>
+            </div>
+            <div class="next-lesson">
+              <h3>Next step</h3>
+              <p>After the reading, quiz, mini project, and wrap-up are complete, Lesson 1 will unlock for this student.</p>
+              <p><a class="secondary-link" href="index.html">Open Lesson 1</a></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const sections = Array.from(document.querySelectorAll("[data-track-section]"));
+      const navLinks = Array.from(document.querySelectorAll("[data-section]"));
+      const completeButtons = Array.from(document.querySelectorAll("[data-complete]"));
+      const progressCopy = document.getElementById("progressCopy");
+      const progressFill = document.getElementById("progressFill");
+      const authOverlay = document.getElementById("authOverlay");
+      const accountMenu = document.getElementById("accountMenu");
+      const accountName = document.getElementById("accountName");
+      const logoutButton = document.getElementById("logoutButton");
+      const loginForm = document.getElementById("loginForm");
+      const loginMessage = document.getElementById("loginMessage");
+      const lessonSlug = "intermediate-readiness-week";
+      const baseStorageKey = "dba-week-1-complete";
+      const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
+      const total = sections.length;
+
+      let currentUser = null;
+      let storageKey = baseStorageKey + "-guest";
+      let completed = readLocalProgress();
+
+      function readLocalProgress() {
+        try {
+          return new Set(JSON.parse(localStorage.getItem(storageKey) || "[]"));
+        } catch (_) {
+          return new Set();
+        }
+      }
+
+      function switchLocalProgress(user) {
+        storageKey = baseStorageKey + "-" + (user ? user.id : "guest");
+        completed = readLocalProgress();
+      }
+
+      function setAuthMessage(message) {
+        loginMessage.textContent = message || "";
+      }
+
+      function parseJsonResponse(response) {
+        return response.json().catch(function () {
+          return {};
+        }).then(function (data) {
+          if (!response.ok) {
+            throw new Error(data.error || "Request failed.");
+          }
+          return data;
+        });
+      }
+
+      function postJson(url, payload) {
+        return fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload || {})
+        }).then(parseJsonResponse);
+      }
+
+      function renderAuth(user) {
+        currentUser = user || null;
+        switchLocalProgress(currentUser);
+        document.body.classList.toggle("auth-locked", !currentUser && canUseBackend);
+        authOverlay.hidden = Boolean(currentUser) || !canUseBackend;
+        accountMenu.hidden = !currentUser;
+        accountName.textContent = currentUser ? currentUser.displayName || currentUser.username : "";
+        renderProgress();
+      }
+
+      function loadAuth() {
+        if (!canUseBackend) {
+          renderAuth(null);
+          return;
+        }
+
+        fetch("/api/auth/me")
+          .then(parseJsonResponse)
+          .then(function (data) {
+            renderAuth(data.user);
+            if (data.authenticated) {
+              loadProgressFromBackend();
+            }
+          })
+          .catch(function () {
+            renderAuth(null);
+          });
+      }
+
+      function saveProgress() {
+        localStorage.setItem(storageKey, JSON.stringify(Array.from(completed)));
+        saveProgressToBackend();
+      }
+
+      function saveProgressToBackend() {
+        if (!canUseBackend) return;
+
+        fetch("/api/progress/lesson", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lessonSlug: lessonSlug,
+            completedSections: Array.from(completed)
+          })
+        }).then(function (response) {
+          if (response.status === 401) {
+            renderAuth(null);
+          }
+        }).catch(function () {
+          // Keep local progress if the backend is temporarily unavailable.
+        });
+      }
+
+      function loadProgressFromBackend() {
+        if (!canUseBackend) {
+          renderProgress();
+          return;
+        }
+
+        fetch("/api/progress/lesson?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(function (response) {
+            if (response.status === 401) {
+              renderAuth(null);
+              throw new Error("Login required");
+            }
+            if (!response.ok) throw new Error("Could not load progress");
+            return response.json();
+          })
+          .then(function (data) {
+            if (Array.isArray(data.completedSections)) {
+              completed = new Set(data.completedSections);
+              localStorage.setItem(storageKey, JSON.stringify(Array.from(completed)));
+              renderProgress();
+            }
+          })
+          .catch(function () {
+            renderProgress();
+          });
+      }
+
+      function renderProgress() {
+        const count = completed.size;
+        progressCopy.textContent = count + " of " + total + " complete";
+        progressFill.style.width = Math.round((count / total) * 100) + "%";
+
+        navLinks.forEach(function (link) {
+          const id = link.dataset.section;
+          link.classList.toggle("done", completed.has(id));
+        });
+
+        completeButtons.forEach(function (button) {
+          const id = button.dataset.complete;
+          const isDone = completed.has(id);
+          button.classList.toggle("is-done", isDone);
+          button.textContent = isDone ? "Completed" : "Mark complete";
+        });
+      }
+
+      completeButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          const id = button.dataset.complete;
+          if (completed.has(id)) {
+            completed.delete(id);
+          } else {
+            completed.add(id);
+          }
+          saveProgress();
+          renderProgress();
+        });
+      });
+
+      loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setAuthMessage("");
+
+        postJson("/api/auth/login", {
+          username: loginForm.elements.username.value,
+          password: loginForm.elements.password.value
+        }).then(function (data) {
+          loginForm.reset();
+          renderAuth(data.user);
+          loadProgressFromBackend();
+        }).catch(function (error) {
+          setAuthMessage(error.message);
+        });
+      });
+
+      logoutButton.addEventListener("click", function () {
+        postJson("/api/auth/logout", {}).finally(function () {
+          renderAuth(null);
+          document.getElementById("loginUsername").focus();
+        });
+      });
+
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          const id = entry.target.id;
+          navLinks.forEach(function (link) {
+            link.classList.toggle("active", link.dataset.section === id);
+          });
+        });
+      }, {
+        rootMargin: "-30% 0px -58% 0px",
+        threshold: 0.01
+      });
+
+      sections.forEach(function (section) {
+        observer.observe(section);
+      });
+
+      function resizeEmbeddedFrame(frame) {
+        try {
+          const doc = frame.contentDocument;
+          if (!doc || !doc.body) return;
+          const height = Math.max(
+            doc.body.scrollHeight,
+            doc.documentElement ? doc.documentElement.scrollHeight : 0
+          );
+          if (height > 0) {
+            frame.style.height = height + 24 + "px";
+          }
+        } catch (_) {
+          // Keep the CSS fallback height if the browser blocks iframe measurement.
+        }
+      }
+
+      document.querySelectorAll(".embedded-frame").forEach(function (frame) {
+        frame.addEventListener("load", function () {
+          resizeEmbeddedFrame(frame);
+        });
+      });
+
+      renderProgress();
+      loadAuth();
+    })();
+  </script>
+</body>
+</html>

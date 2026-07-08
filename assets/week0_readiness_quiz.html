@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 1 Readiness Quiz - Digital Bridge Academy</title>
+  <style>
+    :root {
+      --navy: #132a4c;
+      --navy-dark: #0b1b33;
+      --gold: #c9a227;
+      --paper: #ffffff;
+      --canvas: #f8faf7;
+      --line: #ded9c9;
+      --ink: #202633;
+      --muted: #66707d;
+      --teal: #206d6f;
+      --teal-soft: #e2f0ec;
+      --rose: #9b594c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .heading {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+      background: var(--paper);
+    }
+
+    .lesson-tag {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2 {
+      margin: 6px 0 8px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: 30px;
+      line-height: 1.12;
+    }
+
+    h2 {
+      font-size: 22px;
+    }
+
+    p {
+      color: var(--muted);
+    }
+
+    .quiz {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .question {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      background: var(--paper);
+    }
+
+    .question strong {
+      display: block;
+      color: var(--navy-dark);
+      font-size: 16px;
+    }
+
+    .choice {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 10px;
+      align-items: start;
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .choice:hover {
+      border-color: var(--line);
+      background: #fbfcfb;
+    }
+
+    .choice input {
+      margin-top: 3px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      min-height: 42px;
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 16px;
+      background: var(--navy);
+      color: var(--paper);
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    button.secondary {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--navy);
+    }
+
+    .result {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      background: var(--paper);
+    }
+
+    .result.good {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+    }
+
+    .result.review {
+      border-color: var(--rose);
+      background: #fbefed;
+    }
+
+    .breakdown {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--navy-dark);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 680px) {
+      .wrap {
+        padding: 16px;
+      }
+
+      .breakdown {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="heading">
+      <span class="lesson-tag">Week 1 Diagnostic Quiz</span>
+      <h1>Intermediate readiness quiz</h1>
+      <p>Plan about 45 minutes. Answer every question, then review the category breakdown before building the mini project. This is less about perfection and more about spotting whether the student can reason through common programming situations.</p>
+    </section>
+
+    <form id="quizForm" class="quiz"></form>
+
+    <div class="actions">
+      <button id="submitBtn" type="button">Submit quiz</button>
+      <button class="secondary" id="resetBtn" type="button">Reset answers</button>
+    </div>
+
+    <div class="result" id="result" hidden></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        category: "Variables",
+        prompt: "A variable should be used when you need to:",
+        choices: [
+          "Store a value so the program can use or change it later.",
+          "Make a program run only on the internet.",
+          "Delete all errors from the program.",
+          "Turn text into a database automatically."
+        ],
+        answer: 0
+      },
+      {
+        category: "Types",
+        prompt: "What is the most likely problem with '5' + 2 in many languages?",
+        choices: [
+          "The code may mix a string and a number.",
+          "The number 2 is too small.",
+          "Variables cannot contain digits.",
+          "Strings can only be used inside loops."
+        ],
+        answer: 0
+      },
+      {
+        category: "Conditionals",
+        prompt: "When should an if/else statement be used?",
+        choices: [
+          "When the program must choose between different paths.",
+          "Only when the program is finished.",
+          "Only when writing HTML.",
+          "When every line must run at the same time."
+        ],
+        answer: 0
+      },
+      {
+        category: "Loops",
+        prompt: "A loop is most useful when:",
+        choices: [
+          "The same kind of work must happen for many items.",
+          "A program should stop forever.",
+          "A variable should never change.",
+          "A file must become a web page."
+        ],
+        answer: 0
+      },
+      {
+        category: "Functions",
+        prompt: "The best reason to create a function is to:",
+        choices: [
+          "Group a reusable piece of logic behind a clear name.",
+          "Hide code so nobody can run it.",
+          "Make every variable global.",
+          "Avoid using return values."
+        ],
+        answer: 0
+      },
+      {
+        category: "Functions",
+        prompt: "What does a return value do?",
+        choices: [
+          "It sends a result back to the code that called the function.",
+          "It prints every variable automatically.",
+          "It starts a new project folder.",
+          "It deletes the function after it runs."
+        ],
+        answer: 0
+      },
+      {
+        category: "Data structures",
+        prompt: "Which structure is best for storing a person's profile with keys like name, age, and skillLevel?",
+        choices: [
+          "A dictionary or object.",
+          "A single boolean.",
+          "A random error message.",
+          "A loop without a body."
+        ],
+        answer: 0
+      },
+      {
+        category: "Data structures",
+        prompt: "If you need to keep an ordered group of tasks, which structure is usually a good fit?",
+        choices: [
+          "A list or array.",
+          "A single number.",
+          "A password field.",
+          "A CSS color."
+        ],
+        answer: 0
+      },
+      {
+        category: "Debugging",
+        prompt: "What is the strongest first debugging move?",
+        choices: [
+          "Read the error message and identify the line or operation that failed.",
+          "Rewrite the entire program immediately.",
+          "Ignore the error if the page looks nice.",
+          "Add more files until the error disappears."
+        ],
+        answer: 0
+      },
+      {
+        category: "Debugging",
+        prompt: "A function expects a list but receives a string. What kind of issue is this?",
+        choices: [
+          "A data type or input-shape mismatch.",
+          "A styling issue.",
+          "A network timeout only.",
+          "A password security feature."
+        ],
+        answer: 0
+      },
+      {
+        category: "Program design",
+        prompt: "A small program should usually be built by:",
+        choices: [
+          "Separating input, processing, and output into understandable steps.",
+          "Writing one long line of code.",
+          "Avoiding tests until the final course.",
+          "Putting every value directly inside a print statement."
+        ],
+        answer: 0
+      },
+      {
+        category: "Program design",
+        prompt: "Why is naming important in code?",
+        choices: [
+          "Good names explain the purpose of values and functions.",
+          "Names make code impossible to change.",
+          "Names replace the need for logic.",
+          "Names only matter in design files."
+        ],
+        answer: 0
+      },
+      {
+        category: "Files",
+        prompt: "What is a project folder for?",
+        choices: [
+          "Keeping related code, assets, and notes organized together.",
+          "Making the computer faster by itself.",
+          "Preventing a program from running.",
+          "Replacing all variables."
+        ],
+        answer: 0
+      },
+      {
+        category: "Command line",
+        prompt: "What does changing directories in a terminal help you do?",
+        choices: [
+          "Run commands from the correct project location.",
+          "Change the website's font.",
+          "Turn a list into a dictionary.",
+          "Submit a quiz automatically."
+        ],
+        answer: 0
+      },
+      {
+        category: "Web basics",
+        prompt: "What is an API often used for?",
+        choices: [
+          "Letting software send or receive structured data.",
+          "Making code private by default.",
+          "Replacing all databases.",
+          "Only changing button colors."
+        ],
+        answer: 0
+      },
+      {
+        category: "Web basics",
+        prompt: "When a browser sends a request and receives a response, what is happening?",
+        choices: [
+          "Client-server communication.",
+          "A variable declaration only.",
+          "A local loop inside CSS.",
+          "A password reset every time."
+        ],
+        answer: 0
+      },
+      {
+        category: "Git",
+        prompt: "Why do developers use Git?",
+        choices: [
+          "To track versions of code and collaborate safely.",
+          "To make every program run without bugs.",
+          "To turn Python into HTML.",
+          "To remove the need for file names."
+        ],
+        answer: 0
+      },
+      {
+        category: "Reasoning",
+        prompt: "A student copies code that works, then cannot explain any line. What does that show?",
+        choices: [
+          "They may need foundations even if the output looks correct.",
+          "They are definitely advanced.",
+          "The code cannot be assessed.",
+          "The teacher should skip all practice."
+        ],
+        answer: 0
+      }
+    ];
+
+    const form = document.getElementById("quizForm");
+    const result = document.getElementById("result");
+    const submitBtn = document.getElementById("submitBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    function renderQuiz() {
+      form.innerHTML = "";
+      questions.forEach(function (question, index) {
+        const block = document.createElement("section");
+        block.className = "question";
+
+        const prompt = document.createElement("strong");
+        prompt.textContent = index + 1 + ". " + question.prompt;
+        block.appendChild(prompt);
+
+        question.choices.forEach(function (choice, choiceIndex) {
+          const label = document.createElement("label");
+          label.className = "choice";
+
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = "q" + index;
+          input.value = String(choiceIndex);
+
+          const span = document.createElement("span");
+          span.textContent = choice;
+
+          label.appendChild(input);
+          label.appendChild(span);
+          block.appendChild(label);
+        });
+
+        form.appendChild(block);
+      });
+    }
+
+    function gradeQuiz() {
+      let score = 0;
+      const stats = {};
+      questions.forEach(function (question, index) {
+        if (!stats[question.category]) {
+          stats[question.category] = { correct: 0, total: 0 };
+        }
+        stats[question.category].total += 1;
+
+        const selected = form.querySelector("input[name='q" + index + "']:checked");
+        const selectedIndex = selected ? Number(selected.value) : -1;
+        if (selectedIndex === question.answer) {
+          score += 1;
+          stats[question.category].correct += 1;
+        }
+      });
+      return { score: score, stats: stats };
+    }
+
+    function saveQuiz(score, stats) {
+      fetch("/api/progress/quiz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lessonSlug: "intermediate-readiness-week",
+          score: score,
+          totalQuestions: questions.length,
+          categoryBreakdown: stats
+        })
+      }).catch(function () {
+        // The quiz still works if the file is opened without the backend.
+      });
+    }
+
+    function showResult(score, stats) {
+      const pct = Math.round((score / questions.length) * 100);
+      const ready = pct >= 75;
+      result.hidden = false;
+      result.className = "result " + (ready ? "good" : "review");
+      result.innerHTML = "";
+
+      const title = document.createElement("h2");
+      title.textContent = score + " of " + questions.length + " correct (" + pct + "%)";
+      result.appendChild(title);
+
+      const message = document.createElement("p");
+      message.textContent = ready
+        ? "Good signal. Use the mini project to confirm that the student can apply these ideas."
+        : "Review needed. The mini project will show whether the gaps are vocabulary gaps or application gaps.";
+      result.appendChild(message);
+
+      const breakdown = document.createElement("div");
+      breakdown.className = "breakdown";
+      Object.keys(stats).forEach(function (category) {
+        const item = document.createElement("div");
+        item.className = "stat";
+        item.textContent = category + ": " + stats[category].correct + " / " + stats[category].total;
+        breakdown.appendChild(item);
+      });
+      result.appendChild(breakdown);
+    }
+
+    submitBtn.addEventListener("click", function () {
+      const graded = gradeQuiz();
+      saveQuiz(graded.score, graded.stats);
+      showResult(graded.score, graded.stats);
+      result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+
+    resetBtn.addEventListener("click", function () {
+      form.reset();
+      result.hidden = true;
+    });
+
+    renderQuiz();
+  </script>
+</body>
+</html>

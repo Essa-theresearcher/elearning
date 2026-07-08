@@ -37,10 +37,18 @@ PASSWORD_ITERATIONS = 260_000
 MIN_PASSWORD_LENGTH = 8
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v", ".webm", ".ogg"}
 LESSONS = {
+    "intermediate-readiness-week": {
+        "title": "Week 1 Intermediate Readiness Intensive",
+        "section_ids": ["welcome", "reading", "quiz", "project", "wrapup"],
+        "prerequisite": None,
+        "requires_activity_submission": True,
+        "video_dir": os.environ.get("WEEK0_VIDEO_DIR", "assets/videos/week0"),
+        "recording_segments": [],
+    },
     "cs-fundamentals-lesson-1": {
         "title": "How Computers Actually Work",
         "section_ids": ["welcome", "video", "reading", "activity", "quiz", "wrapup"],
-        "prerequisite": None,
+        "prerequisite": "intermediate-readiness-week",
         "video_dir": os.environ.get("LESSON1_VIDEO_DIR", "assets/videos/lesson1"),
         "recording_segments": [
             {
@@ -332,7 +340,20 @@ def lesson_access_status(conn, student_id, lesson_slug):
         (student_id, prerequisite_slug),
     ).fetchone()["count"]
     quiz_completed = quiz_count > 0
-    unlocked = not missing_sections and quiz_completed
+    requires_activity_submission = prerequisite.get("requires_activity_submission", False)
+    activity_count = 0
+    if requires_activity_submission:
+        activity_count = db_execute(
+            conn,
+            """
+            SELECT COUNT(*) AS count
+            FROM activity_submissions
+            WHERE student_id = ? AND lesson_slug = ?
+            """,
+            (student_id, prerequisite_slug),
+        ).fetchone()["count"]
+    activity_completed = not requires_activity_submission or activity_count > 0
+    unlocked = not missing_sections and quiz_completed and activity_completed
 
     return {
         "lessonSlug": lesson_slug,
@@ -345,6 +366,9 @@ def lesson_access_status(conn, student_id, lesson_slug):
             "missingSections": missing_sections,
             "quizCompleted": quiz_completed,
             "quizResultCount": quiz_count,
+            "activityCompleted": activity_completed,
+            "activitySubmissionCount": activity_count,
+            "requiresActivitySubmission": requires_activity_submission,
             "updatedAt": updated_at,
         },
     }
@@ -535,7 +559,7 @@ class LearningHandler(SimpleHTTPRequestHandler):
         parsed = urlparse(path)
         request_path = parsed.path
         if request_path == "/":
-            request_path = "/index.html"
+            request_path = "/prework.html"
 
         relative = Path(request_path.lstrip("/"))
         target = (ROOT / relative).resolve()

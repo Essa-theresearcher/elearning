@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 1 Mini Project - Digital Bridge Academy</title>
+  <style>
+    :root {
+      --navy: #132a4c;
+      --navy-dark: #0b1b33;
+      --gold: #c9a227;
+      --paper: #ffffff;
+      --canvas: #f8faf7;
+      --line: #ded9c9;
+      --line-strong: #c8bea3;
+      --ink: #202633;
+      --muted: #66707d;
+      --teal: #206d6f;
+      --teal-soft: #e2f0ec;
+      --rose: #9b594c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+      background: var(--paper);
+    }
+
+    .lesson-tag {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin: 6px 0 8px;
+      font-size: 30px;
+      line-height: 1.12;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    p,
+    li {
+      color: var(--ink);
+      font-size: 15px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .rubric {
+      display: grid;
+      gap: 12px;
+    }
+
+    .rubric div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcfb;
+    }
+
+    code {
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      background: #eef1f3;
+      color: var(--navy-dark);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.92em;
+      white-space: nowrap;
+    }
+
+    pre {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #f8faf9;
+      color: var(--navy-dark);
+    }
+
+    pre code {
+      padding: 0;
+      background: transparent;
+      white-space: pre;
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--navy-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: var(--paper);
+      color: var(--ink);
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    button {
+      justify-self: start;
+      min-height: 42px;
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 16px;
+      background: var(--navy);
+      color: var(--paper);
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .status {
+      min-height: 22px;
+      color: var(--teal);
+      font-weight: 800;
+    }
+
+    .status.error {
+      color: var(--rose);
+    }
+
+    @media (max-width: 760px) {
+      .wrap {
+        padding: 16px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="panel">
+      <span class="lesson-tag">Week 1 Mini Project</span>
+      <h1>Readiness report tool</h1>
+      <p class="muted">Build a small program that turns a student's skill evidence into a readiness recommendation.</p>
+    </section>
+
+    <div class="grid">
+      <section class="panel">
+        <h2>Project brief</h2>
+        <p>
+          Create a small program called <code>readiness_report</code>. It can be written in Python or JavaScript. The program should store a learner profile, evaluate several skill areas, and print a final recommendation.
+        </p>
+        <p>Your program should include:</p>
+        <ul>
+          <li>A profile with name, goal, claimed level, and available study hours.</li>
+          <li>A list or dictionary of at least five skill areas.</li>
+          <li>At least one function that receives data and returns a useful result.</li>
+          <li>A loop that evaluates all skill areas.</li>
+          <li>A conditional that decides between ready, almost ready, and needs foundations.</li>
+          <li>Clear output that a teacher could read quickly.</li>
+        </ul>
+
+        <h3>Suggested build timeline</h3>
+        <ul>
+          <li><strong>30 minutes:</strong> sketch the profile fields, skill areas, and readiness rules before writing code.</li>
+          <li><strong>45 minutes:</strong> build the first working version with hard-coded sample data.</li>
+          <li><strong>30 minutes:</strong> add a function that calculates an average and another function that returns the placement label.</li>
+          <li><strong>30 minutes:</strong> test the program with three different profiles: ready, almost ready, and needs foundations.</li>
+          <li><strong>30 minutes:</strong> improve the output so a teacher can understand the recommendation quickly.</li>
+          <li><strong>15 minutes:</strong> write the reflection and submit the strongest code sample.</li>
+        </ul>
+
+        <h3>Required evidence</h3>
+        <p>
+          The submission should prove that the student did not only copy a finished answer. It should show design choices, a useful function, a loop, data structure use, and a reflection on one mistake or improvement.
+        </p>
+
+        <h3>Example shape</h3>
+        <pre><code>profile = {
+    "name": "Amina",
+    "claimed_level": "intermediate",
+    "weekly_hours": 8
+}
+
+skills = {
+    "functions": 4,
+    "loops": 3,
+    "debugging": 2,
+    "data_structures": 4,
+    "web_basics": 3
+}
+
+def average_score(skill_scores):
+    total = 0
+    for score in skill_scores.values():
+        total += score
+    return total / len(skill_scores)</code></pre>
+      </section>
+
+      <aside class="panel rubric">
+        <h2>Rubric</h2>
+        <div>
+          <h3>Ready</h3>
+          <p>Program runs, logic is organized, output is readable, and the student can explain the result.</p>
+        </div>
+        <div>
+          <h3>Almost ready</h3>
+          <p>Program partly works and shows real reasoning, but one core idea such as functions or dictionaries needs review.</p>
+        </div>
+        <div>
+          <h3>Needs foundations</h3>
+          <p>No working attempt, no clear logic, no debugging evidence, or no explanation of what the code does.</p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="panel" style="margin-top:18px">
+      <h2>Submit the project</h2>
+      <p class="muted">Paste a link, paste code, and explain the strongest and weakest part of the work.</p>
+
+      <form id="projectForm">
+        <label>
+          Language used
+          <select name="language" required>
+            <option value="">Choose one</option>
+            <option>Python</option>
+            <option>JavaScript</option>
+            <option>Other</option>
+          </select>
+        </label>
+
+        <label>
+          Project link or file location
+          <input name="projectLink" placeholder="GitHub link, Replit link, or file name" required>
+        </label>
+
+        <label>
+          Code sample or main function
+          <textarea name="codeSample" placeholder="Paste the most important part of your code." required></textarea>
+        </label>
+
+        <label>
+          How does your program decide if someone is ready?
+          <textarea name="decisionLogic" required></textarea>
+        </label>
+
+        <label>
+          What was the hardest bug or design choice?
+          <textarea name="reflection" required></textarea>
+        </label>
+
+        <button type="submit">Submit mini project</button>
+        <div class="status" id="status" role="status"></div>
+      </form>
+    </section>
+  </div>
+
+  <script>
+    const form = document.getElementById("projectForm");
+    const status = document.getElementById("status");
+
+    function setStatus(message, isError) {
+      status.textContent = message || "";
+      status.classList.toggle("error", Boolean(isError));
+    }
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      setStatus("Submitting...", false);
+
+      const answers = {
+        language: form.elements.language.value,
+        projectLink: form.elements.projectLink.value.trim(),
+        codeSample: form.elements.codeSample.value.trim(),
+        decisionLogic: form.elements.decisionLogic.value.trim(),
+        reflection: form.elements.reflection.value.trim()
+      };
+
+      fetch("/api/progress/activity", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lessonSlug: "intermediate-readiness-week",
+          answers: answers
+        })
+      }).then(function (response) {
+        if (!response.ok) {
+          throw new Error("Could not save the mini project.");
+        }
+        return response.json();
+      }).then(function () {
+        setStatus("Mini project submitted. Mark the project section complete on the main Week 1 page.", false);
+      }).catch(function (error) {
+        setStatus(error.message, true);
+      });
+    });
+  </script>
+</body>
+</html>

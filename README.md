@@ -14,6 +14,14 @@ Then open:
 http://127.0.0.1:8765/
 ```
 
+## Course Sequence
+
+The homepage opens `prework.html`, which is Week 1: Intermediate Readiness Intensive.
+
+- Week 1 is designed as a detailed 6-hour readiness session with reading, practice drills, a diagnostic quiz, and a mini project.
+- Lesson 1 unlocks after Week 1 sections are complete, the Week 1 quiz is submitted, and the Week 1 mini project is submitted.
+- Lesson 2 unlocks after Lesson 1 sections are complete and the Lesson 1 quiz is submitted.
+
 ## Database
 
 Local development defaults to SQLite and creates:
