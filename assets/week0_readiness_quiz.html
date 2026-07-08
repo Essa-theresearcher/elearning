@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Week 1 Readiness Quiz - Digital Bridge Academy</title>
+  <title>Week 0 Python Placement Quiz - Digital Bridge Academy</title>
   <style>
     :root {
       --navy: #132a4c;
@@ -187,9 +187,9 @@
 <body>
   <div class="wrap">
     <section class="heading">
-      <span class="lesson-tag">Week 1 Diagnostic Quiz</span>
-      <h1>Intermediate readiness quiz</h1>
-      <p>Plan about 45 minutes. Answer every question, then review the category breakdown before building the mini project. This is less about perfection and more about spotting whether the student can reason through common programming situations.</p>
+      <span class="lesson-tag">Week 0 Python Placement Quiz</span>
+      <h1>Intermediate Python placement quiz</h1>
+      <p>Plan about 45 minutes. Answer every question, then review the category breakdown before submitting the coding review. This checks whether the student is really ready for the intermediate track.</p>
     </section>
 
     <form id="quizForm" class="quiz"></form>
@@ -205,200 +205,200 @@
   <script>
     const questions = [
       {
-        category: "Variables",
-        prompt: "A variable should be used when you need to:",
+        category: "Variables & types",
+        prompt: "What is the value of result after this code?\n\nx = \"5\"\ny = 2\nresult = x * y",
         choices: [
-          "Store a value so the program can use or change it later.",
-          "Make a program run only on the internet.",
-          "Delete all errors from the program.",
-          "Turn text into a database automatically."
+          "\"55\"",
+          "10",
+          "\"10\"",
+          "TypeError"
         ],
         answer: 0
       },
       {
-        category: "Types",
-        prompt: "What is the most likely problem with '5' + 2 in many languages?",
+        category: "Variables & types",
+        prompt: "Which conversion correctly turns the string \"42\" into an integer?",
         choices: [
-          "The code may mix a string and a number.",
-          "The number 2 is too small.",
-          "Variables cannot contain digits.",
-          "Strings can only be used inside loops."
+          "int(\"42\")",
+          "str(\"42\")",
+          "list(\"42\")",
+          "\"42\".integer()"
         ],
         answer: 0
       },
       {
-        category: "Conditionals",
-        prompt: "When should an if/else statement be used?",
+        category: "Control flow",
+        prompt: "What does this code print?\n\nscore = 72\nif score >= 80:\n    print(\"A\")\nelif score >= 70:\n    print(\"B\")\nelse:\n    print(\"C\")",
         choices: [
-          "When the program must choose between different paths.",
-          "Only when the program is finished.",
-          "Only when writing HTML.",
-          "When every line must run at the same time."
+          "A",
+          "B",
+          "C",
+          "Nothing"
         ],
-        answer: 0
+        answer: 1
       },
       {
-        category: "Loops",
-        prompt: "A loop is most useful when:",
+        category: "Control flow",
+        prompt: "What is total after this loop?\n\ntotal = 0\nfor n in [2, 4, 6]:\n    total += n",
         choices: [
-          "The same kind of work must happen for many items.",
-          "A program should stop forever.",
-          "A variable should never change.",
-          "A file must become a web page."
+          "6",
+          "10",
+          "12",
+          "[2, 4, 6]"
         ],
-        answer: 0
-      },
-      {
-        category: "Functions",
-        prompt: "The best reason to create a function is to:",
-        choices: [
-          "Group a reusable piece of logic behind a clear name.",
-          "Hide code so nobody can run it.",
-          "Make every variable global.",
-          "Avoid using return values."
-        ],
-        answer: 0
+        answer: 2
       },
       {
         category: "Functions",
-        prompt: "What does a return value do?",
+        prompt: "Which function returns a value instead of only printing it?",
         choices: [
-          "It sends a result back to the code that called the function.",
-          "It prints every variable automatically.",
-          "It starts a new project folder.",
-          "It deletes the function after it runs."
+          "def add(a, b):\n    print(a + b)",
+          "def add(a, b):\n    return a + b",
+          "def add(a, b):\n    a + b",
+          "def add(a, b)\n    return a + b"
+        ],
+        answer: 1
+      },
+      {
+        category: "Functions",
+        prompt: "What does this function call return?\n\ndef label(score):\n    if score >= 80:\n        return \"ready\"\n    return \"review\"\n\nlabel(79)",
+        choices: [
+          "\"ready\"",
+          "\"review\"",
+          "79",
+          "None"
+        ],
+        answer: 1
+      },
+      {
+        category: "Lists & dictionaries",
+        prompt: "Which expression gets the value \"Python\" from this dictionary?\n\nprofile = {\"name\": \"Amina\", \"skill\": \"Python\"}",
+        choices: [
+          "profile[\"skill\"]",
+          "profile.skill",
+          "profile[1]",
+          "profile(\"skill\")"
         ],
         answer: 0
       },
       {
-        category: "Data structures",
-        prompt: "Which structure is best for storing a person's profile with keys like name, age, and skillLevel?",
+        category: "Lists & dictionaries",
+        prompt: "What does items.append(\"c\") do?\n\nitems = [\"a\", \"b\"]",
         choices: [
-          "A dictionary or object.",
-          "A single boolean.",
-          "A random error message.",
-          "A loop without a body."
+          "Creates a new dictionary.",
+          "Adds \"c\" to the end of the list.",
+          "Deletes \"a\" from the list.",
+          "Sorts the list alphabetically."
+        ],
+        answer: 1
+      },
+      {
+        category: "Strings",
+        prompt: "What is the value of word[1:4]?\n\nword = \"python\"",
+        choices: [
+          "\"pyt\"",
+          "\"yth\"",
+          "\"ytho\"",
+          "\"tho\""
+        ],
+        answer: 1
+      },
+      {
+        category: "Strings",
+        prompt: "Which line produces \"Hello, Amina\" using an f-string?",
+        choices: [
+          "f\"Hello, {name}\"",
+          "\"Hello, {name}\"",
+          "f(Hello, name)",
+          "\"Hello,\" + {name}"
         ],
         answer: 0
       },
       {
-        category: "Data structures",
-        prompt: "If you need to keep an ordered group of tasks, which structure is usually a good fit?",
+        category: "Comprehensions",
+        prompt: "What is squares?\n\nsquares = [n * n for n in [1, 2, 3]]",
         choices: [
-          "A list or array.",
-          "A single number.",
-          "A password field.",
-          "A CSS color."
+          "[1, 2, 3]",
+          "[2, 4, 6]",
+          "[1, 4, 9]",
+          "9"
+        ],
+        answer: 2
+      },
+      {
+        category: "Comprehensions",
+        prompt: "Which comprehension keeps only even numbers?",
+        choices: [
+          "[n for n in nums if n % 2 == 0]",
+          "[n if n % 2 == 0 for n in nums]",
+          "[n for nums if n % 2 == 0]",
+          "[n % 2 == 0 for n]"
         ],
         answer: 0
       },
       {
-        category: "Debugging",
-        prompt: "What is the strongest first debugging move?",
+        category: "OOP",
+        prompt: "In Python, what is self normally used for inside a class method?",
         choices: [
-          "Read the error message and identify the line or operation that failed.",
-          "Rewrite the entire program immediately.",
-          "Ignore the error if the page looks nice.",
-          "Add more files until the error disappears."
+          "Referring to the current object instance.",
+          "Importing another file.",
+          "Stopping a loop.",
+          "Converting a string to an integer."
         ],
         answer: 0
       },
       {
-        category: "Debugging",
-        prompt: "A function expects a list but receives a string. What kind of issue is this?",
+        category: "OOP",
+        prompt: "What does __init__ usually do in a Python class?",
         choices: [
-          "A data type or input-shape mismatch.",
-          "A styling issue.",
-          "A network timeout only.",
-          "A password security feature."
+          "Initializes a new object with starting attributes.",
+          "Deletes a class.",
+          "Runs only when there is an error.",
+          "Imports all methods automatically."
         ],
         answer: 0
       },
       {
-        category: "Program design",
-        prompt: "A small program should usually be built by:",
+        category: "File I/O",
+        prompt: "Why is with open(\"data.txt\") as file: commonly used?",
         choices: [
-          "Separating input, processing, and output into understandable steps.",
-          "Writing one long line of code.",
-          "Avoiding tests until the final course.",
-          "Putting every value directly inside a print statement."
+          "It opens the file and helps close it safely after the block.",
+          "It permanently deletes the file.",
+          "It converts the file to a list automatically.",
+          "It only works for images."
         ],
         answer: 0
       },
       {
-        category: "Program design",
-        prompt: "Why is naming important in code?",
+        category: "Errors",
+        prompt: "What should a student look at first in a Python traceback?",
         choices: [
-          "Good names explain the purpose of values and functions.",
-          "Names make code impossible to change.",
-          "Names replace the need for logic.",
-          "Names only matter in design files."
+          "The line number and final error type/message.",
+          "Only the first word of the file name.",
+          "The computer battery level.",
+          "The number of blank lines."
         ],
         answer: 0
       },
       {
-        category: "Files",
-        prompt: "What is a project folder for?",
+        category: "Errors",
+        prompt: "Which code catches a ValueError from int(user_input)?",
         choices: [
-          "Keeping related code, assets, and notes organized together.",
-          "Making the computer faster by itself.",
-          "Preventing a program from running.",
-          "Replacing all variables."
-        ],
-        answer: 0
-      },
-      {
-        category: "Command line",
-        prompt: "What does changing directories in a terminal help you do?",
-        choices: [
-          "Run commands from the correct project location.",
-          "Change the website's font.",
-          "Turn a list into a dictionary.",
-          "Submit a quiz automatically."
-        ],
-        answer: 0
-      },
-      {
-        category: "Web basics",
-        prompt: "What is an API often used for?",
-        choices: [
-          "Letting software send or receive structured data.",
-          "Making code private by default.",
-          "Replacing all databases.",
-          "Only changing button colors."
-        ],
-        answer: 0
-      },
-      {
-        category: "Web basics",
-        prompt: "When a browser sends a request and receives a response, what is happening?",
-        choices: [
-          "Client-server communication.",
-          "A variable declaration only.",
-          "A local loop inside CSS.",
-          "A password reset every time."
-        ],
-        answer: 0
-      },
-      {
-        category: "Git",
-        prompt: "Why do developers use Git?",
-        choices: [
-          "To track versions of code and collaborate safely.",
-          "To make every program run without bugs.",
-          "To turn Python into HTML.",
-          "To remove the need for file names."
+          "try:\n    age = int(user_input)\nexcept ValueError:\n    age = None",
+          "if ValueError:\n    age = int(user_input)",
+          "catch ValueError:\n    age = None",
+          "age = int(user_input) except ValueError"
         ],
         answer: 0
       },
       {
         category: "Reasoning",
-        prompt: "A student copies code that works, then cannot explain any line. What does that show?",
+        prompt: "A student copies code that works but cannot explain variables, branches, or function returns. What is the best placement decision?",
         choices: [
-          "They may need foundations even if the output looks correct.",
-          "They are definitely advanced.",
-          "The code cannot be assessed.",
-          "The teacher should skip all practice."
+          "They may need foundations before the intermediate track.",
+          "They are automatically intermediate.",
+          "Skip all assessments.",
+          "Move directly to advanced OOP."
         ],
         answer: 0
       }
@@ -487,8 +487,8 @@
 
       const message = document.createElement("p");
       message.textContent = ready
-        ? "Good signal. Use the mini project to confirm that the student can apply these ideas."
-        : "Review needed. The mini project will show whether the gaps are vocabulary gaps or application gaps.";
+        ? "Good signal. Use the coding review to confirm that the student can apply these ideas."
+        : "Review needed. The coding review will show whether the gaps are vocabulary gaps or application gaps.";
       result.appendChild(message);
 
       const breakdown = document.createElement("div");

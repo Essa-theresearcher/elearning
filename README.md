@@ -16,11 +16,12 @@ http://127.0.0.1:8765/
 
 ## Course Sequence
 
-The homepage opens `prework.html`, which is Week 1: Intermediate Readiness Intensive.
+The homepage opens `prework.html`, which is Week 0: Python Placement Assessment.
 
-- Week 1 is designed as a detailed 6-hour readiness session with reading, practice drills, a diagnostic quiz, and a mini project.
-- Lesson 1 unlocks after Week 1 sections are complete, the Week 1 quiz is submitted, and the Week 1 mini project is submitted.
-- Lesson 2 unlocks after Lesson 1 sections are complete and the Lesson 1 quiz is submitted.
+- Week 0 includes an auto-scored Python placement quiz and an open-ended coding review for instructor assessment.
+- Week 1 Lesson 1 is reading-based while videos are not ready. Students work through `assets/lesson1-notes.pdf`, then complete the activity and quiz.
+- Week 1 Lesson 1 unlocks after Week 0 sections are complete, the Week 0 quiz is submitted, and the Week 0 coding review is submitted.
+- Week 1 Lesson 2 sits under Week 1 and unlocks after Lesson 1 sections are complete and the Lesson 1 quiz is submitted.
 
 ## Database
 

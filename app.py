@@ -38,7 +38,7 @@ MIN_PASSWORD_LENGTH = 8
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v", ".webm", ".ogg"}
 LESSONS = {
     "intermediate-readiness-week": {
-        "title": "Week 1 Intermediate Readiness Intensive",
+        "title": "Week 0 Python Placement Assessment",
         "section_ids": ["welcome", "reading", "quiz", "project", "wrapup"],
         "prerequisite": None,
         "requires_activity_submission": True,

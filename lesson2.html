@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lesson 2 - How the Internet Actually Works</title>
+  <title>Week 1 Lesson 2 - How the Internet Actually Works</title>
   <link rel="icon" href="data:,">
   <style>
     :root {
@@ -1126,11 +1126,11 @@
     <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="lessonLockTitle">
       <div class="auth-form">
         <span class="eyebrow">Lesson locked</span>
-        <h2 id="lessonLockTitle">Finish Lesson 1 first</h2>
-        <p class="auth-copy" id="lessonLockMessage">Lesson 2 unlocks after Lesson 1 and its quiz are complete.</p>
+        <h2 id="lessonLockTitle">Finish Week 1 Lesson 1 first</h2>
+        <p class="auth-copy" id="lessonLockMessage">Week 1 Lesson 2 unlocks after Lesson 1 and its quiz are complete.</p>
         <ul class="lesson-lock-list" id="lessonLockList"></ul>
         <div class="lesson-lock-actions">
-          <a class="primary-link" href="index.html">Open Lesson 1</a>
+          <a class="primary-link" href="index.html">Open Week 1 Lesson 1</a>
           <button class="secondary-link" id="refreshAccessButton" type="button">Check again</button>
         </div>
       </div>
@@ -1164,13 +1164,13 @@
   <div class="layout">
     <aside class="sidebar" aria-label="Lesson contents">
       <div class="sidebar-head">
-        <span class="eyebrow">Lesson 2</span>
+        <span class="eyebrow">Week 1 · Lesson 2</span>
         <h1>How the Internet Actually Works</h1>
         <div class="sidebar-meta">2-hour session with notes, video, activity, quiz, and wrap-up</div>
         <div class="course-links" aria-label="Course lessons">
-          <a class="course-link" href="prework.html">Week 1</a>
-          <a class="course-link" href="index.html">Lesson 1</a>
-          <a class="course-link is-current" href="lesson2.html">Lesson 2</a>
+          <a class="course-link" href="prework.html">Week 0</a>
+          <a class="course-link" href="index.html">Week 1 · L1</a>
+          <a class="course-link is-current" href="lesson2.html">Week 1 · L2</a>
         </div>
       </div>
       <nav class="lesson-nav" id="lessonNav">
@@ -1674,7 +1674,7 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
 
         document.body.classList.add("lesson-locked");
         lessonLockOverlay.hidden = false;
-        lessonLockMessage.textContent = "Lesson 2 unlocks after " + title + " is complete and its quiz has been submitted.";
+        lessonLockMessage.textContent = "Week 1 Lesson 2 unlocks after " + title + " is complete and its quiz has been submitted.";
 
         missingSections.forEach(function (section) {
           items.push("Complete " + (sectionLabels[section] || section) + ".");

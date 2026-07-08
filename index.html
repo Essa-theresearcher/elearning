@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lesson 1 - How Computers Actually Work</title>
+  <title>Week 1 Lesson 1 - How Computers Actually Work</title>
   <link rel="icon" href="data:,">
   <style>
     :root {
@@ -1126,11 +1126,11 @@
     <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="lessonLockTitle">
       <div class="auth-form">
         <span class="eyebrow">Lesson locked</span>
-        <h2 id="lessonLockTitle">Finish Week 1 first</h2>
-        <p class="auth-copy" id="lessonLockMessage">Lesson 1 unlocks after the Week 1 readiness intensive is complete.</p>
+        <h2 id="lessonLockTitle">Finish Week 0 first</h2>
+        <p class="auth-copy" id="lessonLockMessage">Week 1 Lesson 1 unlocks after the Week 0 Python placement assessment is complete.</p>
         <ul class="lesson-lock-list" id="lessonLockList"></ul>
         <div class="lesson-lock-actions">
-          <a class="primary-link" href="prework.html">Open Week 1</a>
+          <a class="primary-link" href="prework.html">Open Week 0</a>
           <button class="secondary-link" id="refreshAccessButton" type="button">Check again</button>
         </div>
       </div>
@@ -1164,13 +1164,13 @@
   <div class="layout">
     <aside class="sidebar" aria-label="Lesson contents">
       <div class="sidebar-head">
-        <span class="eyebrow">Lesson 1</span>
+        <span class="eyebrow">Week 1 · Lesson 1</span>
         <h1>How Computers Actually Work</h1>
-        <div class="sidebar-meta">2-hour session with notes, video, activity, quiz, and wrap-up</div>
+        <div class="sidebar-meta">Reading-based lesson using the PDF notes, activity, quiz, and wrap-up</div>
         <div class="course-links" aria-label="Course lessons">
-          <a class="course-link" href="prework.html">Week 1</a>
-          <a class="course-link is-current" href="index.html">Lesson 1</a>
-          <a class="course-link" href="lesson2.html">Lesson 2</a>
+          <a class="course-link" href="prework.html">Week 0</a>
+          <a class="course-link is-current" href="index.html">Week 1 · L1</a>
+          <a class="course-link" href="lesson2.html">Week 1 · L2</a>
         </div>
       </div>
       <nav class="lesson-nav" id="lessonNav">
@@ -1181,7 +1181,7 @@
         </a>
         <a href="#video" data-section="video">
           <span class="nav-dot" aria-hidden="true"></span>
-          <span>Video</span>
+          <span>PDF Plan</span>
           <span class="duration">2 hr</span>
         </a>
         <a href="#reading" data-section="reading">
@@ -1293,28 +1293,54 @@
         <div class="section-surface">
           <div class="section-header">
             <div class="section-title">
-              <span class="eyebrow">Lesson videos</span>
-              <h2>Class Recordings</h2>
-              <p>Lesson 1 is split into seven focused recordings from the teacher script.</p>
+              <span class="eyebrow">PDF reading plan</span>
+              <h2>Work through the Lesson 1 notes first</h2>
+              <p>Until recordings are ready, Week 1 uses the PDF notes as the main learning path.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="video">Mark complete</button>
           </div>
           <div class="section-body">
             <div class="video-layout">
               <div class="video-frame" id="videoFrame">
-                <video id="lessonVideo" controls preload="metadata"></video>
+                <video id="lessonVideo" controls preload="metadata" hidden></video>
                 <div class="video-empty">
-                  <strong>Recordings will appear here</strong>
-                  <span>Select a recording part from the list when videos are available.</span>
+                  <strong>Videos are not required yet</strong>
+                  <span>Use the PDF reading schedule for Week 1. Recordings can be added later without changing the lesson.</span>
                 </div>
               </div>
               <div class="video-panel">
-                <h3>Recording parts</h3>
-                <p>Upload the seven Lesson 1 videos into the video folder, or preview multiple local files here.</p>
-                <div class="recording-list" id="recordingList"></div>
-                <label class="file-label" for="videoInput">Choose video files</label>
-                <input class="video-file" id="videoInput" type="file" accept="video/*" multiple>
-                <div class="video-status" id="videoStatus">No recordings selected yet.</div>
+                <h3>Reading schedule</h3>
+                <p>Read the PDF in this order and take notes after each section.</p>
+                <div class="recording-list" aria-label="PDF reading schedule">
+                  <div class="recording-item">
+                    <strong>Part 1: Welcome and framing</strong>
+                    <span>Pages 1-2 · why computer fundamentals matter</span>
+                  </div>
+                  <div class="recording-item">
+                    <strong>Part 2: Hardware basics</strong>
+                    <span>CPU, RAM, storage, I/O, buses, and speed differences</span>
+                  </div>
+                  <div class="recording-item">
+                    <strong>Part 3: Binary and encoding</strong>
+                    <span>Bits, bytes, place value, ASCII, Unicode, and meaning</span>
+                  </div>
+                  <div class="recording-item">
+                    <strong>Part 4: Code to execution</strong>
+                    <span>Source code, bytecode, Python Virtual Machine, and machine code</span>
+                  </div>
+                  <div class="recording-item">
+                    <strong>Part 5: Variables and memory</strong>
+                    <span>References, <code>id()</code>, mutability, stack, and heap</span>
+                  </div>
+                  <div class="recording-item">
+                    <strong>Part 6: Operating system</strong>
+                    <span>Processes, threads, scheduling, context switching, and the GIL</span>
+                  </div>
+                </div>
+                <div class="recording-list" id="recordingList" hidden></div>
+                <label class="file-label" for="videoInput" hidden>Choose video files</label>
+                <input class="video-file" id="videoInput" type="file" accept="video/*" multiple hidden>
+                <div class="video-status" id="videoStatus" hidden>No recordings selected yet.</div>
               </div>
             </div>
           </div>
@@ -1546,7 +1572,7 @@ print(a)  # [1, 2, 3, 4]</code></pre>
               <div class="next-lesson">
                 <h3>Next lesson</h3>
                 <p>How the Internet Actually Works - what really happens between typing a URL and a page loading on your screen.</p>
-                <p><a class="secondary-link" href="lesson2.html">Open Lesson 2</a></p>
+                <p><a class="secondary-link" href="lesson2.html">Open Week 1 Lesson 2</a></p>
               </div>
             </div>
           </div>
@@ -1584,7 +1610,7 @@ print(a)  # [1, 2, 3, 4]</code></pre>
         welcome: "Welcome",
         reading: "Reading",
         quiz: "Diagnostic quiz",
-        project: "Mini project",
+        project: "Coding review",
         wrapup: "Decision",
         video: "Video recordings",
         activity: "Class activity"
@@ -1648,25 +1674,25 @@ print(a)  # [1, 2, 3, 4]</code></pre>
 
       function lockLesson(data) {
         const prerequisite = data.prerequisite || {};
-        const title = prerequisite.title || "Week 1";
+        const title = prerequisite.title || "Week 0";
         const missingSections = prerequisite.missingSections || [];
         const items = [];
 
         document.body.classList.add("lesson-locked");
         lessonLockOverlay.hidden = false;
-        lessonLockMessage.textContent = "Lesson 1 unlocks after " + title + " is complete, including the quiz and mini project.";
+        lessonLockMessage.textContent = "Week 1 Lesson 1 unlocks after " + title + " is complete, including the quiz and coding review.";
 
         missingSections.forEach(function (section) {
           items.push("Complete " + (sectionLabels[section] || section) + ".");
         });
         if (!prerequisite.quizCompleted) {
-          items.push("Submit the Week 1 diagnostic quiz.");
+          items.push("Submit the Week 0 Python placement quiz.");
         }
         if (prerequisite.requiresActivitySubmission && !prerequisite.activityCompleted) {
-          items.push("Submit the Week 1 mini project.");
+          items.push("Submit the Week 0 coding review.");
         }
         if (!items.length) {
-          items.push("Return to Week 1 and finish the remaining requirements.");
+          items.push("Return to Week 0 and finish the remaining requirements.");
         }
 
         lessonLockList.innerHTML = "";
@@ -1704,7 +1730,7 @@ print(a)  # [1, 2, 3, 4]</code></pre>
             if (currentUser) {
               lockLesson({
                 prerequisite: {
-                  title: "Week 1",
+                  title: "Week 0",
                   missingSections: [],
                   quizCompleted: false,
                   requiresActivitySubmission: true,

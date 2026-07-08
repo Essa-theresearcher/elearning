@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Week 1 Mini Project - Digital Bridge Academy</title>
+  <title>Week 0 Python Coding Review - Digital Bridge Academy</title>
   <style>
     :root {
       --navy: #132a4c;
@@ -198,73 +198,62 @@
 <body>
   <div class="wrap">
     <section class="panel">
-      <span class="lesson-tag">Week 1 Mini Project</span>
-      <h1>Readiness report tool</h1>
-      <p class="muted">Build a small program that turns a student's skill evidence into a readiness recommendation.</p>
+      <span class="lesson-tag">Week 0 Coding Review</span>
+      <h1>Python placement coding prompts</h1>
+      <p class="muted">Submit real Python work so the instructor can verify that the student is genuinely ready for intermediate material.</p>
     </section>
 
     <div class="grid">
       <section class="panel">
-        <h2>Project brief</h2>
+        <h2>Coding review brief</h2>
         <p>
-          Create a small program called <code>readiness_report</code>. It can be written in Python or JavaScript. The program should store a learner profile, evaluate several skill areas, and print a final recommendation.
+          Complete the prompts below in Python. The goal is not to produce a huge project. The goal is to show whether the student can write functions, use Python data structures, reason about classes, handle files, and explain their debugging process.
         </p>
-        <p>Your program should include:</p>
+        <p>The submitted work should include:</p>
         <ul>
-          <li>A profile with name, goal, claimed level, and available study hours.</li>
-          <li>A list or dictionary of at least five skill areas.</li>
-          <li>At least one function that receives data and returns a useful result.</li>
-          <li>A loop that evaluates all skill areas.</li>
-          <li>A conditional that decides between ready, almost ready, and needs foundations.</li>
-          <li>Clear output that a teacher could read quickly.</li>
+          <li>A function that accepts a list of scores and returns a dictionary with the average, highest score, lowest score, and pass/fail label.</li>
+          <li>A string-cleaning function that normalizes names or email addresses using methods such as <code>strip</code>, <code>lower</code>, <code>split</code>, or slicing.</li>
+          <li>A list or dictionary comprehension that filters or transforms data.</li>
+          <li>A small class with <code>__init__</code>, at least two attributes, and one useful method.</li>
+          <li>A short file I/O example or a written explanation of how their code would read from and write to a text file.</li>
+          <li>A <code>try</code>/<code>except</code> example that handles bad input without crashing.</li>
         </ul>
 
-        <h3>Suggested build timeline</h3>
+        <h3>Suggested 90-minute timeline</h3>
         <ul>
-          <li><strong>30 minutes:</strong> sketch the profile fields, skill areas, and readiness rules before writing code.</li>
-          <li><strong>45 minutes:</strong> build the first working version with hard-coded sample data.</li>
-          <li><strong>30 minutes:</strong> add a function that calculates an average and another function that returns the placement label.</li>
-          <li><strong>30 minutes:</strong> test the program with three different profiles: ready, almost ready, and needs foundations.</li>
-          <li><strong>30 minutes:</strong> improve the output so a teacher can understand the recommendation quickly.</li>
-          <li><strong>15 minutes:</strong> write the reflection and submit the strongest code sample.</li>
+          <li><strong>20 minutes:</strong> write the score-analysis function and test it with at least two lists.</li>
+          <li><strong>15 minutes:</strong> write the string-cleaning function.</li>
+          <li><strong>15 minutes:</strong> add a comprehension that filters or transforms a list.</li>
+          <li><strong>20 minutes:</strong> create the class and call its method.</li>
+          <li><strong>10 minutes:</strong> add file I/O or explain the exact file I/O plan.</li>
+          <li><strong>10 minutes:</strong> write the debugging reflection.</li>
         </ul>
 
         <h3>Required evidence</h3>
         <p>
-          The submission should prove that the student did not only copy a finished answer. It should show design choices, a useful function, a loop, data structure use, and a reflection on one mistake or improvement.
+          The submission should prove that the student did not only copy a finished answer. It should show design choices, working Python, and a reflection on one mistake or improvement.
         </p>
 
-        <h3>Example shape</h3>
-        <pre><code>profile = {
-    "name": "Amina",
-    "claimed_level": "intermediate",
-    "weekly_hours": 8
-}
-
-skills = {
-    "functions": 4,
-    "loops": 3,
-    "debugging": 2,
-    "data_structures": 4,
-    "web_basics": 3
-}
-
-def average_score(skill_scores):
-    total = 0
-    for score in skill_scores.values():
-        total += score
-    return total / len(skill_scores)</code></pre>
+        <h3>Example direction</h3>
+        <pre><code>def summarize_scores(scores):
+    average = sum(scores) / len(scores)
+    return {
+        "average": average,
+        "highest": max(scores),
+        "lowest": min(scores),
+        "label": "ready" if average >= 75 else "review"
+    }</code></pre>
       </section>
 
       <aside class="panel rubric">
         <h2>Rubric</h2>
         <div>
           <h3>Ready</h3>
-          <p>Program runs, logic is organized, output is readable, and the student can explain the result.</p>
+          <p>Code runs, functions return useful values, data structures are appropriate, and explanations are clear.</p>
         </div>
         <div>
           <h3>Almost ready</h3>
-          <p>Program partly works and shows real reasoning, but one core idea such as functions or dictionaries needs review.</p>
+          <p>Code partly works and shows real reasoning, but one core idea such as classes, comprehensions, files, or errors needs review.</p>
         </div>
         <div>
           <h3>Needs foundations</h3>
@@ -274,7 +263,7 @@ def average_score(skill_scores):
     </div>
 
     <section class="panel" style="margin-top:18px">
-      <h2>Submit the project</h2>
+      <h2>Submit the coding review</h2>
       <p class="muted">Paste a link, paste code, and explain the strongest and weakest part of the work.</p>
 
       <form id="projectForm">
@@ -283,32 +272,31 @@ def average_score(skill_scores):
           <select name="language" required>
             <option value="">Choose one</option>
             <option>Python</option>
-            <option>JavaScript</option>
             <option>Other</option>
           </select>
         </label>
 
         <label>
-          Project link or file location
-          <input name="projectLink" placeholder="GitHub link, Replit link, or file name" required>
+          Link or file location
+          <input name="projectLink" placeholder="GitHub link, Replit link, notebook link, or file name" required>
         </label>
 
         <label>
-          Code sample or main function
-          <textarea name="codeSample" placeholder="Paste the most important part of your code." required></textarea>
+          Score function and data-structure code
+          <textarea name="codeSample" placeholder="Paste the score function plus any list/dictionary/comprehension code." required></textarea>
         </label>
 
         <label>
-          How does your program decide if someone is ready?
-          <textarea name="decisionLogic" required></textarea>
+          Class, file I/O, or error-handling code
+          <textarea name="decisionLogic" placeholder="Paste your class, file example, or try/except example." required></textarea>
         </label>
 
         <label>
-          What was the hardest bug or design choice?
+          What was the hardest bug, concept, or design choice?
           <textarea name="reflection" required></textarea>
         </label>
 
-        <button type="submit">Submit mini project</button>
+        <button type="submit">Submit coding review</button>
         <div class="status" id="status" role="status"></div>
       </form>
     </section>
@@ -344,11 +332,11 @@ def average_score(skill_scores):
         })
       }).then(function (response) {
         if (!response.ok) {
-          throw new Error("Could not save the mini project.");
+          throw new Error("Could not save the coding review.");
         }
         return response.json();
       }).then(function () {
-        setStatus("Mini project submitted. Mark the project section complete on the main Week 1 page.", false);
+        setStatus("Coding review submitted. Mark the coding review section complete on the main Week 0 page.", false);
       }).catch(function (error) {
         setStatus(error.message, true);
       });
