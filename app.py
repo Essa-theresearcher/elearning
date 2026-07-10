@@ -723,7 +723,7 @@ class LearningHandler(SimpleHTTPRequestHandler):
         parsed = urlparse(path)
         request_path = parsed.path
         if request_path == "/":
-            request_path = "/prework.html"
+            request_path = "/home.html"
 
         relative = Path(request_path.lstrip("/"))
         target = (ROOT / relative).resolve()

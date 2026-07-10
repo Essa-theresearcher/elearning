@@ -16,7 +16,7 @@ http://127.0.0.1:8765/
 
 ## Course Sequence
 
-The homepage opens `prework.html`, which is Week 0: Python Readiness Assessment.
+The homepage opens `home.html`, which introduces Digital Bridge School and links to the student course and staff management area. The student course starts at `prework.html`, which is Week 0: Python Readiness Assessment.
 
 - Week 0 includes an auto-scored Python readiness quiz and an open-ended coding review.
 - Week 1 Lesson 1 is reading-based while videos are not ready. Students work through `assets/lesson1-notes.pdf`, then complete the activity and quiz.
