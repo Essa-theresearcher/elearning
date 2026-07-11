@@ -95,6 +95,39 @@ curl http://127.0.0.1:8765/health
 sudo journalctl -u learning-ms -n 80 --no-pager
 ```
 
+## Dokploy Deployment
+
+This is a Python app, not a Node app. In Dokploy, use the `Dockerfile` build type.
+
+Recommended Dokploy settings:
+
+```text
+Build type: Dockerfile
+Dockerfile path: Dockerfile
+Container port: 8765
+```
+
+Environment variables:
+
+```text
+APP_HOST=0.0.0.0
+PORT=8765
+COOKIE_SECURE=0
+REQUIRE_LOGIN=1
+ALLOW_SIGNUP=0
+```
+
+If you connect it to the Dokploy PostgreSQL service, also set `DATABASE_URL` to the internal database URL. If `DATABASE_URL` is not set, the app falls back to SQLite inside `/app/data`.
+
+In the Domains tab, add a domain or generated `traefik.me` domain and set:
+
+```text
+Path: /
+Container Port: 8765
+```
+
+Do not add a public host port in Advanced -> Ports unless you intentionally want direct access like `http://server-ip:8765`. For a multi-app Dokploy server, let Traefik own ports `80` and `443`.
+
 The app creates an admin account, a teacher account, and a student account when those usernames are missing. Set `SYSTEM_ADMIN_PASSWORD`, `TEACHER_PASSWORD`, and `STUDENT_PASSWORD` to strong passwords before sharing the public link. If an account already exists, changing the environment variable will not change that saved password automatically.
 
 Open `/admin.html` for management. Staff accounts are sent there when they sign in from the course pages. Admin accounts can use the Teachers and Students tabs to create accounts and reset teacher/student passwords. Teacher accounts can use the Classes & resources tab to add class links, readings, videos, assignments, downloads, and other resources to lessons. Staff can also change their own password from the My password tab.
