@@ -737,6 +737,9 @@ class LearningHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urlparse(self.path)
+        if parsed.path in {"/health", "/api/health"}:
+            self.handle_health()
+            return
         if parsed.path == "/api/auth/me":
             self.handle_auth_me()
             return
@@ -765,6 +768,16 @@ class LearningHandler(SimpleHTTPRequestHandler):
             self.handle_get_progress_summary()
             return
         super().do_GET()
+
+    def handle_health(self):
+        self.send_json(
+            {
+                "ok": True,
+                "service": "learning-ms",
+                "database": "postgresql" if USE_POSTGRES else "sqlite",
+                "time": utc_now(),
+            }
+        )
 
     def do_POST(self):
         parsed = urlparse(self.path)
