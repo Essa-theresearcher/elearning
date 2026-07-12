@@ -433,6 +433,115 @@
       text-align: center;
     }
 
+    .work-filter {
+      max-width: 420px;
+      margin-top: 16px;
+    }
+
+    .work-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0 18px;
+    }
+
+    .work-stat,
+    .work-block,
+    .answer-row {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfb;
+    }
+
+    .work-stat {
+      padding: 12px;
+    }
+
+    .work-stat strong {
+      display: block;
+      color: var(--navy-dark);
+      font-size: 22px;
+      line-height: 1.1;
+    }
+
+    .work-stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .work-detail {
+      display: grid;
+      gap: 16px;
+    }
+
+    .work-block {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+    }
+
+    .work-block h3 {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 16px;
+    }
+
+    .work-record {
+      display: grid;
+      gap: 7px;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+    }
+
+    .work-record:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .work-record strong {
+      color: var(--navy-dark);
+    }
+
+    .work-record span,
+    .answer-row span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .answer-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .answer-row {
+      display: grid;
+      gap: 5px;
+      padding: 10px;
+    }
+
+    .answer-row.correct {
+      border-color: rgba(32, 109, 111, 0.35);
+      background: var(--teal-soft);
+    }
+
+    .answer-row.incorrect {
+      border-color: rgba(155, 89, 76, 0.35);
+      background: #fbefed;
+    }
+
+    .answer-row pre {
+      overflow: auto;
+      margin: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      color: var(--ink);
+      font: 13px/1.45 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
     @media (max-width: 860px) {
       .topbar-inner {
         align-items: stretch;
@@ -500,6 +609,10 @@
 
       .panel-head {
         flex-direction: column;
+      }
+
+      .work-summary {
+        grid-template-columns: 1fr;
       }
 
       .password-reset-form {
@@ -588,6 +701,7 @@
         <button class="tab-button" type="button" data-admin-tab="orders" data-admin-only>Orders</button>
         <button class="tab-button" type="button" data-admin-tab="teachers" data-admin-only>Teachers</button>
         <button class="tab-button" type="button" data-admin-tab="students" data-admin-only>Students</button>
+        <button class="tab-button" type="button" data-admin-tab="work">Student work</button>
         <button class="tab-button" type="button" data-admin-tab="resources">Classes & resources</button>
         <button class="tab-button" type="button" data-admin-tab="password">My password</button>
       </div>
@@ -657,6 +771,26 @@
           </form>
 
           <div class="compact-list" id="studentList" aria-live="polite"></div>
+        </section>
+
+        <section class="panel" data-admin-section="work">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Student work</span>
+              <h2>Grades, answers, and projects</h2>
+            </div>
+            <button class="secondary" id="refreshWorkButton" type="button">Refresh</button>
+          </div>
+          <p>Choose a student to see completed lesson sections, quiz attempts, submitted answers, and coding projects.</p>
+          <div class="work-filter">
+            <label>
+              Student
+              <select id="workStudentSelect"></select>
+            </label>
+          </div>
+          <p class="status" id="workStatus" role="status"></p>
+          <div class="work-summary" id="workSummary"></div>
+          <div class="work-detail" id="workDetail" aria-live="polite"></div>
         </section>
 
         <section class="panel" data-admin-section="resources">
@@ -779,6 +913,11 @@
       const videoUploadStatus = document.getElementById("videoUploadStatus");
       const enrollmentStatus = document.getElementById("enrollmentStatus");
       const enrollmentList = document.getElementById("enrollmentList");
+      const workStudentSelect = document.getElementById("workStudentSelect");
+      const workStatus = document.getElementById("workStatus");
+      const workSummary = document.getElementById("workSummary");
+      const workDetail = document.getElementById("workDetail");
+      const refreshWorkButton = document.getElementById("refreshWorkButton");
       const ownPasswordForm = document.getElementById("ownPasswordForm");
       const ownPasswordStatus = document.getElementById("ownPasswordStatus");
       const loginEyebrow = document.getElementById("loginEyebrow");
@@ -796,6 +935,12 @@
       let lessonsLoaded = false;
       let lessonCatalog = [];
       let currentUser = null;
+      let studentWorkData = {
+        students: [],
+        progress: [],
+        activities: [],
+        quizzes: []
+      };
 
       function isStaff(user) {
         return user && (user.role === "admin" || user.role === "teacher");
@@ -890,7 +1035,7 @@
           adminOnlyElements.forEach(function (element) {
             element.hidden = !isSystemAdmin(currentUser);
           });
-          showTab(isSystemAdmin(currentUser) ? "orders" : "resources");
+          showTab(isSystemAdmin(currentUser) ? "orders" : "work");
           loadDashboard();
           return;
         }
@@ -1205,6 +1350,260 @@
         });
       }
 
+      function formatDateTime(value) {
+        if (!value) return "Not recorded";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return value;
+        return date.toLocaleString();
+      }
+
+      function renderWorkEmpty(message) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = message;
+        return empty;
+      }
+
+      function recordsForStudent(records, studentId) {
+        return records.filter(function (record) {
+          return record.studentId === studentId;
+        });
+      }
+
+      function formatAnswerValue(value) {
+        if (value === null || value === undefined || value === "") return "No answer";
+        if (typeof value === "string") return value;
+        return JSON.stringify(value, null, 2);
+      }
+
+      function appendAnswerObject(container, answers) {
+        const keys = Object.keys(answers || {});
+        if (!keys.length) {
+          container.appendChild(renderWorkEmpty("No submitted answer fields were saved."));
+          return;
+        }
+
+        const list = document.createElement("div");
+        list.className = "answer-list";
+        keys.forEach(function (key) {
+          const row = document.createElement("div");
+          row.className = "answer-row";
+
+          const label = document.createElement("strong");
+          label.textContent = key;
+
+          const value = document.createElement("pre");
+          value.textContent = formatAnswerValue(answers[key]);
+
+          row.appendChild(label);
+          row.appendChild(value);
+          list.appendChild(row);
+        });
+        container.appendChild(list);
+      }
+
+      function appendQuizAnswers(container, answerDetails) {
+        if (!Array.isArray(answerDetails) || !answerDetails.length) {
+          container.appendChild(renderWorkEmpty("Answer details were not captured for this older quiz attempt. Ask the student to retake the quiz to capture answers."));
+          return;
+        }
+
+        const list = document.createElement("div");
+        list.className = "answer-list";
+        answerDetails.forEach(function (answer) {
+          const row = document.createElement("div");
+          row.className = "answer-row " + (answer.isCorrect ? "correct" : "incorrect");
+
+          const title = document.createElement("strong");
+          title.textContent = "Q" + (answer.questionNumber || "") + ": " + (answer.question || "Question");
+
+          const selected = document.createElement("span");
+          selected.textContent = "Student answered: " + formatAnswerValue(answer.selectedAnswer);
+
+          const correct = document.createElement("span");
+          correct.textContent = "Correct answer: " + formatAnswerValue(answer.correctAnswer);
+
+          row.appendChild(title);
+          row.appendChild(selected);
+          row.appendChild(correct);
+          if (answer.explanation) {
+            const explanation = document.createElement("span");
+            explanation.textContent = "Explanation: " + answer.explanation;
+            row.appendChild(explanation);
+          }
+          list.appendChild(row);
+        });
+        container.appendChild(list);
+      }
+
+      function createWorkBlock(title, records, renderRecord) {
+        const block = document.createElement("section");
+        block.className = "work-block";
+
+        const heading = document.createElement("h3");
+        heading.textContent = title;
+        block.appendChild(heading);
+
+        if (!records.length) {
+          block.appendChild(renderWorkEmpty("Nothing submitted yet."));
+          return block;
+        }
+
+        records.forEach(function (record) {
+          block.appendChild(renderRecord(record));
+        });
+        return block;
+      }
+
+      function renderProgressRecord(progress) {
+        const item = document.createElement("div");
+        item.className = "work-record";
+
+        const title = document.createElement("strong");
+        title.textContent = progress.lessonTitle;
+
+        const completed = document.createElement("span");
+        const sections = Array.isArray(progress.completedSections) ? progress.completedSections : [];
+        completed.textContent = sections.length
+          ? "Completed sections: " + sections.join(", ")
+          : "No completed sections saved.";
+
+        const updated = document.createElement("span");
+        updated.textContent = "Updated: " + formatDateTime(progress.updatedAt);
+
+        item.appendChild(title);
+        item.appendChild(completed);
+        item.appendChild(updated);
+        return item;
+      }
+
+      function renderQuizRecord(quiz) {
+        const item = document.createElement("div");
+        item.className = "work-record";
+
+        const pct = quiz.totalQuestions
+          ? Math.round((quiz.score / quiz.totalQuestions) * 100)
+          : 0;
+
+        const title = document.createElement("strong");
+        title.textContent = quiz.lessonTitle + ": " + quiz.score + "/" + quiz.totalQuestions + " (" + pct + "%)";
+
+        const submitted = document.createElement("span");
+        submitted.textContent = "Submitted: " + formatDateTime(quiz.createdAt);
+
+        const details = document.createElement("details");
+        const summary = document.createElement("summary");
+        summary.textContent = "View quiz answers";
+        details.appendChild(summary);
+        appendQuizAnswers(details, quiz.answerDetails);
+
+        item.appendChild(title);
+        item.appendChild(submitted);
+        item.appendChild(details);
+        return item;
+      }
+
+      function renderActivityRecord(activity) {
+        const item = document.createElement("div");
+        item.className = "work-record";
+
+        const title = document.createElement("strong");
+        title.textContent = activity.lessonTitle;
+
+        const submitted = document.createElement("span");
+        submitted.textContent = "Submitted: " + formatDateTime(activity.createdAt);
+
+        const details = document.createElement("details");
+        const summary = document.createElement("summary");
+        summary.textContent = "View submitted work";
+        details.appendChild(summary);
+        appendAnswerObject(details, activity.answers || {});
+
+        item.appendChild(title);
+        item.appendChild(submitted);
+        item.appendChild(details);
+        return item;
+      }
+
+      function renderSelectedStudentWork() {
+        const studentId = workStudentSelect.value;
+        workSummary.innerHTML = "";
+        workDetail.innerHTML = "";
+
+        if (!studentId) {
+          workDetail.appendChild(renderWorkEmpty("Choose a student to view submitted work."));
+          return;
+        }
+
+        const progress = recordsForStudent(studentWorkData.progress || [], studentId);
+        const activities = recordsForStudent(studentWorkData.activities || [], studentId);
+        const quizzes = recordsForStudent(studentWorkData.quizzes || [], studentId);
+
+        [
+          ["Lessons touched", progress.length],
+          ["Quiz attempts", quizzes.length],
+          ["Activities/projects", activities.length]
+        ].forEach(function (stat) {
+          const item = document.createElement("div");
+          item.className = "work-stat";
+          const value = document.createElement("strong");
+          value.textContent = String(stat[1]);
+          const label = document.createElement("span");
+          label.textContent = stat[0];
+          item.appendChild(value);
+          item.appendChild(label);
+          workSummary.appendChild(item);
+        });
+
+        workDetail.appendChild(createWorkBlock("Completed lesson sections", progress, renderProgressRecord));
+        workDetail.appendChild(createWorkBlock("Quiz grades and answers", quizzes, renderQuizRecord));
+        workDetail.appendChild(createWorkBlock("Activities and projects", activities, renderActivityRecord));
+      }
+
+      function renderStudentWork(data) {
+        studentWorkData = {
+          students: Array.isArray(data.students) ? data.students : [],
+          progress: Array.isArray(data.progress) ? data.progress : [],
+          activities: Array.isArray(data.activities) ? data.activities : [],
+          quizzes: Array.isArray(data.quizzes) ? data.quizzes : []
+        };
+
+        const previous = workStudentSelect.value;
+        workStudentSelect.innerHTML = "";
+
+        if (!studentWorkData.students.length) {
+          workSummary.innerHTML = "";
+          workDetail.innerHTML = "";
+          workStudentSelect.disabled = true;
+          workDetail.appendChild(renderWorkEmpty("No student accounts yet."));
+          return;
+        }
+
+        workStudentSelect.disabled = false;
+        studentWorkData.students.forEach(function (student) {
+          const option = document.createElement("option");
+          option.value = student.id;
+          option.textContent = student.displayName + " (" + student.username + ")";
+          workStudentSelect.appendChild(option);
+        });
+
+        const hasPrevious = studentWorkData.students.some(function (student) {
+          return student.id === previous;
+        });
+        if (hasPrevious) {
+          workStudentSelect.value = previous;
+        } else {
+          const activeStudent = studentWorkData.students.find(function (student) {
+            return recordsForStudent(studentWorkData.progress, student.id).length
+              || recordsForStudent(studentWorkData.activities, student.id).length
+              || recordsForStudent(studentWorkData.quizzes, student.id).length;
+          });
+          workStudentSelect.value = activeStudent ? activeStudent.id : studentWorkData.students[0].id;
+        }
+
+        renderSelectedStudentWork();
+      }
+
       function loadStudents() {
         return fetch("/api/admin/students")
           .then(parseJsonResponse)
@@ -1252,16 +1651,30 @@
           });
       }
 
+      function loadStudentWork() {
+        return fetch("/api/admin/student-work")
+          .then(parseJsonResponse)
+          .then(function (data) {
+            renderStudentWork(data);
+            setStatus(workStatus, "");
+          })
+          .catch(function (error) {
+            setStatus(workStatus, error.message, true);
+          });
+      }
+
       function loadDashboard() {
         setStatus(studentStatus, "");
         setStatus(teacherStatus, "");
         setStatus(resourceStatus, "");
         setStatus(enrollmentStatus, "");
+        setStatus(workStatus, "");
         if (isSystemAdmin(currentUser)) {
           loadEnrollments();
           loadTeachers();
           loadStudents();
         }
+        loadStudentWork();
         loadResources();
       }
 
@@ -1298,6 +1711,13 @@
         button.addEventListener("click", function () {
           showTab(button.dataset.adminTab);
         });
+      });
+
+      workStudentSelect.addEventListener("change", renderSelectedStudentWork);
+
+      refreshWorkButton.addEventListener("click", function () {
+        setStatus(workStatus, "Refreshing...");
+        loadStudentWork();
       });
 
       function handlePasswordReset(event, listName) {
@@ -1343,6 +1763,7 @@
           setStatus(studentStatus, "Computer Fundamentals access granted.");
           loadStudents();
           loadEnrollments();
+          loadStudentWork();
         }).catch(function (error) {
           setStatus(studentStatus, error.message, true);
           button.disabled = false;
@@ -1415,6 +1836,7 @@
           setStatus(studentStatus, "Created student login: " + username + " and granted Computer Fundamentals.");
           loadStudents();
           loadEnrollments();
+          loadStudentWork();
         }).catch(function (error) {
           setStatus(studentStatus, error.message, true);
         });

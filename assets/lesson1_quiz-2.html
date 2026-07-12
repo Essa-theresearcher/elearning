@@ -457,6 +457,7 @@
   let current = 0;
   let answered = false;
   let score = 0;
+  let answerDetails = [];
   const catStats = {};
   QUESTIONS.forEach(q => { if(!catStats[q.category]) catStats[q.category] = {correct:0, total:0}; catStats[q.category].total++; });
 
@@ -524,6 +525,17 @@
     const q = QUESTIONS[current];
     const buttons = optionsWrapEl.querySelectorAll('.option');
     const isCorrect = idx === q.correct;
+    answerDetails[current] = {
+      questionNumber: current + 1,
+      category: q.category,
+      question: q.question,
+      selectedIndex: idx,
+      selectedAnswer: q.options[idx],
+      correctIndex: q.correct,
+      correctAnswer: q.options[q.correct],
+      isCorrect: isCorrect,
+      explanation: q.explanation
+    };
 
     buttons.forEach((btn, i) => {
       btn.disabled = true;
@@ -568,6 +580,7 @@
         score: score,
         totalQuestions: TOTAL,
         categoryBreakdown: catStats,
+        answerDetails: answerDetails,
       }),
     }).catch(function(){ /* Keep the quiz usable if opened without the backend. */ });
   }
@@ -602,6 +615,7 @@
 
   document.getElementById('restartBtn').addEventListener('click', () => {
     current = 0; score = 0; answered = false;
+    answerDetails = [];
     Object.keys(catStats).forEach(c => catStats[c].correct = 0);
     quizScreen.classList.remove('hide');
     resultsScreen.classList.remove('show');

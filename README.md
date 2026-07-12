@@ -140,7 +140,9 @@ The default teacher login is `teacher` with password `changeme123`. Set `SYSTEM_
 
 Open `/admin.html` for admin management and `/teacher.html` for the teacher workspace. Staff accounts are sent to the correct workspace when they sign in from the course pages. Admin accounts can use the Orders tab to approve or reject course checkout requests after confirming payment. Admin accounts can also use the Teachers and Students tabs to create accounts and reset teacher/student passwords. New students created by admin are automatically granted Computer Fundamentals access. For existing students, use the Students tab and click Grant Computer Fundamentals.
 
-Teacher accounts can use `/teacher.html` to add class links, readings, video links, assignments, downloads, and other resources to lessons. To add a Week 1 video link, choose Lesson 1 or Lesson 2, set Type to Video, paste the video URL, and save it. To upload a local MP4 directly, use the Direct MP4 upload form in Classes & resources, choose the lesson, choose the recording part, and upload the file. Staff can also change their own password from the My password tab.
+Teacher accounts can use `/teacher.html` to view student work, quiz grades, submitted quiz answers, activities, and projects from the Student work tab. Teachers can also add class links, readings, video links, assignments, downloads, and other resources to lessons. To add a Week 1 video link, choose Lesson 1 or Lesson 2, set Type to Video, paste the video URL, and save it. To upload a local MP4 directly, use the Direct MP4 upload form in Classes & resources, choose the lesson, choose the recording part, and upload the file. Staff can also change their own password from the My password tab.
+
+Quiz answer details are captured for new quiz attempts. Older quiz attempts saved before this feature still show score and date, but not answer-by-answer details.
 
 `DIRECT_ACCESS_STUDENT_USERNAMES=zakariya` grants Computer Fundamentals automatically to matching student usernames on app startup, so those students do not need checkout approval. Add more usernames with commas, for example `DIRECT_ACCESS_STUDENT_USERNAMES=zakariya,amina`.
 

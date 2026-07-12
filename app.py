@@ -357,6 +357,15 @@ def direct_access_student_usernames():
     return usernames
 
 
+def parse_json_field(raw_value, fallback):
+    if raw_value in (None, ""):
+        return fallback
+    try:
+        return json.loads(raw_value)
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return fallback
+
+
 def public_user(row):
     if not row:
         return None
@@ -446,6 +455,51 @@ def public_enrollment(row):
     if "reviewed_by_username" in row.keys():
         result["reviewedByUsername"] = row["reviewed_by_username"]
     return result
+
+
+def public_lesson_progress(row):
+    if not row:
+        return None
+    lesson_slug = row["lesson_slug"]
+    return {
+        "studentId": row["student_id"],
+        "lessonSlug": lesson_slug,
+        "lessonTitle": lesson_config(lesson_slug).get("title", lesson_slug),
+        "completedSections": parse_json_field(row["completed_sections"], []),
+        "updatedAt": row["updated_at"],
+    }
+
+
+def public_activity_submission(row):
+    if not row:
+        return None
+    lesson_slug = row["lesson_slug"]
+    return {
+        "id": row["id"],
+        "studentId": row["student_id"],
+        "lessonSlug": lesson_slug,
+        "lessonTitle": lesson_config(lesson_slug).get("title", lesson_slug),
+        "answers": parse_json_field(row["answers"], {}),
+        "createdAt": row["created_at"],
+    }
+
+
+def public_quiz_result(row):
+    if not row:
+        return None
+    lesson_slug = row["lesson_slug"]
+    answer_details = row["answer_details"] if "answer_details" in row.keys() else "[]"
+    return {
+        "id": row["id"],
+        "studentId": row["student_id"],
+        "lessonSlug": lesson_slug,
+        "lessonTitle": lesson_config(lesson_slug).get("title", lesson_slug),
+        "score": row["score"],
+        "totalQuestions": row["total_questions"],
+        "categoryBreakdown": parse_json_field(row["category_breakdown"], {}),
+        "answerDetails": parse_json_field(answer_details, []),
+        "createdAt": row["created_at"],
+    }
 
 
 def is_admin_role(role):
@@ -996,6 +1050,24 @@ def seed_default_accounts(conn):
         print("Default student password is changeme123. Change STUDENT_PASSWORD in production.")
 
 
+def ensure_schema_migrations(conn):
+    if USE_POSTGRES:
+        conn.execute(
+            """
+            ALTER TABLE quiz_results
+            ADD COLUMN IF NOT EXISTS answer_details TEXT NOT NULL DEFAULT '[]'
+            """
+        )
+        return
+
+    columns = conn.execute("PRAGMA table_info(quiz_results)").fetchall()
+    column_names = {row["name"] for row in columns}
+    if "answer_details" not in column_names:
+        conn.execute(
+            "ALTER TABLE quiz_results ADD COLUMN answer_details TEXT NOT NULL DEFAULT '[]'"
+        )
+
+
 def init_db():
     if USE_POSTGRES:
         with connect_db() as conn:
@@ -1052,6 +1124,7 @@ def init_db():
                     score INTEGER NOT NULL,
                     total_questions INTEGER NOT NULL,
                     category_breakdown TEXT NOT NULL,
+                    answer_details TEXT NOT NULL DEFAULT '[]',
                     created_at TEXT NOT NULL
                 )
                 """
@@ -1086,6 +1159,7 @@ def init_db():
                 )
                 """
             )
+            ensure_schema_migrations(conn)
             seed_default_accounts(conn)
         return
 
@@ -1131,6 +1205,7 @@ def init_db():
                 score INTEGER NOT NULL,
                 total_questions INTEGER NOT NULL,
                 category_breakdown TEXT NOT NULL,
+                answer_details TEXT NOT NULL DEFAULT '[]',
                 created_at TEXT NOT NULL
             );
 
@@ -1159,6 +1234,7 @@ def init_db():
             );
             """
         )
+        ensure_schema_migrations(conn)
         seed_default_accounts(conn)
 
 
@@ -1199,6 +1275,9 @@ class LearningHandler(SimpleHTTPRequestHandler):
             return
         if parsed.path == "/api/admin/students":
             self.handle_admin_students()
+            return
+        if parsed.path == "/api/admin/student-work":
+            self.handle_admin_student_work()
             return
         if parsed.path == "/api/admin/teachers":
             self.handle_admin_teachers()
@@ -2064,6 +2143,61 @@ class LearningHandler(SimpleHTTPRequestHandler):
             }
         )
 
+    def handle_admin_student_work(self):
+        staff = self.current_staff_user()
+        if not staff:
+            self.send_staff_required()
+            return
+
+        with connect_db() as conn:
+            student_rows = db_execute(
+                conn,
+                """
+                SELECT id, username, display_name, role, created_at
+                FROM app_users
+                WHERE role = 'student'
+                ORDER BY display_name ASC, username ASC
+                """,
+            ).fetchall()
+            progress_rows = db_execute(
+                conn,
+                """
+                SELECT student_id, lesson_slug, completed_sections, updated_at
+                FROM lesson_progress
+                ORDER BY updated_at DESC
+                """,
+            ).fetchall()
+            activity_rows = db_execute(
+                conn,
+                """
+                SELECT id, student_id, lesson_slug, answers, created_at
+                FROM activity_submissions
+                ORDER BY created_at DESC, id DESC
+                """,
+            ).fetchall()
+            quiz_rows = db_execute(
+                conn,
+                """
+                SELECT id, student_id, lesson_slug, score, total_questions,
+                    category_breakdown, answer_details, created_at
+                FROM quiz_results
+                ORDER BY created_at DESC, id DESC
+                """,
+            ).fetchall()
+
+        self.send_json(
+            {
+                "staff": public_user(staff),
+                "students": [public_student(row) for row in student_rows],
+                "lessons": lesson_summaries(),
+                "progress": [public_lesson_progress(row) for row in progress_rows],
+                "activities": [
+                    public_activity_submission(row) for row in activity_rows
+                ],
+                "quizzes": [public_quiz_result(row) for row in quiz_rows],
+            }
+        )
+
     def handle_admin_teachers(self):
         admin = self.current_admin_user()
         if not admin:
@@ -2837,6 +2971,14 @@ class LearningHandler(SimpleHTTPRequestHandler):
             )
             return
 
+        answer_details = data.get("answerDetails", [])
+        if not isinstance(answer_details, list):
+            self.send_json(
+                {"error": "answerDetails must be a list"},
+                HTTPStatus.BAD_REQUEST,
+            )
+            return
+
         created_at = utc_now()
         with connect_db() as conn:
             if USE_POSTGRES:
@@ -2845,9 +2987,9 @@ class LearningHandler(SimpleHTTPRequestHandler):
                     """
                     INSERT INTO quiz_results (
                         student_id, lesson_slug, score, total_questions,
-                        category_breakdown, created_at
+                        category_breakdown, answer_details, created_at
                     )
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
                     RETURNING id
                     """,
                     (
@@ -2856,6 +2998,7 @@ class LearningHandler(SimpleHTTPRequestHandler):
                         score,
                         total_questions,
                         json.dumps(category_breakdown),
+                        json.dumps(answer_details),
                         created_at,
                     ),
                 )
@@ -2866,9 +3009,9 @@ class LearningHandler(SimpleHTTPRequestHandler):
                     """
                     INSERT INTO quiz_results (
                         student_id, lesson_slug, score, total_questions,
-                        category_breakdown, created_at
+                        category_breakdown, answer_details, created_at
                     )
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         student_id,
@@ -2876,6 +3019,7 @@ class LearningHandler(SimpleHTTPRequestHandler):
                         score,
                         total_questions,
                         json.dumps(category_breakdown),
+                        json.dumps(answer_details),
                         created_at,
                     ),
                 )

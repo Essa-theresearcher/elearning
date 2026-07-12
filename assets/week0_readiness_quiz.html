@@ -464,6 +464,7 @@
     function gradeQuiz() {
       let score = 0;
       const stats = {};
+      const answers = [];
       questions.forEach(function (question, index) {
         if (!stats[question.category]) {
           stats[question.category] = { correct: 0, total: 0 };
@@ -472,15 +473,26 @@
 
         const selected = form.querySelector("input[name='q" + index + "']:checked");
         const selectedIndex = selected ? Number(selected.value) : -1;
-        if (selectedIndex === question.answer) {
+        const isCorrect = selectedIndex === question.answer;
+        answers.push({
+          questionNumber: index + 1,
+          category: question.category,
+          question: question.prompt,
+          selectedIndex: selectedIndex,
+          selectedAnswer: selectedIndex >= 0 ? question.choices[selectedIndex] : "No answer",
+          correctIndex: question.answer,
+          correctAnswer: question.choices[question.answer],
+          isCorrect: isCorrect
+        });
+        if (isCorrect) {
           score += 1;
           stats[question.category].correct += 1;
         }
       });
-      return { score: score, stats: stats };
+      return { score: score, stats: stats, answers: answers };
     }
 
-    function saveQuiz(score, stats) {
+    function saveQuiz(score, stats, answers) {
       fetch("/api/progress/quiz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -488,7 +500,8 @@
           lessonSlug: "intermediate-readiness-week",
           score: score,
           totalQuestions: questions.length,
-          categoryBreakdown: stats
+          categoryBreakdown: stats,
+          answerDetails: answers
         })
       }).catch(function () {
         // The quiz still works if the file is opened without the backend.
@@ -525,7 +538,7 @@
 
     submitBtn.addEventListener("click", function () {
       const graded = gradeQuiz();
-      saveQuiz(graded.score, graded.stats);
+      saveQuiz(graded.score, graded.stats, graded.answers);
       showResult(graded.score, graded.stats);
       result.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
