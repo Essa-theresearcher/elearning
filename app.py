@@ -51,6 +51,10 @@ TEACHER_DISPLAY_NAME = (
 STUDENT_USERNAME = os.environ.get("STUDENT_USERNAME", "student").strip().lower()
 STUDENT_PASSWORD = os.environ.get("STUDENT_PASSWORD", "changeme123")
 STUDENT_DISPLAY_NAME = os.environ.get("STUDENT_DISPLAY_NAME", "Student").strip() or "Student"
+DIRECT_ACCESS_STUDENT_USERNAMES_RAW = os.environ.get(
+    "DIRECT_ACCESS_STUDENT_USERNAMES",
+    "zakariya",
+)
 PASSWORD_ITERATIONS = 260_000
 MIN_PASSWORD_LENGTH = 8
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v", ".webm", ".ogg"}
@@ -342,6 +346,15 @@ def utc_from_now(days):
 
 def normalize_username(username):
     return (username or "").strip().lower()
+
+
+def direct_access_student_usernames():
+    usernames = []
+    for username in DIRECT_ACCESS_STUDENT_USERNAMES_RAW.split(","):
+        normalized = normalize_username(username)
+        if normalized and normalized not in usernames:
+            usernames.append(normalized)
+    return usernames
 
 
 def public_user(row):
@@ -767,6 +780,36 @@ def grant_course_enrollment(
     ).fetchone()
 
 
+def grant_direct_access_students(conn):
+    usernames = direct_access_student_usernames()
+    if not usernames:
+        return
+
+    placeholders = ", ".join("?" for _ in usernames)
+    rows = db_execute(
+        conn,
+        f"""
+        SELECT id, username
+        FROM app_users
+        WHERE role = 'student' AND username IN ({placeholders})
+        """,
+        tuple(usernames),
+    ).fetchall()
+
+    for student in rows:
+        grant_course_enrollment(
+            conn,
+            student["id"],
+            course_slug="computer-fundamentals",
+            payment_reference="Direct student access",
+            payment_note="Bypasses checkout approval",
+        )
+
+    if rows:
+        granted = ", ".join(row["username"] for row in rows)
+        print(f"Granted Computer Fundamentals direct access to: {granted}")
+
+
 def lesson_access_status(conn, student_id, lesson_slug):
     config = lesson_config(lesson_slug)
     course_slug = course_for_lesson(lesson_slug)
@@ -944,6 +987,7 @@ def seed_default_accounts(conn):
         STUDENT_PASSWORD,
         "student",
     )
+    grant_direct_access_students(conn)
     if SYSTEM_ADMIN_PASSWORD == "adminchangeme123":
         print("Default admin password is adminchangeme123. Change SYSTEM_ADMIN_PASSWORD in production.")
     if TEACHER_PASSWORD == "changeme123":

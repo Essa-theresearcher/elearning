@@ -142,6 +142,8 @@ Open `/admin.html` for admin management and `/teacher.html` for the teacher work
 
 Teacher accounts can use `/teacher.html` to add class links, readings, video links, assignments, downloads, and other resources to lessons. To add a Week 1 video link, choose Lesson 1 or Lesson 2, set Type to Video, paste the video URL, and save it. To upload a local MP4 directly, use the Direct MP4 upload form in Classes & resources, choose the lesson, choose the recording part, and upload the file. Staff can also change their own password from the My password tab.
 
+`DIRECT_ACCESS_STUDENT_USERNAMES=zakariya` grants Computer Fundamentals automatically to matching student usernames on app startup, so those students do not need checkout approval. Add more usernames with commas, for example `DIRECT_ACCESS_STUDENT_USERNAMES=zakariya,amina`.
+
 Older deployments that already use `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_DISPLAY_NAME` will still use those values for the default teacher account unless the newer `TEACHER_*` variables are set.
 
 `ALLOW_SIGNUP=0` keeps student self-registration disabled. Set `ALLOW_SIGNUP=1` only if you want students to create their own accounts from the login screen.
