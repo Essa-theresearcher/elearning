@@ -383,6 +383,40 @@
       text-transform: uppercase;
     }
 
+    .status-pill {
+      width: max-content;
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: var(--teal-soft);
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .status-pill.pending {
+      background: #f2e8bf;
+      color: #7b6419;
+    }
+
+    .status-pill.rejected {
+      background: #f4ded8;
+      color: #8a3f34;
+    }
+
+    .order-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .order-actions button {
+      min-height: 36px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
     .empty-state {
       border: 1px dashed var(--line-strong);
       border-radius: 6px;
@@ -474,10 +508,11 @@
       <section class="hero">
         <span class="eyebrow">Course management</span>
         <h1>People, classes, and resources</h1>
-        <p>Admin oversees teachers and students. Teachers add the class links, lesson files, assignments, videos, and other resources students need.</p>
+        <p>Admin approves course orders and oversees teachers and students. Teachers add the class links, lesson files, assignments, videos, and other resources students need.</p>
       </section>
 
       <div class="function-tabs" id="functionTabs" aria-label="Management functions">
+        <button class="tab-button" type="button" data-admin-tab="orders" data-admin-only>Orders</button>
         <button class="tab-button" type="button" data-admin-tab="teachers" data-admin-only>Teachers</button>
         <button class="tab-button" type="button" data-admin-tab="students" data-admin-only>Students</button>
         <button class="tab-button" type="button" data-admin-tab="resources">Classes & resources</button>
@@ -485,6 +520,18 @@
       </div>
 
       <div class="dashboard-grid">
+        <section class="panel" data-admin-section="orders" data-admin-only>
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Course orders</span>
+              <h2>Approve enrollments</h2>
+            </div>
+          </div>
+          <p>After a student checks out and payment is confirmed, approve the course to unlock its lessons.</p>
+          <p class="status" id="enrollmentStatus" role="status"></p>
+          <div class="compact-list" id="enrollmentList" aria-live="polite"></div>
+        </section>
+
         <section class="panel" data-admin-section="teachers" data-admin-only>
           <div class="panel-head">
             <div>
@@ -632,6 +679,8 @@
       const resourceStatus = document.getElementById("resourceStatus");
       const resourceList = document.getElementById("resourceList");
       const resourceLesson = document.getElementById("resourceLesson");
+      const enrollmentStatus = document.getElementById("enrollmentStatus");
+      const enrollmentList = document.getElementById("enrollmentList");
       const ownPasswordForm = document.getElementById("ownPasswordForm");
       const ownPasswordStatus = document.getElementById("ownPasswordStatus");
       const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
@@ -653,14 +702,14 @@
       }
 
       function roleCanSeeTab(tabId) {
-        if (tabId === "teachers" || tabId === "students") {
+        if (tabId === "orders" || tabId === "teachers" || tabId === "students") {
           return isSystemAdmin(currentUser);
         }
         return isStaff(currentUser);
       }
 
       function showTab(tabId) {
-        const fallback = isSystemAdmin(currentUser) ? "teachers" : "resources";
+        const fallback = isSystemAdmin(currentUser) ? "orders" : "resources";
         const activeTab = roleCanSeeTab(tabId) ? tabId : fallback;
 
         tabButtons.forEach(function (button) {
@@ -702,7 +751,7 @@
           adminOnlyElements.forEach(function (element) {
             element.hidden = !isSystemAdmin(currentUser);
           });
-          showTab(isSystemAdmin(currentUser) ? "teachers" : "resources");
+          showTab(isSystemAdmin(currentUser) ? "orders" : "resources");
           loadDashboard();
           return;
         }
@@ -886,6 +935,83 @@
         });
       }
 
+      function enrollmentStatusLabel(status) {
+        if (status === "approved") return "Approved";
+        if (status === "rejected") return "Rejected";
+        return "Pending";
+      }
+
+      function renderEnrollments(enrollments) {
+        enrollmentList.innerHTML = "";
+        if (!enrollments.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.textContent = "No course checkout requests yet.";
+          enrollmentList.appendChild(empty);
+          return;
+        }
+
+        enrollments.forEach(function (enrollment) {
+          const item = document.createElement("div");
+          item.className = "list-item";
+
+          const status = document.createElement("span");
+          status.className = "status-pill " + enrollment.status;
+          status.textContent = enrollmentStatusLabel(enrollment.status);
+
+          const title = document.createElement("strong");
+          title.textContent = enrollment.courseTitle;
+
+          const student = document.createElement("span");
+          student.textContent = "Student: " + (enrollment.studentDisplayName || enrollment.studentUsername || enrollment.studentId);
+
+          const requested = document.createElement("span");
+          requested.textContent = "Requested: " + enrollment.requestedAt;
+
+          const payment = document.createElement("span");
+          payment.textContent = "Payment reference: " + (enrollment.paymentReference || "Not provided");
+
+          const note = document.createElement("span");
+          note.textContent = enrollment.paymentNote ? "Note: " + enrollment.paymentNote : "Note: none";
+
+          item.appendChild(status);
+          item.appendChild(title);
+          item.appendChild(student);
+          item.appendChild(requested);
+          item.appendChild(payment);
+          item.appendChild(note);
+
+          if (enrollment.reviewedAt) {
+            const reviewed = document.createElement("span");
+            reviewed.textContent = "Reviewed: " + enrollment.reviewedAt;
+            item.appendChild(reviewed);
+          }
+
+          const actions = document.createElement("div");
+          actions.className = "order-actions";
+
+          const approve = document.createElement("button");
+          approve.type = "button";
+          approve.dataset.enrollmentId = enrollment.id;
+          approve.dataset.reviewStatus = "approved";
+          approve.textContent = "Approve";
+          approve.disabled = enrollment.status === "approved";
+
+          const reject = document.createElement("button");
+          reject.type = "button";
+          reject.className = "secondary";
+          reject.dataset.enrollmentId = enrollment.id;
+          reject.dataset.reviewStatus = "rejected";
+          reject.textContent = "Reject";
+          reject.disabled = enrollment.status === "rejected";
+
+          actions.appendChild(approve);
+          actions.appendChild(reject);
+          item.appendChild(actions);
+          enrollmentList.appendChild(item);
+        });
+      }
+
       function loadStudents() {
         return fetch("/api/admin/students")
           .then(parseJsonResponse)
@@ -922,11 +1048,24 @@
           });
       }
 
+      function loadEnrollments() {
+        return fetch("/api/admin/enrollments")
+          .then(parseJsonResponse)
+          .then(function (data) {
+            renderEnrollments(Array.isArray(data.enrollments) ? data.enrollments : []);
+          })
+          .catch(function (error) {
+            setStatus(enrollmentStatus, error.message, true);
+          });
+      }
+
       function loadDashboard() {
         setStatus(studentStatus, "");
         setStatus(teacherStatus, "");
         setStatus(resourceStatus, "");
+        setStatus(enrollmentStatus, "");
         if (isSystemAdmin(currentUser)) {
+          loadEnrollments();
           loadTeachers();
           loadStudents();
         }
@@ -992,6 +1131,25 @@
 
       studentList.addEventListener("submit", function (event) {
         handlePasswordReset(event, "student");
+      });
+
+      enrollmentList.addEventListener("click", function (event) {
+        const button = event.target.closest("[data-enrollment-id]");
+        if (!button) return;
+
+        setStatus(enrollmentStatus, "");
+        button.disabled = true;
+
+        postJson("/api/admin/enrollments/review", {
+          enrollmentId: button.dataset.enrollmentId,
+          status: button.dataset.reviewStatus
+        }).then(function () {
+          setStatus(enrollmentStatus, "Enrollment " + button.dataset.reviewStatus + ".");
+          loadEnrollments();
+        }).catch(function (error) {
+          setStatus(enrollmentStatus, error.message, true);
+          button.disabled = false;
+        });
       });
 
       ownPasswordForm.addEventListener("submit", function (event) {

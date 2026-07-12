@@ -270,9 +270,13 @@
     }
 
     .auth-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       min-height: 44px;
       border: 0;
       border-radius: 6px;
+      padding: 10px 16px;
       background: var(--navy);
       color: var(--paper);
       cursor: pointer;
@@ -291,6 +295,26 @@
     body.auth-locked .layout {
       pointer-events: none;
       user-select: none;
+    }
+
+    body.lesson-locked .layout {
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .lesson-lock-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding-left: 20px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .lesson-lock-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .layout {
@@ -723,6 +747,21 @@
     </div>
   </div>
 
+  <div class="auth-overlay" id="lessonLockOverlay" hidden>
+    <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="lessonLockTitle">
+      <div class="auth-form">
+        <span class="eyebrow">Course locked</span>
+        <h2 id="lessonLockTitle">Checkout approval required</h2>
+        <p class="auth-copy" id="lessonLockMessage">Computer Fundamentals opens after checkout and admin approval.</p>
+        <ul class="lesson-lock-list" id="lessonLockList"></ul>
+        <div class="lesson-lock-actions">
+          <a class="auth-submit" href="courses.html">Open marketplace</a>
+          <button class="secondary-link" id="refreshAccessButton" type="button">Check again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <header class="topbar">
     <div class="topbar-inner">
       <a class="brand-lockup" href="home.html" aria-label="Digital Bridge School home">
@@ -1023,6 +1062,10 @@
       const logoutButton = document.getElementById("logoutButton");
       const loginForm = document.getElementById("loginForm");
       const loginMessage = document.getElementById("loginMessage");
+      const lessonLockOverlay = document.getElementById("lessonLockOverlay");
+      const lessonLockList = document.getElementById("lessonLockList");
+      const lessonLockMessage = document.getElementById("lessonLockMessage");
+      const refreshAccessButton = document.getElementById("refreshAccessButton");
       const teacherResources = document.getElementById("teacherResources");
       const teacherResourceList = document.getElementById("teacherResourceList");
       const lessonSlug = "intermediate-readiness-week";
@@ -1131,6 +1174,12 @@
               renderAuth(null);
               throw new Error("Login required");
             }
+            if (response.status === 423) {
+              response.json().then(lockLesson).catch(function () {
+                checkLessonAccess();
+              });
+              throw new Error("Course locked");
+            }
             if (!response.ok) throw new Error("Could not load resources");
             return response.json();
           })
@@ -1156,6 +1205,83 @@
         renderProgress();
       }
 
+      function unlockLesson() {
+        document.body.classList.remove("lesson-locked");
+        lessonLockOverlay.hidden = true;
+      }
+
+      function lockLesson(data) {
+        const course = data.course && data.course.course ? data.course.course : null;
+        const enrollment = data.course ? data.course.enrollment : null;
+        const items = [];
+
+        document.body.classList.add("lesson-locked");
+        lessonLockOverlay.hidden = false;
+        lessonLockMessage.textContent = (course ? course.title : "This course") + " opens after checkout and admin approval.";
+
+        if (!enrollment) {
+          items.push("Add the course to your cart and submit checkout.");
+        } else if (enrollment.status === "pending") {
+          items.push("Your checkout is waiting for admin approval.");
+        } else if (enrollment.status === "rejected") {
+          items.push("Your checkout was rejected. Contact the school or submit checkout again.");
+        }
+        items.push("After admin approval, click Check again.");
+
+        lessonLockList.innerHTML = "";
+        items.forEach(function (item) {
+          const listItem = document.createElement("li");
+          listItem.textContent = item;
+          lessonLockList.appendChild(listItem);
+        });
+      }
+
+      function checkLessonAccess() {
+        if (!canUseBackend || !currentUser) {
+          unlockLesson();
+          return Promise.resolve(true);
+        }
+
+        return fetch("/api/lesson-access?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(function (response) {
+            if (response.status === 401) {
+              renderAuth(null);
+              throw new Error("Login required");
+            }
+            if (!response.ok) throw response;
+            return response.json();
+          })
+          .then(function (data) {
+            if (data.unlocked) {
+              unlockLesson();
+              return true;
+            }
+            lockLesson(data);
+            return false;
+          })
+          .catch(function (error) {
+            if (error && typeof error.json === "function") {
+              return error.json().then(function (data) {
+                lockLesson(data);
+                return false;
+              }).catch(function () {
+                return false;
+              });
+            }
+            return false;
+          });
+      }
+
+      function loadUnlockedLessonData() {
+        return checkLessonAccess().then(function (unlocked) {
+          if (unlocked) {
+            loadProgressFromBackend();
+            loadTeacherResources();
+          }
+          return unlocked;
+        });
+      }
+
       function loadAuth() {
         if (!canUseBackend) {
           renderAuth(null);
@@ -1167,8 +1293,7 @@
           .then(function (data) {
             renderAuth(data.user);
             if (data.authenticated) {
-              loadProgressFromBackend();
-              loadTeacherResources();
+              loadUnlockedLessonData();
             }
           })
           .catch(function () {
@@ -1182,7 +1307,7 @@
       }
 
       function saveProgressToBackend() {
-        if (!canUseBackend) return;
+        if (!canUseBackend || document.body.classList.contains("lesson-locked")) return;
 
         fetch("/api/progress/lesson", {
           method: "POST",
@@ -1194,6 +1319,12 @@
         }).then(function (response) {
           if (response.status === 401) {
             renderAuth(null);
+            return;
+          }
+          if (response.status === 423) {
+            response.json().then(lockLesson).catch(function () {
+              checkLessonAccess();
+            });
           }
         }).catch(function () {
           // Keep local progress if the backend is temporarily unavailable.
@@ -1211,6 +1342,12 @@
             if (response.status === 401) {
               renderAuth(null);
               throw new Error("Login required");
+            }
+            if (response.status === 423) {
+              response.json().then(lockLesson).catch(function () {
+                checkLessonAccess();
+              });
+              throw new Error("Course locked");
             }
             if (!response.ok) throw new Error("Could not load progress");
             return response.json();
@@ -1247,6 +1384,7 @@
 
       completeButtons.forEach(function (button) {
         button.addEventListener("click", function () {
+          if (document.body.classList.contains("lesson-locked")) return;
           const id = button.dataset.complete;
           if (completed.has(id)) {
             completed.delete(id);
@@ -1269,8 +1407,7 @@
         }).then(function (data) {
           loginForm.reset();
           renderAuth(data.user);
-          loadProgressFromBackend();
-          loadTeacherResources();
+          loadUnlockedLessonData();
         }).catch(function (error) {
           setAuthMessage(error.message);
         });
@@ -1278,10 +1415,15 @@
 
       logoutButton.addEventListener("click", function () {
         postJson("/api/auth/logout", {}).finally(function () {
+          unlockLesson();
           renderAuth(null);
           renderTeacherResources([]);
           document.getElementById("loginUsername").focus();
         });
+      });
+
+      refreshAccessButton.addEventListener("click", function () {
+        loadUnlockedLessonData();
       });
 
       const observer = new IntersectionObserver(function (entries) {

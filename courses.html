@@ -40,8 +40,18 @@
     }
 
     button,
-    input {
+    input,
+    textarea {
       font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.62;
     }
 
     .topbar {
@@ -59,7 +69,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 18px;
-      max-width: 1180px;
+      max-width: 1240px;
       margin: 0 auto;
       padding: 14px 22px;
     }
@@ -97,30 +107,34 @@
       justify-content: flex-end;
     }
 
-    .nav a {
+    .nav a,
+    .nav button {
       min-height: 34px;
+      border: 0;
       border-radius: 6px;
       padding: 7px 10px;
+      background: transparent;
       color: rgba(255, 255, 255, 0.86);
       font-size: 13px;
       font-weight: 800;
     }
 
     .nav a:hover,
+    .nav button:hover,
     .nav a[aria-current="page"] {
       background: rgba(255, 255, 255, 0.1);
       color: var(--paper);
     }
 
     .market {
-      width: min(1180px, calc(100% - 36px));
+      width: min(1240px, calc(100% - 36px));
       margin: 0 auto;
-      padding: 42px 0 64px;
+      padding: 38px 0 64px;
     }
 
     .market-head {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
       gap: 24px;
       align-items: end;
       margin-bottom: 22px;
@@ -146,8 +160,8 @@
     }
 
     h1 {
-      max-width: 720px;
-      font-size: clamp(34px, 6vw, 64px);
+      max-width: 760px;
+      font-size: clamp(34px, 6vw, 62px);
       line-height: 1.02;
     }
 
@@ -157,70 +171,46 @@
     }
 
     .market-head p {
-      max-width: 720px;
+      max-width: 760px;
       margin-top: 14px;
       font-size: 17px;
     }
 
-    .search-box {
+    .search-box,
+    .checkout-form,
+    .login-form {
       display: grid;
-      gap: 8px;
+      gap: 9px;
     }
 
-    .search-box label {
+    label {
+      display: grid;
+      gap: 7px;
       color: var(--navy);
       font-size: 13px;
       font-weight: 900;
     }
 
-    .search-box input {
+    input,
+    textarea {
       width: 100%;
       border: 1px solid var(--line);
       border-radius: 6px;
-      padding: 12px 13px;
+      padding: 11px 12px;
       background: var(--paper);
       color: var(--ink);
     }
 
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
     .market-layout {
       display: grid;
-      grid-template-columns: 250px minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr) 340px;
       gap: 22px;
       align-items: start;
-    }
-
-    .filter-panel {
-      position: sticky;
-      top: 82px;
-      display: grid;
-      gap: 12px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 16px;
-      background: var(--paper);
-    }
-
-    .filter-panel h2 {
-      font-size: 20px;
-    }
-
-    .filter-chip {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      min-height: 38px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      padding: 8px 10px;
-      background: var(--ivory);
-      color: var(--navy);
-      font-size: 13px;
-      font-weight: 900;
-    }
-
-    .filter-chip span:last-child {
-      color: var(--teal);
     }
 
     .course-grid {
@@ -232,7 +222,7 @@
     .course-card {
       display: grid;
       grid-template-rows: auto 1fr auto;
-      min-height: 420px;
+      min-height: 450px;
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: var(--radius);
@@ -279,6 +269,11 @@
       color: #7b6419;
     }
 
+    .pill.rose {
+      background: #f4ded8;
+      color: #8a3f34;
+    }
+
     .course-card h3 {
       font-size: 24px;
       line-height: 1.15;
@@ -301,33 +296,119 @@
       padding: 0 18px 18px;
     }
 
-    .open-course {
+    .primary-action,
+    .secondary-action {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       min-height: 44px;
       border-radius: 6px;
       padding: 10px 14px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .primary-action {
+      border: 1px solid var(--navy);
       background: var(--navy);
+      color: var(--paper);
+    }
+
+    .primary-action:hover {
+      background: var(--teal);
+      border-color: var(--teal);
+    }
+
+    .secondary-action {
+      border: 1px solid var(--line);
+      background: var(--ivory);
+      color: var(--navy);
+    }
+
+    .muted-note {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .cart-panel {
+      position: sticky;
+      top: 82px;
+      display: grid;
+      gap: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: var(--paper);
+      box-shadow: 0 16px 34px rgba(19, 42, 76, 0.08);
+    }
+
+    .cart-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .cart-count {
+      display: grid;
+      place-items: center;
+      min-width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: var(--teal);
       color: var(--paper);
       font-weight: 900;
     }
 
-    .open-course:hover {
-      background: var(--teal);
+    .cart-items {
+      display: grid;
+      gap: 8px;
     }
 
-    .open-course.is-disabled {
+    .cart-item,
+    .status-box {
+      display: grid;
+      gap: 5px;
       border: 1px solid var(--line);
-      background: var(--ivory);
-      color: var(--muted);
-      cursor: default;
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: #fbfcfb;
     }
 
-    .locked-note {
-      color: var(--muted);
+    .cart-item strong,
+    .status-box strong {
+      color: var(--navy);
+    }
+
+    .cart-item button {
+      width: max-content;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--rose);
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 900;
+      text-align: left;
+    }
+
+    .cart-empty {
+      border: 1px dashed var(--line);
+      border-radius: 6px;
+      padding: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .status-message {
+      min-height: 22px;
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .status-message.error {
+      color: var(--rose);
     }
 
     .empty-state {
@@ -342,13 +423,17 @@
       display: block;
     }
 
-    @media (max-width: 980px) {
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 1100px) {
       .market-head,
       .market-layout {
         grid-template-columns: 1fr;
       }
 
-      .filter-panel {
+      .cart-panel {
         position: static;
       }
 
@@ -364,7 +449,7 @@
       }
 
       .market {
-        width: min(100% - 28px, 1180px);
+        width: min(100% - 28px, 1240px);
         padding-top: 30px;
       }
 
@@ -388,6 +473,7 @@
       <nav class="nav" aria-label="Course marketplace navigation">
         <a href="home.html">Home</a>
         <a href="courses.html" aria-current="page">Courses</a>
+        <button id="logoutButton" type="button" hidden>Log out</button>
       </nav>
     </div>
   </header>
@@ -396,287 +482,411 @@
     <section class="market-head">
       <div>
         <span class="eyebrow">Course marketplace</span>
-        <h1>Choose the next learning path</h1>
-        <p>Browse the student course catalog. Each course opens the actual lesson workspace with reading, video, activity, quiz, and project work.</p>
+        <h1>Buy courses, then wait for admin approval</h1>
+        <p>Choose full courses for your cart. After checkout and payment confirmation, admin approves your enrollment and the course opens in your student account.</p>
       </div>
       <div class="search-box">
         <label for="courseSearch">Search courses</label>
-        <input id="courseSearch" type="search" placeholder="Search by week, topic, or skill">
+        <input id="courseSearch" type="search" placeholder="Search by course, category, or skill">
       </div>
     </section>
 
-    <section class="market-layout" aria-label="Available courses">
-      <aside class="filter-panel">
-        <span class="eyebrow">Catalog</span>
-        <h2>All programs</h2>
-        <div class="filter-chip"><span>Available</span><span>3</span></div>
-        <div class="filter-chip"><span>Coming soon</span><span>7</span></div>
-        <div class="filter-chip"><span>Reading</span><span>3</span></div>
-        <div class="filter-chip"><span>Quiz</span><span>3</span></div>
-        <div class="filter-chip"><span>Project work</span><span>2</span></div>
-      </aside>
-
+    <section class="market-layout" aria-label="Course marketplace">
       <div>
-        <div class="course-grid" id="courseGrid">
-          <article class="course-card" data-course-card data-keywords="week 0 python readiness placement diagnostic quiz mini project intermediate">
-            <div class="course-media">
-              <img src="assets/school/icon-graduation.png" alt="">
-            </div>
-            <div class="course-body">
-              <div class="course-meta">
-                <span class="pill gold">Start here</span>
-                <span class="pill">Week 0</span>
-              </div>
-              <h3>Python Readiness Assessment</h3>
-              <p>Confirm the student is ready for intermediate work before the main lessons begin.</p>
-              <ul class="course-list">
-                <li>Core Python review</li>
-                <li>Readiness quiz</li>
-                <li>Mini coding project</li>
-              </ul>
-            </div>
-            <div class="course-actions">
-              <a class="open-course" href="prework.html">Open Week 0</a>
-              <span class="locked-note">Students should complete this before Lesson 1.</span>
-            </div>
-          </article>
-
-          <article class="course-card" data-course-card data-keywords="week 1 lesson 1 computers hardware binary cpu ram operating system python memory">
-            <div class="course-media">
-              <img src="assets/school/icon-coding.png" alt="">
-            </div>
-            <div class="course-body">
-              <div class="course-meta">
-                <span class="pill">Week 1</span>
-                <span class="pill">Lesson 1</span>
-              </div>
-              <h3>How Computers Actually Work</h3>
-              <p>Understand the journey from Python code to hardware, memory, operating systems, and binary.</p>
-              <ul class="course-list">
-                <li>PDF reading plan</li>
-                <li>Class activity</li>
-                <li>Quiz and wrap-up</li>
-              </ul>
-            </div>
-            <div class="course-actions">
-              <a class="open-course" href="index.html">Open Lesson 1</a>
-              <span class="locked-note">Unlocks after Week 0 is complete.</span>
-            </div>
-          </article>
-
-          <article class="course-card" data-course-card data-keywords="week 1 lesson 2 internet dns ip http https api servers ports networking">
-            <div class="course-media">
-              <img src="assets/school/icon-networking.png" alt="">
-            </div>
-            <div class="course-body">
-              <div class="course-meta">
-                <span class="pill">Week 1</span>
-                <span class="pill">Lesson 2</span>
-              </div>
-              <h3>How the Internet Actually Works</h3>
-              <p>Trace what happens when a browser opens a page, from DNS and IP addresses to HTTPS and APIs.</p>
-              <ul class="course-list">
-                <li>Internet reading notes</li>
-                <li>Hands-on class activity</li>
-                <li>Practice quiz</li>
-              </ul>
-            </div>
-            <div class="course-actions">
-              <a class="open-course" href="lesson2.html">Open Lesson 2</a>
-              <span class="locked-note">Unlocks after Lesson 1 is complete.</span>
-            </div>
-          </article>
-
-          <article class="course-card" data-course-card data-keywords="python fundamentals beginner programming variables loops functions lists dictionaries">
-            <div class="course-media">
-              <img src="assets/school/icon-coding.png" alt="">
-            </div>
-            <div class="course-body">
-              <div class="course-meta">
-                <span class="pill gold">Coming soon</span>
-                <span class="pill">Python</span>
-              </div>
-              <h3>Python Fundamentals</h3>
-              <p>A beginner-friendly path for students who need the foundations before intermediate Python work.</p>
-              <ul class="course-list">
-                <li>Variables, data types, and operators</li>
-                <li>Control flow and functions</li>
-                <li>Lists, dictionaries, and files</li>
-              </ul>
-            </div>
-            <div class="course-actions">
-              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
-              <span class="locked-note">Lessons will be added when the course content is ready.</span>
-            </div>
-          </article>
-
-          <article class="course-card" data-course-card data-keywords="web development coding html css javascript python logic problem solving">
-            <div class="course-media">
-              <img src="assets/school/icon-rocket.png" alt="">
-            </div>
-            <div class="course-body">
-              <div class="course-meta">
-                <span class="pill gold">Coming soon</span>
-                <span class="pill">Coding</span>
-              </div>
-              <h3>Web Development & Coding</h3>
-              <p>Build practical websites and learn the programming logic behind interactive web apps.</p>
-              <ul class="course-list">
-                <li>HTML and CSS</li>
-                <li>JavaScript fundamentals</li>
-                <li>Projects and problem solving</li>
-              </ul>
-            </div>
-            <div class="course-actions">
-              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
-              <span class="locked-note">This program is listed now; lessons are not published yet.</span>
-            </div>
-          </article>
-
-          <article class="course-card" data-course-card data-keywords="data it skills analysis visualization networking computer systems">
-            <div class="course-media">
-              <img src="assets/school/icon-networking.png" alt="">
-            </div>
-            <div class="course-body">
-              <div class="course-meta">
-                <span class="pill gold">Coming soon</span>
-                <span class="pill">IT</span>
-              </div>
-              <h3>Data & IT Skills</h3>
-              <p>Learn the practical digital and analytical skills used in modern workplaces.</p>
-              <ul class="course-list">
-                <li>Data analysis and visualization</li>
-                <li>Networking fundamentals</li>
-                <li>Computer systems basics</li>
-              </ul>
-            </div>
-            <div class="course-actions">
-              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
-              <span class="locked-note">This program is waiting for lesson materials.</span>
-            </div>
-          </article>
-
-          <article class="course-card" data-course-card data-keywords="graphic design creativity photoshop canva logo branding visual communication">
-            <div class="course-media">
-              <img src="assets/school/icon-design.png" alt="">
-            </div>
-            <div class="course-body">
-              <div class="course-meta">
-                <span class="pill gold">Coming soon</span>
-                <span class="pill">Design</span>
-              </div>
-              <h3>Graphic Design & Creativity</h3>
-              <p>Practice visual communication through branding, layout, and creative digital tools.</p>
-              <ul class="course-list">
-                <li>Canva and Photoshop basics</li>
-                <li>Logo and brand design</li>
-                <li>Creative project work</li>
-              </ul>
-            </div>
-            <div class="course-actions">
-              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
-              <span class="locked-note">Students can see the program, but no lesson is open yet.</span>
-            </div>
-          </article>
-
-          <article class="course-card" data-course-card data-keywords="digital marketing social media content creation seo online branding">
-            <div class="course-media">
-              <img src="assets/school/icon-data.png" alt="">
-            </div>
-            <div class="course-body">
-              <div class="course-meta">
-                <span class="pill gold">Coming soon</span>
-                <span class="pill">Marketing</span>
-              </div>
-              <h3>Digital Marketing</h3>
-              <p>Plan and publish online campaigns with content, social media, search, and brand strategy.</p>
-              <ul class="course-list">
-                <li>Social media strategy</li>
-                <li>Content creation</li>
-                <li>SEO and online branding</li>
-              </ul>
-            </div>
-            <div class="course-actions">
-              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
-              <span class="locked-note">This will open after the marketing lessons are built.</span>
-            </div>
-          </article>
-
-          <article class="course-card" data-course-card data-keywords="mobile app development android ios app design user experience">
-            <div class="course-media">
-              <img src="assets/school/icon-people.png" alt="">
-            </div>
-            <div class="course-body">
-              <div class="course-meta">
-                <span class="pill gold">Coming soon</span>
-                <span class="pill">Apps</span>
-              </div>
-              <h3>Mobile App Development</h3>
-              <p>Learn the structure, design thinking, and practical steps behind mobile application projects.</p>
-              <ul class="course-list">
-                <li>Android development</li>
-                <li>iOS basics</li>
-                <li>User experience</li>
-              </ul>
-            </div>
-            <div class="course-actions">
-              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
-              <span class="locked-note">This program is not yet accepting students in the app.</span>
-            </div>
-          </article>
-
-          <article class="course-card" data-course-card data-keywords="english communication speaking writing business english presentation interview">
-            <div class="course-media">
-              <img src="assets/school/icon-graduation.png" alt="">
-            </div>
-            <div class="course-body">
-              <div class="course-meta">
-                <span class="pill gold">Coming soon</span>
-                <span class="pill">Communication</span>
-              </div>
-              <h3>English & Communication</h3>
-              <p>Build confidence for speaking, writing, interviews, presentations, and workplace communication.</p>
-              <ul class="course-list">
-                <li>Business English</li>
-                <li>Presentation skills</li>
-                <li>Interview preparation</li>
-              </ul>
-            </div>
-            <div class="course-actions">
-              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
-              <span class="locked-note">Lessons will be connected later.</span>
-            </div>
-          </article>
-        </div>
+        <div class="course-grid" id="courseGrid"></div>
         <div class="empty-state" id="emptyState">
           <h2>No matching courses</h2>
-          <p>Try searching for Python, internet, computer, quiz, or week.</p>
+          <p>Try searching for Python, marketing, design, IT, apps, English, or computer.</p>
         </div>
       </div>
+
+      <aside class="cart-panel" aria-label="Cart and checkout">
+        <div class="cart-head">
+          <div>
+            <span class="eyebrow">Checkout</span>
+            <h2>Your cart</h2>
+          </div>
+          <span class="cart-count" id="cartCount">0</span>
+        </div>
+
+        <div class="status-box" id="studentStatus">
+          <strong>Student account</strong>
+          <span id="studentStatusText">Sign in to checkout and see approval status.</span>
+        </div>
+
+        <div class="cart-items" id="cartItems"></div>
+
+        <form class="login-form" id="loginForm">
+          <span class="eyebrow">Student login</span>
+          <label>
+            Username
+            <input name="username" autocomplete="username" required>
+          </label>
+          <label>
+            Password
+            <input name="password" type="password" autocomplete="current-password" required>
+          </label>
+          <button class="primary-action" type="submit">Sign in</button>
+        </form>
+
+        <form class="checkout-form" id="checkoutForm" hidden>
+          <span class="eyebrow">Payment confirmation</span>
+          <label>
+            Payment reference
+            <input name="paymentReference" placeholder="Receipt, M-Pesa, bank, or invoice reference">
+          </label>
+          <label>
+            Note to admin
+            <textarea name="paymentNote" maxlength="500" placeholder="Example: Paid for Computer Fundamentals today."></textarea>
+          </label>
+          <button class="primary-action" type="submit">Submit checkout</button>
+          <p class="muted-note">Admin reviews the payment and approves your course enrollment.</p>
+        </form>
+
+        <p class="status-message" id="cartMessage" role="status"></p>
+      </aside>
     </section>
   </main>
 
   <script>
     (function () {
-      const search = document.getElementById("courseSearch");
-      const cards = Array.from(document.querySelectorAll("[data-course-card]"));
+      const CART_KEY = "dbs-course-cart";
+      const courseGrid = document.getElementById("courseGrid");
+      const courseSearch = document.getElementById("courseSearch");
       const emptyState = document.getElementById("emptyState");
+      const cartCount = document.getElementById("cartCount");
+      const cartItems = document.getElementById("cartItems");
+      const cartMessage = document.getElementById("cartMessage");
+      const loginForm = document.getElementById("loginForm");
+      const checkoutForm = document.getElementById("checkoutForm");
+      const logoutButton = document.getElementById("logoutButton");
+      const studentStatusText = document.getElementById("studentStatusText");
 
-      function filterCourses() {
-        const query = search.value.trim().toLowerCase();
+      let courses = [];
+      let enrollments = [];
+      let currentUser = null;
+      let cart = readCart();
+
+      function readCart() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (_) {
+          return [];
+        }
+      }
+
+      function saveCart() {
+        localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      }
+
+      function setMessage(message, isError) {
+        cartMessage.textContent = message || "";
+        cartMessage.classList.toggle("error", Boolean(isError));
+      }
+
+      function parseJsonResponse(response) {
+        return response.json().catch(function () {
+          return {};
+        }).then(function (data) {
+          if (!response.ok) {
+            throw new Error(data.error || "Request failed.");
+          }
+          return data;
+        });
+      }
+
+      function postJson(url, payload) {
+        return fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload || {})
+        }).then(parseJsonResponse);
+      }
+
+      function enrollmentFor(courseSlug) {
+        return enrollments.find(function (enrollment) {
+          return enrollment.courseSlug === courseSlug;
+        });
+      }
+
+      function courseBySlug(courseSlug) {
+        return courses.find(function (course) {
+          return course.slug === courseSlug;
+        });
+      }
+
+      function statusLabel(enrollment) {
+        if (!enrollment) return "";
+        if (enrollment.status === "approved") return "Approved";
+        if (enrollment.status === "pending") return "Pending approval";
+        return "Rejected";
+      }
+
+      function renderCourses() {
+        const query = courseSearch.value.trim().toLowerCase();
         let visible = 0;
+        courseGrid.innerHTML = "";
 
-        cards.forEach(function (card) {
-          const text = (card.textContent + " " + card.dataset.keywords).toLowerCase();
-          const isVisible = !query || text.includes(query);
-          card.hidden = !isVisible;
-          if (isVisible) visible += 1;
+        courses.forEach(function (course) {
+          const enrollment = enrollmentFor(course.slug);
+          const text = [
+            course.title,
+            course.category,
+            course.description,
+            course.highlights.join(" ")
+          ].join(" ").toLowerCase();
+
+          if (query && !text.includes(query)) return;
+          visible += 1;
+
+          const card = document.createElement("article");
+          card.className = "course-card";
+
+          const media = document.createElement("div");
+          media.className = "course-media";
+          const img = document.createElement("img");
+          img.src = course.image;
+          img.alt = "";
+          media.appendChild(img);
+
+          const body = document.createElement("div");
+          body.className = "course-body";
+
+          const meta = document.createElement("div");
+          meta.className = "course-meta";
+          const category = document.createElement("span");
+          category.className = "pill";
+          category.textContent = course.category;
+          const status = document.createElement("span");
+          status.className = enrollment ? "pill gold" : "pill";
+          status.textContent = enrollment ? statusLabel(enrollment) : course.priceLabel;
+          meta.appendChild(category);
+          meta.appendChild(status);
+
+          const title = document.createElement("h3");
+          title.textContent = course.title;
+
+          const description = document.createElement("p");
+          description.textContent = course.description;
+
+          const list = document.createElement("ul");
+          list.className = "course-list";
+          course.highlights.forEach(function (highlight) {
+            const item = document.createElement("li");
+            item.textContent = highlight;
+            list.appendChild(item);
+          });
+
+          body.appendChild(meta);
+          body.appendChild(title);
+          body.appendChild(description);
+          body.appendChild(list);
+
+          const actions = document.createElement("div");
+          actions.className = "course-actions";
+
+          if (enrollment && enrollment.status === "approved" && course.entryPath) {
+            const openLink = document.createElement("a");
+            openLink.className = "primary-action";
+            openLink.href = course.entryPath;
+            openLink.textContent = "Open course";
+            actions.appendChild(openLink);
+            const note = document.createElement("span");
+            note.className = "muted-note";
+            note.textContent = "Your enrollment is approved.";
+            actions.appendChild(note);
+          } else if (enrollment && enrollment.status === "approved") {
+            const approved = document.createElement("span");
+            approved.className = "secondary-action";
+            approved.textContent = "Approved";
+            actions.appendChild(approved);
+            const note = document.createElement("span");
+            note.className = "muted-note";
+            note.textContent = "Course content will be connected when lessons are ready.";
+            actions.appendChild(note);
+          } else if (enrollment && enrollment.status === "pending") {
+            const pending = document.createElement("span");
+            pending.className = "secondary-action";
+            pending.textContent = "Waiting for admin";
+            actions.appendChild(pending);
+            const note = document.createElement("span");
+            note.className = "muted-note";
+            note.textContent = "Admin must approve this checkout before access opens.";
+            actions.appendChild(note);
+          } else {
+            const button = document.createElement("button");
+            button.className = "primary-action";
+            button.type = "button";
+            button.textContent = cart.includes(course.slug) ? "In cart" : "Add to cart";
+            button.disabled = cart.includes(course.slug);
+            button.addEventListener("click", function () {
+              addToCart(course.slug);
+            });
+            actions.appendChild(button);
+            const note = document.createElement("span");
+            note.className = "muted-note";
+            note.textContent = course.status === "open"
+              ? "Checkout required before the course opens."
+              : "You can request enrollment before lessons are published.";
+            actions.appendChild(note);
+          }
+
+          card.appendChild(media);
+          card.appendChild(body);
+          card.appendChild(actions);
+          courseGrid.appendChild(card);
         });
 
         emptyState.classList.toggle("is-visible", visible === 0);
       }
 
-      search.addEventListener("input", filterCourses);
+      function renderCart() {
+        cartCount.textContent = String(cart.length);
+        cartItems.innerHTML = "";
+
+        if (currentUser) {
+          studentStatusText.textContent = "Signed in as " + (currentUser.displayName || currentUser.username) + ".";
+          loginForm.hidden = true;
+          checkoutForm.hidden = false;
+          logoutButton.hidden = false;
+        } else {
+          studentStatusText.textContent = "Sign in to checkout and see approval status.";
+          loginForm.hidden = false;
+          checkoutForm.hidden = true;
+          logoutButton.hidden = true;
+        }
+
+        if (!cart.length) {
+          const empty = document.createElement("div");
+          empty.className = "cart-empty";
+          empty.textContent = "Your cart is empty.";
+          cartItems.appendChild(empty);
+          checkoutForm.querySelector("button").disabled = true;
+          return;
+        }
+
+        checkoutForm.querySelector("button").disabled = !currentUser;
+
+        cart.forEach(function (courseSlug) {
+          const course = courseBySlug(courseSlug);
+          if (!course) return;
+
+          const item = document.createElement("div");
+          item.className = "cart-item";
+
+          const title = document.createElement("strong");
+          title.textContent = course.title;
+
+          const detail = document.createElement("span");
+          detail.textContent = course.priceLabel;
+
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.textContent = "Remove";
+          remove.addEventListener("click", function () {
+            cart = cart.filter(function (slug) {
+              return slug !== courseSlug;
+            });
+            saveCart();
+            renderAll();
+          });
+
+          item.appendChild(title);
+          item.appendChild(detail);
+          item.appendChild(remove);
+          cartItems.appendChild(item);
+        });
+      }
+
+      function renderAll() {
+        renderCourses();
+        renderCart();
+      }
+
+      function addToCart(courseSlug) {
+        if (!cart.includes(courseSlug)) {
+          cart.push(courseSlug);
+          saveCart();
+        }
+        setMessage("Added to cart.");
+        renderAll();
+      }
+
+      function mergeEnrollments(newEnrollments) {
+        newEnrollments.forEach(function (newEnrollment) {
+          enrollments = enrollments.filter(function (enrollment) {
+            return enrollment.courseSlug !== newEnrollment.courseSlug;
+          });
+          enrollments.push(newEnrollment);
+        });
+      }
+
+      function loadCatalog() {
+        fetch("/api/catalog")
+          .then(parseJsonResponse)
+          .then(function (data) {
+            courses = Array.isArray(data.courses) ? data.courses : [];
+            enrollments = Array.isArray(data.enrollments) ? data.enrollments : [];
+            currentUser = data.user || null;
+            renderAll();
+          })
+          .catch(function (error) {
+            setMessage(error.message, true);
+          });
+      }
+
+      courseSearch.addEventListener("input", renderCourses);
+
+      loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setMessage("");
+        postJson("/api/auth/login", {
+          loginRole: "student",
+          username: loginForm.elements.username.value,
+          password: loginForm.elements.password.value
+        }).then(function (data) {
+          currentUser = data.user || null;
+          loginForm.reset();
+          return fetch("/api/enrollments").then(parseJsonResponse);
+        }).then(function (data) {
+          enrollments = Array.isArray(data.enrollments) ? data.enrollments : [];
+          setMessage("Signed in. You can checkout now.");
+          renderAll();
+        }).catch(function (error) {
+          setMessage(error.message, true);
+        });
+      });
+
+      checkoutForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setMessage("");
+        postJson("/api/checkout", {
+          courseSlugs: cart,
+          paymentReference: checkoutForm.elements.paymentReference.value,
+          paymentNote: checkoutForm.elements.paymentNote.value
+        }).then(function (data) {
+          mergeEnrollments(Array.isArray(data.enrollments) ? data.enrollments : []);
+          cart = [];
+          saveCart();
+          checkoutForm.reset();
+          setMessage("Checkout submitted. Admin will approve after confirming payment.");
+          renderAll();
+        }).catch(function (error) {
+          setMessage(error.message, true);
+        });
+      });
+
+      logoutButton.addEventListener("click", function () {
+        postJson("/api/auth/logout", {}).finally(function () {
+          currentUser = null;
+          enrollments = [];
+          setMessage("Signed out.");
+          renderAll();
+        });
+      });
+
+      loadCatalog();
     })();
   </script>
 </body>

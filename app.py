@@ -164,6 +164,157 @@ LESSONS = {
     },
 }
 
+COURSES = {
+    "computer-fundamentals": {
+        "title": "Computer Fundamentals",
+        "category": "Technology",
+        "status": "open",
+        "image": "assets/school/icon-coding.png",
+        "entry_path": "prework.html",
+        "price_label": "Manual checkout",
+        "description": (
+            "Understand how computers, memory, operating systems, and the "
+            "internet actually work before deeper programming lessons."
+        ),
+        "highlights": [
+            "Week 0 readiness assessment",
+            "How Computers Actually Work",
+            "How the Internet Actually Works",
+        ],
+        "lesson_slugs": [
+            "intermediate-readiness-week",
+            "cs-fundamentals-lesson-1",
+            "internet-fundamentals-lesson-2",
+        ],
+    },
+    "python-fundamentals": {
+        "title": "Python Fundamentals",
+        "category": "Programming",
+        "status": "planned",
+        "image": "assets/school/icon-coding.png",
+        "entry_path": "",
+        "price_label": "Manual checkout",
+        "description": (
+            "A beginner-friendly path for students who need Python foundations "
+            "before intermediate work."
+        ),
+        "highlights": [
+            "Variables and data types",
+            "Control flow and functions",
+            "Lists, dictionaries, and files",
+        ],
+        "lesson_slugs": [],
+    },
+    "web-development-coding": {
+        "title": "Web Development & Coding",
+        "category": "Coding",
+        "status": "planned",
+        "image": "assets/school/icon-rocket.png",
+        "entry_path": "",
+        "price_label": "Manual checkout",
+        "description": (
+            "Build practical websites and learn the programming logic behind "
+            "interactive web apps."
+        ),
+        "highlights": [
+            "HTML and CSS",
+            "JavaScript fundamentals",
+            "Projects and problem solving",
+        ],
+        "lesson_slugs": [],
+    },
+    "data-it-skills": {
+        "title": "Data & IT Skills",
+        "category": "IT",
+        "status": "planned",
+        "image": "assets/school/icon-networking.png",
+        "entry_path": "",
+        "price_label": "Manual checkout",
+        "description": (
+            "Learn practical digital, analytical, networking, and computer "
+            "systems skills for modern workplaces."
+        ),
+        "highlights": [
+            "Data analysis and visualization",
+            "Networking fundamentals",
+            "Computer systems basics",
+        ],
+        "lesson_slugs": [],
+    },
+    "graphic-design-creativity": {
+        "title": "Graphic Design & Creativity",
+        "category": "Design",
+        "status": "planned",
+        "image": "assets/school/icon-design.png",
+        "entry_path": "",
+        "price_label": "Manual checkout",
+        "description": (
+            "Practice visual communication through branding, layout, and "
+            "creative digital tools."
+        ),
+        "highlights": [
+            "Canva and Photoshop basics",
+            "Logo and brand design",
+            "Creative project work",
+        ],
+        "lesson_slugs": [],
+    },
+    "digital-marketing": {
+        "title": "Digital Marketing",
+        "category": "Marketing",
+        "status": "planned",
+        "image": "assets/school/icon-data.png",
+        "entry_path": "",
+        "price_label": "Manual checkout",
+        "description": (
+            "Plan and publish online campaigns with content, social media, "
+            "search, and brand strategy."
+        ),
+        "highlights": [
+            "Social media strategy",
+            "Content creation",
+            "SEO and online branding",
+        ],
+        "lesson_slugs": [],
+    },
+    "mobile-app-development": {
+        "title": "Mobile App Development",
+        "category": "Apps",
+        "status": "planned",
+        "image": "assets/school/icon-people.png",
+        "entry_path": "",
+        "price_label": "Manual checkout",
+        "description": (
+            "Learn the structure, design thinking, and practical steps behind "
+            "mobile application projects."
+        ),
+        "highlights": [
+            "Android development",
+            "iOS basics",
+            "User experience",
+        ],
+        "lesson_slugs": [],
+    },
+    "english-communication": {
+        "title": "English & Communication",
+        "category": "Communication",
+        "status": "planned",
+        "image": "assets/school/icon-graduation.png",
+        "entry_path": "",
+        "price_label": "Manual checkout",
+        "description": (
+            "Build confidence for speaking, writing, interviews, "
+            "presentations, and workplace communication."
+        ),
+        "highlights": [
+            "Business English",
+            "Presentation skills",
+            "Interview preparation",
+        ],
+        "lesson_slugs": [],
+    },
+}
+
 
 def sqlite_db_path():
     raw_path = os.environ.get("SQLITE_DB_PATH", "data/learning_ms.sqlite3")
@@ -228,6 +379,57 @@ def public_resource(row):
         "createdBy": row["created_by"],
         "createdAt": row["created_at"],
     }
+
+
+def public_course(slug, config):
+    return {
+        "slug": slug,
+        "title": config["title"],
+        "category": config["category"],
+        "status": config["status"],
+        "image": config["image"],
+        "entryPath": config["entry_path"],
+        "priceLabel": config["price_label"],
+        "description": config["description"],
+        "highlights": list(config["highlights"]),
+        "lessonSlugs": list(config["lesson_slugs"]),
+    }
+
+
+def course_summaries():
+    return [public_course(slug, config) for slug, config in COURSES.items()]
+
+
+def course_for_lesson(lesson_slug):
+    for slug, config in COURSES.items():
+        if lesson_slug in config.get("lesson_slugs", []):
+            return slug
+    return None
+
+
+def public_enrollment(row):
+    if not row:
+        return None
+    course_slug = row["course_slug"]
+    course = COURSES.get(course_slug, {})
+    result = {
+        "id": row["id"],
+        "studentId": row["student_id"],
+        "courseSlug": course_slug,
+        "courseTitle": course.get("title", course_slug),
+        "status": row["status"],
+        "paymentReference": row["payment_reference"],
+        "paymentNote": row["payment_note"],
+        "requestedAt": row["requested_at"],
+        "reviewedAt": row["reviewed_at"],
+    }
+    if "student_username" in row.keys():
+        result["studentUsername"] = row["student_username"]
+    if "student_display_name" in row.keys():
+        result["studentDisplayName"] = row["student_display_name"]
+    if "reviewed_by_username" in row.keys():
+        result["reviewedByUsername"] = row["reviewed_by_username"]
+    return result
 
 
 def is_admin_role(role):
@@ -325,6 +527,37 @@ def validate_resource_payload(data):
     }, None
 
 
+def validate_checkout_payload(data):
+    raw_slugs = data.get("courseSlugs")
+    if not isinstance(raw_slugs, list):
+        raw_slugs = []
+
+    course_slugs = []
+    for slug in raw_slugs:
+        slug = (slug or "").strip()
+        if slug and slug not in course_slugs:
+            course_slugs.append(slug)
+
+    if not course_slugs:
+        return None, "Add at least one course to the cart."
+    invalid_slugs = [slug for slug in course_slugs if slug not in COURSES]
+    if invalid_slugs:
+        return None, "One or more courses are not available."
+
+    payment_reference = (data.get("paymentReference") or "").strip()
+    payment_note = (data.get("paymentNote") or "").strip()
+    if len(payment_reference) > 120:
+        return None, "Payment reference must be 120 characters or less."
+    if len(payment_note) > 500:
+        return None, "Payment note must be 500 characters or less."
+
+    return {
+        "course_slugs": course_slugs,
+        "payment_reference": payment_reference,
+        "payment_note": payment_note,
+    }, None
+
+
 def display_name_from_file(path):
     name = path.stem.replace("_", " ").replace("-", " ").strip()
     return " ".join(word.capitalize() for word in name.split()) or path.name
@@ -407,13 +640,48 @@ def list_lesson_recordings(lesson_slug):
     return recordings
 
 
+def course_access_status(conn, student_id, course_slug):
+    course = COURSES.get(course_slug)
+    if not course:
+        return None
+
+    row = db_execute(
+        conn,
+        """
+        SELECT id, student_id, course_slug, status, payment_reference,
+            payment_note, requested_at, reviewed_by, reviewed_at
+        FROM course_enrollments
+        WHERE student_id = ? AND course_slug = ?
+        """,
+        (student_id, course_slug),
+    ).fetchone()
+
+    return {
+        "course": public_course(course_slug, course),
+        "enrollment": public_enrollment(row) if row else None,
+        "approved": bool(row and row["status"] == "approved"),
+    }
+
+
 def lesson_access_status(conn, student_id, lesson_slug):
     config = lesson_config(lesson_slug)
+    course_slug = course_for_lesson(lesson_slug)
+    if course_slug:
+        course_status = course_access_status(conn, student_id, course_slug)
+        if course_status and not course_status["approved"]:
+            return {
+                "lessonSlug": lesson_slug,
+                "unlocked": False,
+                "course": course_status,
+                "prerequisite": None,
+            }
+
     prerequisite_slug = config.get("prerequisite")
     if not prerequisite_slug:
         return {
             "lessonSlug": lesson_slug,
             "unlocked": True,
+            "course": course_access_status(conn, student_id, course_slug) if course_slug else None,
             "prerequisite": None,
         }
 
@@ -467,6 +735,7 @@ def lesson_access_status(conn, student_id, lesson_slug):
     return {
         "lessonSlug": lesson_slug,
         "unlocked": unlocked,
+        "course": course_access_status(conn, student_id, course_slug) if course_slug else None,
         "prerequisite": {
             "lessonSlug": prerequisite_slug,
             "title": prerequisite.get("title", prerequisite_slug),
@@ -653,6 +922,22 @@ def init_db():
                 )
                 """
             )
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS course_enrollments (
+                    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+                    student_id TEXT NOT NULL REFERENCES app_users(id) ON DELETE CASCADE,
+                    course_slug TEXT NOT NULL,
+                    status TEXT NOT NULL DEFAULT 'pending',
+                    payment_reference TEXT NOT NULL DEFAULT '',
+                    payment_note TEXT NOT NULL DEFAULT '',
+                    requested_at TEXT NOT NULL,
+                    reviewed_by TEXT REFERENCES app_users(id) ON DELETE SET NULL,
+                    reviewed_at TEXT,
+                    UNIQUE (student_id, course_slug)
+                )
+                """
+            )
             seed_default_accounts(conn)
         return
 
@@ -711,6 +996,19 @@ def init_db():
                 created_by TEXT NOT NULL REFERENCES app_users(id) ON DELETE CASCADE,
                 created_at TEXT NOT NULL
             );
+
+            CREATE TABLE IF NOT EXISTS course_enrollments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id TEXT NOT NULL REFERENCES app_users(id) ON DELETE CASCADE,
+                course_slug TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'pending',
+                payment_reference TEXT NOT NULL DEFAULT '',
+                payment_note TEXT NOT NULL DEFAULT '',
+                requested_at TEXT NOT NULL,
+                reviewed_by TEXT REFERENCES app_users(id) ON DELETE SET NULL,
+                reviewed_at TEXT,
+                UNIQUE (student_id, course_slug)
+            );
             """
         )
         seed_default_accounts(conn)
@@ -743,11 +1041,20 @@ class LearningHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/auth/me":
             self.handle_auth_me()
             return
+        if parsed.path == "/api/catalog":
+            self.handle_get_catalog()
+            return
+        if parsed.path == "/api/enrollments":
+            self.handle_get_student_enrollments()
+            return
         if parsed.path == "/api/admin/students":
             self.handle_admin_students()
             return
         if parsed.path == "/api/admin/teachers":
             self.handle_admin_teachers()
+            return
+        if parsed.path == "/api/admin/enrollments":
+            self.handle_admin_enrollments()
             return
         if parsed.path == "/api/admin/resources":
             self.handle_admin_resources(parsed)
@@ -793,6 +1100,9 @@ class LearningHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/auth/change-password":
             self.handle_auth_change_password()
             return
+        if parsed.path == "/api/checkout":
+            self.handle_checkout()
+            return
         if parsed.path == "/api/admin/students":
             self.handle_admin_create_student()
             return
@@ -801,6 +1111,9 @@ class LearningHandler(SimpleHTTPRequestHandler):
             return
         if parsed.path == "/api/admin/users/password":
             self.handle_admin_update_user_password()
+            return
+        if parsed.path == "/api/admin/enrollments/review":
+            self.handle_admin_review_enrollment()
             return
         if parsed.path == "/api/admin/resources":
             self.handle_admin_create_resource()
@@ -869,6 +1182,12 @@ class LearningHandler(SimpleHTTPRequestHandler):
     def current_staff_user(self):
         user = self.current_user()
         if user and is_staff_role(user["role"]):
+            return user
+        return None
+
+    def current_student_user(self):
+        user = self.current_user()
+        if user and user["role"] == "student":
             return user
         return None
 
@@ -970,6 +1289,7 @@ class LearningHandler(SimpleHTTPRequestHandler):
             {
                 "error": "Lesson locked",
                 "lessonSlug": status["lessonSlug"],
+                "course": status.get("course"),
                 "prerequisite": status["prerequisite"],
             },
             HTTPStatus.LOCKED,
@@ -1180,6 +1500,310 @@ class LearningHandler(SimpleHTTPRequestHandler):
             )
 
         self.send_json({"ok": True, "user": public_user(user)})
+
+    def handle_get_catalog(self):
+        user = self.current_student_user()
+        enrollments = []
+        if user:
+            with connect_db() as conn:
+                rows = db_execute(
+                    conn,
+                    """
+                    SELECT id, student_id, course_slug, status, payment_reference,
+                        payment_note, requested_at, reviewed_by, reviewed_at
+                    FROM course_enrollments
+                    WHERE student_id = ?
+                    ORDER BY requested_at DESC, id DESC
+                    """,
+                    (user["id"],),
+                ).fetchall()
+                enrollments = [public_enrollment(row) for row in rows]
+
+        self.send_json(
+            {
+                "courses": course_summaries(),
+                "enrollments": enrollments,
+                "user": public_user(user),
+            }
+        )
+
+    def handle_get_student_enrollments(self):
+        student = self.current_student_user()
+        if not student:
+            if self.current_user():
+                self.send_json(
+                    {"error": "Student login required."},
+                    HTTPStatus.FORBIDDEN,
+                )
+            else:
+                self.send_auth_required()
+            return
+
+        with connect_db() as conn:
+            rows = db_execute(
+                conn,
+                """
+                SELECT id, student_id, course_slug, status, payment_reference,
+                    payment_note, requested_at, reviewed_by, reviewed_at
+                FROM course_enrollments
+                WHERE student_id = ?
+                ORDER BY requested_at DESC, id DESC
+                """,
+                (student["id"],),
+            ).fetchall()
+
+        self.send_json(
+            {
+                "student": public_user(student),
+                "enrollments": [public_enrollment(row) for row in rows],
+            }
+        )
+
+    def handle_checkout(self):
+        student = self.current_student_user()
+        if not student:
+            if self.current_user():
+                self.send_json(
+                    {"error": "Only student accounts can checkout courses."},
+                    HTTPStatus.FORBIDDEN,
+                )
+            else:
+                self.send_auth_required()
+            return
+
+        try:
+            data = self.read_json_body()
+        except ValueError as exc:
+            self.send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+
+        checkout, error = validate_checkout_payload(data)
+        if error:
+            self.send_json({"error": error}, HTTPStatus.BAD_REQUEST)
+            return
+
+        requested_at = utc_now()
+        enrollments = []
+        with connect_db() as conn:
+            for course_slug in checkout["course_slugs"]:
+                existing = db_execute(
+                    conn,
+                    """
+                    SELECT id, student_id, course_slug, status, payment_reference,
+                        payment_note, requested_at, reviewed_by, reviewed_at
+                    FROM course_enrollments
+                    WHERE student_id = ? AND course_slug = ?
+                    """,
+                    (student["id"], course_slug),
+                ).fetchone()
+
+                if existing and existing["status"] == "approved":
+                    enrollments.append(public_enrollment(existing))
+                    continue
+
+                if existing:
+                    db_execute(
+                        conn,
+                        """
+                        UPDATE course_enrollments
+                        SET status = 'pending',
+                            payment_reference = ?,
+                            payment_note = ?,
+                            requested_at = ?,
+                            reviewed_by = NULL,
+                            reviewed_at = NULL
+                        WHERE id = ?
+                        """,
+                        (
+                            checkout["payment_reference"],
+                            checkout["payment_note"],
+                            requested_at,
+                            existing["id"],
+                        ),
+                    )
+                    enrollment_id = existing["id"]
+                elif USE_POSTGRES:
+                    cursor = db_execute(
+                        conn,
+                        """
+                        INSERT INTO course_enrollments (
+                            student_id, course_slug, status, payment_reference,
+                            payment_note, requested_at
+                        )
+                        VALUES (?, ?, 'pending', ?, ?, ?)
+                        RETURNING id
+                        """,
+                        (
+                            student["id"],
+                            course_slug,
+                            checkout["payment_reference"],
+                            checkout["payment_note"],
+                            requested_at,
+                        ),
+                    )
+                    enrollment_id = cursor.fetchone()["id"]
+                else:
+                    cursor = db_execute(
+                        conn,
+                        """
+                        INSERT INTO course_enrollments (
+                            student_id, course_slug, status, payment_reference,
+                            payment_note, requested_at
+                        )
+                        VALUES (?, ?, 'pending', ?, ?, ?)
+                        """,
+                        (
+                            student["id"],
+                            course_slug,
+                            checkout["payment_reference"],
+                            checkout["payment_note"],
+                            requested_at,
+                        ),
+                    )
+                    enrollment_id = cursor.lastrowid
+
+                row = db_execute(
+                    conn,
+                    """
+                    SELECT id, student_id, course_slug, status, payment_reference,
+                        payment_note, requested_at, reviewed_by, reviewed_at
+                    FROM course_enrollments
+                    WHERE id = ?
+                    """,
+                    (enrollment_id,),
+                ).fetchone()
+                enrollments.append(public_enrollment(row))
+
+        self.send_json(
+            {
+                "ok": True,
+                "student": public_user(student),
+                "enrollments": enrollments,
+            },
+            status=HTTPStatus.CREATED,
+        )
+
+    def handle_admin_enrollments(self):
+        admin = self.current_admin_user()
+        if not admin:
+            self.send_admin_required()
+            return
+
+        with connect_db() as conn:
+            rows = db_execute(
+                conn,
+                """
+                SELECT
+                    ce.id,
+                    ce.student_id,
+                    ce.course_slug,
+                    ce.status,
+                    ce.payment_reference,
+                    ce.payment_note,
+                    ce.requested_at,
+                    ce.reviewed_by,
+                    ce.reviewed_at,
+                    student.username AS student_username,
+                    student.display_name AS student_display_name,
+                    reviewer.username AS reviewed_by_username
+                FROM course_enrollments ce
+                JOIN app_users student ON student.id = ce.student_id
+                LEFT JOIN app_users reviewer ON reviewer.id = ce.reviewed_by
+                ORDER BY
+                    CASE ce.status
+                        WHEN 'pending' THEN 0
+                        WHEN 'approved' THEN 1
+                        ELSE 2
+                    END,
+                    ce.requested_at DESC,
+                    ce.id DESC
+                """
+            ).fetchall()
+
+        self.send_json(
+            {
+                "enrollments": [public_enrollment(row) for row in rows],
+                "courses": course_summaries(),
+                "admin": public_user(admin),
+            }
+        )
+
+    def handle_admin_review_enrollment(self):
+        admin = self.current_admin_user()
+        if not admin:
+            self.send_admin_required()
+            return
+
+        try:
+            data = self.read_json_body()
+        except ValueError as exc:
+            self.send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+
+        try:
+            enrollment_id = int(data.get("enrollmentId"))
+        except (TypeError, ValueError):
+            self.send_json({"error": "Enrollment is required."}, HTTPStatus.BAD_REQUEST)
+            return
+
+        status = (data.get("status") or "").strip().lower()
+        if status not in {"approved", "rejected"}:
+            self.send_json(
+                {"error": "Status must be approved or rejected."},
+                HTTPStatus.BAD_REQUEST,
+            )
+            return
+
+        reviewed_at = utc_now()
+        with connect_db() as conn:
+            existing = db_execute(
+                conn,
+                "SELECT id FROM course_enrollments WHERE id = ?",
+                (enrollment_id,),
+            ).fetchone()
+            if not existing:
+                self.send_json(
+                    {"error": "Enrollment request not found."},
+                    HTTPStatus.NOT_FOUND,
+                )
+                return
+
+            db_execute(
+                conn,
+                """
+                UPDATE course_enrollments
+                SET status = ?,
+                    reviewed_by = ?,
+                    reviewed_at = ?
+                WHERE id = ?
+                """,
+                (status, admin["id"], reviewed_at, enrollment_id),
+            )
+            row = db_execute(
+                conn,
+                """
+                SELECT
+                    ce.id,
+                    ce.student_id,
+                    ce.course_slug,
+                    ce.status,
+                    ce.payment_reference,
+                    ce.payment_note,
+                    ce.requested_at,
+                    ce.reviewed_by,
+                    ce.reviewed_at,
+                    student.username AS student_username,
+                    student.display_name AS student_display_name,
+                    reviewer.username AS reviewed_by_username
+                FROM course_enrollments ce
+                JOIN app_users student ON student.id = ce.student_id
+                LEFT JOIN app_users reviewer ON reviewer.id = ce.reviewed_by
+                WHERE ce.id = ?
+                """,
+                (enrollment_id,),
+            ).fetchone()
+
+        self.send_json({"ok": True, "enrollment": public_enrollment(row)})
 
     def handle_admin_students(self):
         admin = self.current_admin_user()

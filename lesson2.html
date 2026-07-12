@@ -1655,8 +1655,10 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
       const loginForm = document.getElementById("loginForm");
       const loginMessage = document.getElementById("loginMessage");
       const lessonLockOverlay = document.getElementById("lessonLockOverlay");
+      const lessonLockTitle = document.getElementById("lessonLockTitle");
       const lessonLockList = document.getElementById("lessonLockList");
       const lessonLockMessage = document.getElementById("lessonLockMessage");
+      const lessonLockPrimaryLink = lessonLockOverlay.querySelector(".primary-link");
       const refreshAccessButton = document.getElementById("refreshAccessButton");
       const teacherResources = document.getElementById("teacherResources");
       const teacherResourceList = document.getElementById("teacherResourceList");
@@ -1857,6 +1859,36 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
       }
 
       function lockLesson(data) {
+        if (data.course && !data.course.approved) {
+          const course = data.course.course || {};
+          const enrollment = data.course.enrollment;
+          const items = [];
+
+          document.body.classList.add("lesson-locked");
+          lessonLockOverlay.hidden = false;
+          lessonLockTitle.textContent = "Checkout approval required";
+          lessonLockMessage.textContent = (course.title || "This course") + " opens after checkout and admin approval.";
+          lessonLockPrimaryLink.href = "courses.html";
+          lessonLockPrimaryLink.textContent = "Open marketplace";
+
+          if (!enrollment) {
+            items.push("Add the course to your cart and submit checkout.");
+          } else if (enrollment.status === "pending") {
+            items.push("Your checkout is waiting for admin approval.");
+          } else if (enrollment.status === "rejected") {
+            items.push("Your checkout was rejected. Contact the school or submit checkout again.");
+          }
+          items.push("After admin approval, click Check again.");
+
+          lessonLockList.innerHTML = "";
+          items.forEach(function (item) {
+            const listItem = document.createElement("li");
+            listItem.textContent = item;
+            lessonLockList.appendChild(listItem);
+          });
+          return;
+        }
+
         const prerequisite = data.prerequisite || {};
         const title = prerequisite.title || "Lesson 1";
         const missingSections = prerequisite.missingSections || [];
@@ -1864,7 +1896,10 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
 
         document.body.classList.add("lesson-locked");
         lessonLockOverlay.hidden = false;
+        lessonLockTitle.textContent = "Finish Week 1 Lesson 1 first";
         lessonLockMessage.textContent = "Week 1 Lesson 2 unlocks after " + title + " is complete and its quiz has been submitted.";
+        lessonLockPrimaryLink.href = "index.html";
+        lessonLockPrimaryLink.textContent = "Open Lesson 1";
 
         missingSections.forEach(function (section) {
           items.push("Complete " + (sectionLabels[section] || section) + ".");

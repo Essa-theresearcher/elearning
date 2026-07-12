@@ -16,10 +16,11 @@ http://127.0.0.1:8765/
 
 ## Course Sequence
 
-The homepage opens `home.html`, which introduces Digital Bridge School and links to `courses.html`, the student course marketplace. The marketplace links students to `prework.html`, which is Week 0: Python Readiness Assessment, then to the Week 1 lessons.
+The homepage opens `home.html`, which introduces Digital Bridge School and links to `courses.html`, the student course marketplace. The marketplace sells full courses, not individual lessons. The existing Week 0 and Week 1 lessons sit inside the Computer Fundamentals course.
 
 - Week 0 includes an auto-scored Python readiness quiz and an open-ended coding review.
 - Week 1 Lesson 1 is reading-based while videos are not ready. Students work through `assets/lesson1-notes.pdf`, then complete the activity and quiz.
+- Students must checkout for Computer Fundamentals and admin must approve the enrollment before Week 0, Lesson 1, or Lesson 2 can open.
 - Week 1 Lesson 1 unlocks after Week 0 sections are complete, the Week 0 quiz is submitted, and the Week 0 coding review is submitted.
 - Week 1 Lesson 2 sits under Week 1 and unlocks after Lesson 1 sections are complete and the Lesson 1 quiz is submitted.
 
@@ -130,7 +131,7 @@ Do not add a public host port in Advanced -> Ports unless you intentionally want
 
 The app creates an admin account, a teacher account, and a student account when those usernames are missing. Set `SYSTEM_ADMIN_PASSWORD`, `TEACHER_PASSWORD`, and `STUDENT_PASSWORD` to strong passwords before sharing the public link. If an account already exists, changing the environment variable will not change that saved password automatically.
 
-Open `/admin.html` for management. Staff accounts are sent there when they sign in from the course pages. Admin accounts can use the Teachers and Students tabs to create accounts and reset teacher/student passwords. Teacher accounts can use the Classes & resources tab to add class links, readings, videos, assignments, downloads, and other resources to lessons. To add a Week 1 video, choose Week 1 Lesson 1 or Week 1 Lesson 2, set Type to Video, paste the video URL, and save it. Staff can also change their own password from the My password tab.
+Open `/admin.html` for management. Staff accounts are sent there when they sign in from the course pages. Admin accounts can use the Orders tab to approve or reject course checkout requests after confirming payment. Admin accounts can also use the Teachers and Students tabs to create accounts and reset teacher/student passwords. Teacher accounts can use the Classes & resources tab to add class links, readings, videos, assignments, downloads, and other resources to lessons. To add a Week 1 video, choose Week 1 Lesson 1 or Week 1 Lesson 2, set Type to Video, paste the video URL, and save it. Staff can also change their own password from the My password tab.
 
 Older deployments that already use `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_DISPLAY_NAME` will still use those values for the default teacher account unless the newer `TEACHER_*` variables are set.
 
