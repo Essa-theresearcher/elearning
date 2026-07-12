@@ -473,6 +473,7 @@
       <nav class="nav" aria-label="Course marketplace navigation">
         <a href="home.html">Home</a>
         <a href="courses.html" aria-current="page">Courses</a>
+        <button id="signInButton" type="button">Student sign in</button>
         <button id="logoutButton" type="button" hidden>Log out</button>
       </nav>
     </div>
@@ -500,7 +501,7 @@
         </div>
       </div>
 
-      <aside class="cart-panel" aria-label="Cart and checkout">
+      <aside class="cart-panel" id="checkoutPanel" aria-label="Cart and checkout">
         <div class="cart-head">
           <div>
             <span class="eyebrow">Checkout</span>
@@ -559,6 +560,7 @@
       const cartMessage = document.getElementById("cartMessage");
       const loginForm = document.getElementById("loginForm");
       const checkoutForm = document.getElementById("checkoutForm");
+      const signInButton = document.getElementById("signInButton");
       const logoutButton = document.getElementById("logoutButton");
       const studentStatusText = document.getElementById("studentStatusText");
 
@@ -749,11 +751,13 @@
           studentStatusText.textContent = "Signed in as " + (currentUser.displayName || currentUser.username) + ".";
           loginForm.hidden = true;
           checkoutForm.hidden = false;
+          signInButton.hidden = true;
           logoutButton.hidden = false;
         } else {
           studentStatusText.textContent = "Sign in to checkout and see approval status.";
           loginForm.hidden = false;
           checkoutForm.hidden = true;
+          signInButton.hidden = false;
           logoutButton.hidden = true;
         }
 
@@ -813,6 +817,18 @@
         renderAll();
       }
 
+      function focusStudentLogin() {
+        document.getElementById("checkoutPanel").scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+        window.setTimeout(function () {
+          if (!loginForm.hidden) {
+            loginForm.elements.username.focus();
+          }
+        }, 320);
+      }
+
       function mergeEnrollments(newEnrollments) {
         newEnrollments.forEach(function (newEnrollment) {
           enrollments = enrollments.filter(function (enrollment) {
@@ -837,6 +853,8 @@
       }
 
       courseSearch.addEventListener("input", renderCourses);
+
+      signInButton.addEventListener("click", focusStudentLogin);
 
       loginForm.addEventListener("submit", function (event) {
         event.preventDefault();
