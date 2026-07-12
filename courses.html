@@ -317,6 +317,13 @@
       background: var(--teal);
     }
 
+    .open-course.is-disabled {
+      border: 1px solid var(--line);
+      background: var(--ivory);
+      color: var(--muted);
+      cursor: default;
+    }
+
     .locked-note {
       color: var(--muted);
       font-size: 13px;
@@ -401,8 +408,9 @@
     <section class="market-layout" aria-label="Available courses">
       <aside class="filter-panel">
         <span class="eyebrow">Catalog</span>
-        <h2>Python track</h2>
+        <h2>All programs</h2>
         <div class="filter-chip"><span>Available</span><span>3</span></div>
+        <div class="filter-chip"><span>Coming soon</span><span>7</span></div>
         <div class="filter-chip"><span>Reading</span><span>3</span></div>
         <div class="filter-chip"><span>Quiz</span><span>3</span></div>
         <div class="filter-chip"><span>Project work</span><span>2</span></div>
@@ -476,6 +484,167 @@
             <div class="course-actions">
               <a class="open-course" href="lesson2.html">Open Lesson 2</a>
               <span class="locked-note">Unlocks after Lesson 1 is complete.</span>
+            </div>
+          </article>
+
+          <article class="course-card" data-course-card data-keywords="python fundamentals beginner programming variables loops functions lists dictionaries">
+            <div class="course-media">
+              <img src="assets/school/icon-coding.png" alt="">
+            </div>
+            <div class="course-body">
+              <div class="course-meta">
+                <span class="pill gold">Coming soon</span>
+                <span class="pill">Python</span>
+              </div>
+              <h3>Python Fundamentals</h3>
+              <p>A beginner-friendly path for students who need the foundations before intermediate Python work.</p>
+              <ul class="course-list">
+                <li>Variables, data types, and operators</li>
+                <li>Control flow and functions</li>
+                <li>Lists, dictionaries, and files</li>
+              </ul>
+            </div>
+            <div class="course-actions">
+              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
+              <span class="locked-note">Lessons will be added when the course content is ready.</span>
+            </div>
+          </article>
+
+          <article class="course-card" data-course-card data-keywords="web development coding html css javascript python logic problem solving">
+            <div class="course-media">
+              <img src="assets/school/icon-rocket.png" alt="">
+            </div>
+            <div class="course-body">
+              <div class="course-meta">
+                <span class="pill gold">Coming soon</span>
+                <span class="pill">Coding</span>
+              </div>
+              <h3>Web Development & Coding</h3>
+              <p>Build practical websites and learn the programming logic behind interactive web apps.</p>
+              <ul class="course-list">
+                <li>HTML and CSS</li>
+                <li>JavaScript fundamentals</li>
+                <li>Projects and problem solving</li>
+              </ul>
+            </div>
+            <div class="course-actions">
+              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
+              <span class="locked-note">This program is listed now; lessons are not published yet.</span>
+            </div>
+          </article>
+
+          <article class="course-card" data-course-card data-keywords="data it skills analysis visualization networking computer systems">
+            <div class="course-media">
+              <img src="assets/school/icon-networking.png" alt="">
+            </div>
+            <div class="course-body">
+              <div class="course-meta">
+                <span class="pill gold">Coming soon</span>
+                <span class="pill">IT</span>
+              </div>
+              <h3>Data & IT Skills</h3>
+              <p>Learn the practical digital and analytical skills used in modern workplaces.</p>
+              <ul class="course-list">
+                <li>Data analysis and visualization</li>
+                <li>Networking fundamentals</li>
+                <li>Computer systems basics</li>
+              </ul>
+            </div>
+            <div class="course-actions">
+              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
+              <span class="locked-note">This program is waiting for lesson materials.</span>
+            </div>
+          </article>
+
+          <article class="course-card" data-course-card data-keywords="graphic design creativity photoshop canva logo branding visual communication">
+            <div class="course-media">
+              <img src="assets/school/icon-design.png" alt="">
+            </div>
+            <div class="course-body">
+              <div class="course-meta">
+                <span class="pill gold">Coming soon</span>
+                <span class="pill">Design</span>
+              </div>
+              <h3>Graphic Design & Creativity</h3>
+              <p>Practice visual communication through branding, layout, and creative digital tools.</p>
+              <ul class="course-list">
+                <li>Canva and Photoshop basics</li>
+                <li>Logo and brand design</li>
+                <li>Creative project work</li>
+              </ul>
+            </div>
+            <div class="course-actions">
+              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
+              <span class="locked-note">Students can see the program, but no lesson is open yet.</span>
+            </div>
+          </article>
+
+          <article class="course-card" data-course-card data-keywords="digital marketing social media content creation seo online branding">
+            <div class="course-media">
+              <img src="assets/school/icon-data.png" alt="">
+            </div>
+            <div class="course-body">
+              <div class="course-meta">
+                <span class="pill gold">Coming soon</span>
+                <span class="pill">Marketing</span>
+              </div>
+              <h3>Digital Marketing</h3>
+              <p>Plan and publish online campaigns with content, social media, search, and brand strategy.</p>
+              <ul class="course-list">
+                <li>Social media strategy</li>
+                <li>Content creation</li>
+                <li>SEO and online branding</li>
+              </ul>
+            </div>
+            <div class="course-actions">
+              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
+              <span class="locked-note">This will open after the marketing lessons are built.</span>
+            </div>
+          </article>
+
+          <article class="course-card" data-course-card data-keywords="mobile app development android ios app design user experience">
+            <div class="course-media">
+              <img src="assets/school/icon-people.png" alt="">
+            </div>
+            <div class="course-body">
+              <div class="course-meta">
+                <span class="pill gold">Coming soon</span>
+                <span class="pill">Apps</span>
+              </div>
+              <h3>Mobile App Development</h3>
+              <p>Learn the structure, design thinking, and practical steps behind mobile application projects.</p>
+              <ul class="course-list">
+                <li>Android development</li>
+                <li>iOS basics</li>
+                <li>User experience</li>
+              </ul>
+            </div>
+            <div class="course-actions">
+              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
+              <span class="locked-note">This program is not yet accepting students in the app.</span>
+            </div>
+          </article>
+
+          <article class="course-card" data-course-card data-keywords="english communication speaking writing business english presentation interview">
+            <div class="course-media">
+              <img src="assets/school/icon-graduation.png" alt="">
+            </div>
+            <div class="course-body">
+              <div class="course-meta">
+                <span class="pill gold">Coming soon</span>
+                <span class="pill">Communication</span>
+              </div>
+              <h3>English & Communication</h3>
+              <p>Build confidence for speaking, writing, interviews, presentations, and workplace communication.</p>
+              <ul class="course-list">
+                <li>Business English</li>
+                <li>Presentation skills</li>
+                <li>Interview preparation</li>
+              </ul>
+            </div>
+            <div class="course-actions">
+              <span class="open-course is-disabled" aria-disabled="true">Coming soon</span>
+              <span class="locked-note">Lessons will be connected later.</span>
             </div>
           </article>
         </div>
