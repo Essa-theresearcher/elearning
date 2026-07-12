@@ -707,15 +707,8 @@
       <form class="auth-form" id="loginForm">
         <span class="eyebrow">Course access</span>
         <h2 id="authTitle">Sign in</h2>
-        <p class="auth-copy">Choose your login type, then use the account you were given.</p>
-        <label class="auth-field">
-          Login type
-          <select id="loginRole" name="loginRole" required>
-            <option value="student">Student login</option>
-            <option value="teacher">Teacher login</option>
-            <option value="admin">Admin login</option>
-          </select>
-        </label>
+        <p class="auth-copy">Use the student account you were given.</p>
+        <input type="hidden" id="loginRole" name="loginRole" value="student">
         <label class="auth-field">
           Username
           <input id="loginUsername" name="username" autocomplete="username" required>
