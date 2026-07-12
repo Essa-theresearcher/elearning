@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+import cgi
 import hashlib
 import hmac
 import json
 import mimetypes
 import os
+import shutil
 import secrets
 import sqlite3
 import uuid
@@ -53,6 +55,7 @@ PASSWORD_ITERATIONS = 260_000
 MIN_PASSWORD_LENGTH = 8
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v", ".webm", ".ogg"}
 RESOURCE_TYPES = {"class", "reading", "video", "link", "assignment", "download", "other"}
+MAX_VIDEO_UPLOAD_BYTES = int(os.environ.get("MAX_VIDEO_UPLOAD_MB", "250")) * 1024 * 1024
 LESSONS = {
     "intermediate-readiness-week": {
         "title": "Week 0 Python Readiness Assessment",
@@ -563,6 +566,33 @@ def display_name_from_file(path):
     return " ".join(word.capitalize() for word in name.split()) or path.name
 
 
+def recording_part_from_file(path):
+    digits = []
+    for char in path.stem:
+        if not char.isdigit():
+            break
+        digits.append(char)
+    if not digits:
+        return None
+    try:
+        return int("".join(digits))
+    except ValueError:
+        return None
+
+
+def video_filename_for_part(lesson_slug, part, extension):
+    config = lesson_config(lesson_slug)
+    segments = config.get("recording_segments", [])
+    slug = None
+    for segment in segments:
+        if segment.get("part") == part:
+            slug = segment.get("slug")
+            break
+    if not slug:
+        slug = f"part-{part}"
+    return f"{part:02d}-{slug}{extension}"
+
+
 def lesson_config(lesson_slug):
     return (
         LESSONS.get(lesson_slug)
@@ -577,6 +607,9 @@ def lesson_summaries():
             "slug": slug,
             "title": config.get("title", slug),
             "prerequisite": config.get("prerequisite"),
+            "recordingSegments": [
+                dict(segment) for segment in config.get("recording_segments", [])
+            ],
         }
         for slug, config in LESSONS.items()
     ]
@@ -602,10 +635,28 @@ def list_lesson_recordings(lesson_slug):
             if path.is_file() and path.suffix.lower() in VIDEO_EXTENSIONS
         ]
 
+    numbered_files = {}
+    unnumbered_files = []
+    for path in files:
+        part = recording_part_from_file(path)
+        if part and part not in numbered_files:
+            numbered_files[part] = path
+        else:
+            unnumbered_files.append(path)
+
     recordings = []
+    used_paths = set()
+    unnumbered_index = 0
     for index, segment in enumerate(recording_segments):
         item = dict(segment)
-        path = files[index] if index < len(files) else None
+        path = numbered_files.get(segment["part"])
+        if not path:
+            while unnumbered_index < len(unnumbered_files):
+                candidate = unnumbered_files[unnumbered_index]
+                unnumbered_index += 1
+                if candidate not in used_paths:
+                    path = candidate
+                    break
         item["name"] = f"Part {segment['part']}: {segment['title']}"
         item["uploaded"] = bool(path)
         item["fileName"] = None
@@ -613,6 +664,7 @@ def list_lesson_recordings(lesson_slug):
         item["size"] = None
 
         if path:
+            used_paths.add(path)
             relative_path = path.relative_to(ROOT).as_posix()
             item["fileName"] = path.name
             item["url"] = "/" + relative_path
@@ -620,7 +672,9 @@ def list_lesson_recordings(lesson_slug):
 
         recordings.append(item)
 
-    for path in files[len(recording_segments) :]:
+    for path in files:
+        if path in used_paths:
+            continue
         relative_path = path.relative_to(ROOT).as_posix()
         part = len(recordings) + 1
         title = display_name_from_file(path)
@@ -661,6 +715,56 @@ def course_access_status(conn, student_id, course_slug):
         "enrollment": public_enrollment(row) if row else None,
         "approved": bool(row and row["status"] == "approved"),
     }
+
+
+def grant_course_enrollment(
+    conn,
+    student_id,
+    course_slug="computer-fundamentals",
+    reviewed_by=None,
+    payment_reference="Admin grant",
+    payment_note="Granted by admin",
+):
+    if course_slug not in COURSES:
+        raise ValueError("Choose a valid course.")
+    reviewed_at = utc_now()
+    requested_at = reviewed_at
+    db_execute(
+        conn,
+        """
+        INSERT INTO course_enrollments (
+            student_id, course_slug, status, payment_reference, payment_note,
+            requested_at, reviewed_by, reviewed_at
+        )
+        VALUES (?, ?, 'approved', ?, ?, ?, ?, ?)
+        ON CONFLICT(student_id, course_slug)
+        DO UPDATE SET
+            status = 'approved',
+            payment_reference = excluded.payment_reference,
+            payment_note = excluded.payment_note,
+            reviewed_by = excluded.reviewed_by,
+            reviewed_at = excluded.reviewed_at
+        """,
+        (
+            student_id,
+            course_slug,
+            payment_reference,
+            payment_note,
+            requested_at,
+            reviewed_by,
+            reviewed_at,
+        ),
+    )
+    return db_execute(
+        conn,
+        """
+        SELECT id, student_id, course_slug, status, payment_reference,
+            payment_note, requested_at, reviewed_by, reviewed_at
+        FROM course_enrollments
+        WHERE student_id = ? AND course_slug = ?
+        """,
+        (student_id, course_slug),
+    ).fetchone()
 
 
 def lesson_access_status(conn, student_id, lesson_slug):
@@ -1115,8 +1219,14 @@ class LearningHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/admin/enrollments/review":
             self.handle_admin_review_enrollment()
             return
+        if parsed.path == "/api/admin/enrollments/grant":
+            self.handle_admin_grant_enrollment()
+            return
         if parsed.path == "/api/admin/resources":
             self.handle_admin_create_resource()
+            return
+        if parsed.path == "/api/admin/videos/upload":
+            self.handle_admin_upload_video()
             return
         if parsed.path == "/api/progress/lesson":
             self.handle_post_lesson_progress()
@@ -1805,6 +1915,58 @@ class LearningHandler(SimpleHTTPRequestHandler):
 
         self.send_json({"ok": True, "enrollment": public_enrollment(row)})
 
+    def handle_admin_grant_enrollment(self):
+        admin = self.current_admin_user()
+        if not admin:
+            self.send_admin_required()
+            return
+
+        try:
+            data = self.read_json_body()
+        except ValueError as exc:
+            self.send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+
+        user_id = (data.get("userId") or "").strip()
+        course_slug = (data.get("courseSlug") or "computer-fundamentals").strip()
+        if course_slug not in COURSES:
+            self.send_json({"error": "Choose a valid course."}, HTTPStatus.BAD_REQUEST)
+            return
+        if not user_id:
+            self.send_json({"error": "Student is required."}, HTTPStatus.BAD_REQUEST)
+            return
+
+        with connect_db() as conn:
+            student = db_execute(
+                conn,
+                """
+                SELECT id, username, display_name, role, created_at
+                FROM app_users
+                WHERE id = ?
+                """,
+                (user_id,),
+            ).fetchone()
+            if not student or student["role"] != "student":
+                self.send_json({"error": "Student not found."}, HTTPStatus.NOT_FOUND)
+                return
+
+            row = grant_course_enrollment(
+                conn,
+                student["id"],
+                course_slug=course_slug,
+                reviewed_by=admin["id"],
+                payment_reference="Admin grant",
+                payment_note="Granted from the Students tab",
+            )
+
+        self.send_json(
+            {
+                "ok": True,
+                "student": public_student(student),
+                "enrollment": public_enrollment(row),
+            }
+        )
+
     def handle_admin_students(self):
         admin = self.current_admin_user()
         if not admin:
@@ -1821,10 +1983,30 @@ class LearningHandler(SimpleHTTPRequestHandler):
                 ORDER BY created_at DESC, username ASC
                 """,
             ).fetchall()
+            enrollment_rows = db_execute(
+                conn,
+                """
+                SELECT id, student_id, course_slug, status, payment_reference,
+                    payment_note, requested_at, reviewed_by, reviewed_at
+                FROM course_enrollments
+                WHERE course_slug = 'computer-fundamentals'
+                """,
+            ).fetchall()
+
+        enrollments_by_student = {}
+        for row in enrollment_rows:
+            enrollments_by_student.setdefault(row["student_id"], []).append(
+                public_enrollment(row)
+            )
+        students = []
+        for row in rows:
+            student = public_student(row)
+            student["courseEnrollments"] = enrollments_by_student.get(row["id"], [])
+            students.append(student)
 
         self.send_json(
             {
-                "students": [public_student(row) for row in rows],
+                "students": students,
                 "lessons": lesson_summaries(),
                 "admin": public_user(admin),
             }
@@ -1907,6 +2089,14 @@ class LearningHandler(SimpleHTTPRequestHandler):
                     created_at,
                 ),
             )
+            enrollment = grant_course_enrollment(
+                conn,
+                user_id,
+                course_slug="computer-fundamentals",
+                reviewed_by=admin["id"],
+                payment_reference="Admin-created student",
+                payment_note="Computer Fundamentals access granted automatically",
+            )
 
         self.send_json(
             {
@@ -1916,6 +2106,7 @@ class LearningHandler(SimpleHTTPRequestHandler):
                     "displayName": display_name,
                     "role": "student",
                     "createdAt": created_at,
+                    "courseEnrollments": [public_enrollment(enrollment)],
                 }
             },
             status=HTTPStatus.CREATED,
@@ -2151,6 +2342,111 @@ class LearningHandler(SimpleHTTPRequestHandler):
 
         self.send_json(
             {"resource": public_resource(row)},
+            status=HTTPStatus.CREATED,
+        )
+
+    def handle_admin_upload_video(self):
+        staff = self.current_staff_user()
+        if not staff:
+            self.send_staff_required()
+            return
+
+        try:
+            content_length = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            content_length = 0
+        if content_length <= 0:
+            self.send_json({"error": "Choose a video file."}, HTTPStatus.BAD_REQUEST)
+            return
+        if content_length > MAX_VIDEO_UPLOAD_BYTES:
+            self.send_json(
+                {
+                    "error": (
+                        "Video is too large. Maximum upload is "
+                        f"{MAX_VIDEO_UPLOAD_BYTES // (1024 * 1024)} MB."
+                    )
+                },
+                HTTPStatus.REQUEST_ENTITY_TOO_LARGE,
+            )
+            return
+
+        content_type = self.headers.get("Content-Type", "")
+        if "multipart/form-data" not in content_type:
+            self.send_json(
+                {"error": "Use the video upload form."},
+                HTTPStatus.BAD_REQUEST,
+            )
+            return
+
+        form = cgi.FieldStorage(
+            fp=self.rfile,
+            headers=self.headers,
+            environ={
+                "REQUEST_METHOD": "POST",
+                "CONTENT_TYPE": content_type,
+                "CONTENT_LENGTH": str(content_length),
+            },
+        )
+
+        lesson_slug = (form.getfirst("lessonSlug", "") or "").strip()
+        if lesson_slug not in LESSONS:
+            self.send_json({"error": "Choose a valid lesson."}, HTTPStatus.BAD_REQUEST)
+            return
+
+        try:
+            video_part = int(form.getfirst("videoPart", "0"))
+        except (TypeError, ValueError):
+            video_part = 0
+        if video_part < 1 or video_part > 99:
+            self.send_json({"error": "Choose a valid video part."}, HTTPStatus.BAD_REQUEST)
+            return
+
+        file_item = form["videoFile"] if "videoFile" in form else None
+        if isinstance(file_item, list):
+            file_item = file_item[0] if file_item else None
+        if file_item is None or not getattr(file_item, "filename", ""):
+            self.send_json({"error": "Choose a video file."}, HTTPStatus.BAD_REQUEST)
+            return
+
+        extension = Path(file_item.filename).suffix.lower()
+        if extension not in VIDEO_EXTENSIONS:
+            self.send_json(
+                {"error": "Upload an MP4, MOV, M4V, WebM, or OGG video."},
+                HTTPStatus.BAD_REQUEST,
+            )
+            return
+
+        video_path = video_dir_path(lesson_slug)
+        if ROOT not in video_path.parents and video_path != ROOT:
+            self.send_json(
+                {"error": "Video folder must stay inside the app directory."},
+                HTTPStatus.BAD_REQUEST,
+            )
+            return
+
+        video_path.mkdir(parents=True, exist_ok=True)
+        filename = video_filename_for_part(lesson_slug, video_part, extension)
+        target_path = (video_path / filename).resolve()
+        if ROOT not in target_path.parents:
+            self.send_json(
+                {"error": "Invalid upload path."},
+                HTTPStatus.BAD_REQUEST,
+            )
+            return
+
+        with target_path.open("wb") as output:
+            shutil.copyfileobj(file_item.file, output)
+
+        relative_path = target_path.relative_to(ROOT).as_posix()
+        self.send_json(
+            {
+                "ok": True,
+                "lessonSlug": lesson_slug,
+                "part": video_part,
+                "fileName": target_path.name,
+                "url": "/" + relative_path,
+                "size": target_path.stat().st_size,
+            },
             status=HTTPStatus.CREATED,
         )
 

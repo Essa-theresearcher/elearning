@@ -81,6 +81,12 @@
       gap: 14px;
     }
 
+    .admin-form + .admin-form {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
     .eyebrow {
       color: var(--gold);
       font-size: 12px;
@@ -631,6 +637,27 @@
             <p class="status" id="resourceStatus" role="status"></p>
           </form>
 
+          <form class="admin-form" id="videoUploadForm">
+            <p class="form-note">Direct MP4 upload: choose the lesson, choose the recording part, then upload the video file. Uploading the same part again replaces the previous file.</p>
+            <label>
+              Lesson
+              <select name="lessonSlug" id="videoUploadLesson" required>
+                <option value="cs-fundamentals-lesson-1">Week 1 Lesson 1</option>
+                <option value="internet-fundamentals-lesson-2">Week 1 Lesson 2</option>
+              </select>
+            </label>
+            <label>
+              Recording part
+              <select name="videoPart" id="videoUploadPart" required></select>
+            </label>
+            <label>
+              Video file
+              <input name="videoFile" type="file" accept="video/mp4,video/quicktime,video/webm,video/*" required>
+            </label>
+            <button type="submit">Upload video</button>
+            <p class="status" id="videoUploadStatus" role="status"></p>
+          </form>
+
           <div class="compact-list" id="resourceList" aria-live="polite"></div>
         </section>
 
@@ -679,6 +706,10 @@
       const resourceStatus = document.getElementById("resourceStatus");
       const resourceList = document.getElementById("resourceList");
       const resourceLesson = document.getElementById("resourceLesson");
+      const videoUploadForm = document.getElementById("videoUploadForm");
+      const videoUploadLesson = document.getElementById("videoUploadLesson");
+      const videoUploadPart = document.getElementById("videoUploadPart");
+      const videoUploadStatus = document.getElementById("videoUploadStatus");
       const enrollmentStatus = document.getElementById("enrollmentStatus");
       const enrollmentList = document.getElementById("enrollmentList");
       const ownPasswordForm = document.getElementById("ownPasswordForm");
@@ -686,6 +717,7 @@
       const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
 
       let lessonsLoaded = false;
+      let lessonCatalog = [];
       let currentUser = null;
 
       function isStaff(user) {
@@ -781,7 +813,12 @@
       }
 
       function renderLessonOptions(lessons) {
-        if (lessonsLoaded || !Array.isArray(lessons) || !lessons.length) return;
+        if (!Array.isArray(lessons) || !lessons.length) return;
+        lessonCatalog = lessons;
+        if (lessonsLoaded) {
+          renderVideoPartOptions();
+          return;
+        }
         const selected = resourceLesson.value;
         resourceLesson.innerHTML = "";
         lessons.forEach(function (lesson) {
@@ -794,6 +831,32 @@
           resourceLesson.value = selected;
         }
         lessonsLoaded = true;
+        renderVideoPartOptions();
+      }
+
+      function renderVideoPartOptions() {
+        const lesson = lessonCatalog.find(function (item) {
+          return item.slug === videoUploadLesson.value;
+        });
+        const segments = lesson && Array.isArray(lesson.recordingSegments)
+          ? lesson.recordingSegments
+          : [];
+
+        videoUploadPart.innerHTML = "";
+        if (!segments.length) {
+          const option = document.createElement("option");
+          option.value = "1";
+          option.textContent = "Part 1";
+          videoUploadPart.appendChild(option);
+          return;
+        }
+
+        segments.forEach(function (segment) {
+          const option = document.createElement("option");
+          option.value = segment.part;
+          option.textContent = "Part " + segment.part + ": " + segment.title;
+          videoUploadPart.appendChild(option);
+        });
       }
 
       function renderStudents(students) {
@@ -819,11 +882,31 @@
           const created = document.createElement("span");
           created.textContent = "Created: " + student.createdAt;
 
+          const computerFundamentalsEnrollment = (student.courseEnrollments || []).find(function (enrollment) {
+            return enrollment.courseSlug === "computer-fundamentals";
+          });
+
+          const access = document.createElement("span");
+          access.textContent = "Computer Fundamentals: "
+            + (computerFundamentalsEnrollment ? enrollmentStatusLabel(computerFundamentalsEnrollment.status) : "No access yet");
+
+          const grantButton = document.createElement("button");
+          grantButton.type = "button";
+          grantButton.className = "secondary";
+          grantButton.dataset.grantCourse = "computer-fundamentals";
+          grantButton.dataset.userId = student.id;
+          grantButton.textContent = computerFundamentalsEnrollment && computerFundamentalsEnrollment.status === "approved"
+            ? "Access granted"
+            : "Grant Computer Fundamentals";
+          grantButton.disabled = computerFundamentalsEnrollment && computerFundamentalsEnrollment.status === "approved";
+
           const resetForm = createPasswordResetForm(student.id, "student");
 
           item.appendChild(name);
           item.appendChild(username);
           item.appendChild(created);
+          item.appendChild(access);
+          item.appendChild(grantButton);
           item.appendChild(resetForm);
           studentList.appendChild(item);
         });
@@ -1133,6 +1216,26 @@
         handlePasswordReset(event, "student");
       });
 
+      studentList.addEventListener("click", function (event) {
+        const button = event.target.closest("[data-grant-course]");
+        if (!button) return;
+
+        setStatus(studentStatus, "");
+        button.disabled = true;
+
+        postJson("/api/admin/enrollments/grant", {
+          userId: button.dataset.userId,
+          courseSlug: button.dataset.grantCourse
+        }).then(function () {
+          setStatus(studentStatus, "Computer Fundamentals access granted.");
+          loadStudents();
+          loadEnrollments();
+        }).catch(function (error) {
+          setStatus(studentStatus, error.message, true);
+          button.disabled = false;
+        });
+      });
+
       enrollmentList.addEventListener("click", function (event) {
         const button = event.target.closest("[data-enrollment-id]");
         if (!button) return;
@@ -1196,8 +1299,9 @@
         }).then(function (data) {
           const username = data.student ? data.student.username : "student";
           studentForm.reset();
-          setStatus(studentStatus, "Created student login: " + username);
+          setStatus(studentStatus, "Created student login: " + username + " and granted Computer Fundamentals.");
           loadStudents();
+          loadEnrollments();
         }).catch(function (error) {
           setStatus(studentStatus, error.message, true);
         });
@@ -1222,6 +1326,43 @@
         }).catch(function (error) {
           setStatus(resourceStatus, error.message, true);
         });
+      });
+
+      videoUploadLesson.addEventListener("change", function () {
+        renderVideoPartOptions();
+      });
+
+      videoUploadForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setStatus(videoUploadStatus, "");
+
+        const file = videoUploadForm.elements.videoFile.files[0];
+        if (!file) {
+          setStatus(videoUploadStatus, "Choose a video file.", true);
+          return;
+        }
+
+        const formData = new FormData(videoUploadForm);
+        const button = videoUploadForm.querySelector("button");
+        button.disabled = true;
+        button.textContent = "Uploading...";
+
+        fetch("/api/admin/videos/upload", {
+          method: "POST",
+          body: formData
+        }).then(parseJsonResponse)
+          .then(function (data) {
+            videoUploadForm.reset();
+            renderVideoPartOptions();
+            setStatus(videoUploadStatus, "Uploaded " + data.fileName + ".");
+          })
+          .catch(function (error) {
+            setStatus(videoUploadStatus, error.message, true);
+          })
+          .finally(function () {
+            button.disabled = false;
+            button.textContent = "Upload video";
+          });
       });
 
       resourceLesson.addEventListener("change", function () {
