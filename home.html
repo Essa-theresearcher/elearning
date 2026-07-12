@@ -36,6 +36,7 @@
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       line-height: 1.55;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
     a {
@@ -403,17 +404,59 @@
 
     @media (max-width: 660px) {
       .topbar-inner {
-        align-items: flex-start;
+        align-items: stretch;
         flex-direction: column;
+        gap: 12px;
+        padding: 12px 14px;
+      }
+
+      .brand span:last-child {
+        white-space: normal;
+      }
+
+      .nav {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+      }
+
+      .nav a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        text-align: center;
       }
 
       .hero {
-        min-height: 72vh;
-        background-position: 58% center;
+        min-height: calc(100svh - 124px);
+        background:
+          linear-gradient(180deg, rgba(11, 27, 51, 0.92), rgba(11, 27, 51, 0.75) 70%, rgba(11, 27, 51, 0.38)),
+          url("assets/school/school-hero.png") 58% center / cover no-repeat;
       }
 
       .hero-copy {
         padding: 48px 0 42px;
+      }
+
+      h1 {
+        font-size: clamp(38px, 15vw, 56px);
+        line-height: 1;
+      }
+
+      .hero-copy p {
+        font-size: 17px;
+      }
+
+      .actions,
+      .contact-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+      }
+
+      .button {
+        width: 100%;
       }
 
       .intro-grid,
@@ -425,6 +468,22 @@
 
       section {
         padding: 44px 0;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .nav {
+        grid-template-columns: 1fr;
+      }
+
+      .program-card {
+        grid-template-columns: 44px 1fr;
+        padding: 16px;
+      }
+
+      .program-card img {
+        width: 44px;
+        height: 44px;
       }
     }
   </style>

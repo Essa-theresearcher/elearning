@@ -32,6 +32,7 @@
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       line-height: 1.55;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
     a {
@@ -43,6 +44,7 @@
     input,
     textarea {
       font: inherit;
+      min-width: 0;
     }
 
     button {
@@ -444,13 +446,45 @@
 
     @media (max-width: 680px) {
       .topbar-inner {
-        align-items: flex-start;
+        align-items: stretch;
         flex-direction: column;
+        gap: 12px;
+        padding: 12px 14px;
+      }
+
+      .brand span:last-child {
+        white-space: normal;
+      }
+
+      .nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+      }
+
+      .nav a,
+      .nav button {
+        width: 100%;
+        min-height: 42px;
+        padding: 9px 10px;
       }
 
       .market {
         width: min(100% - 28px, 1240px);
-        padding-top: 30px;
+        padding: 24px 0 46px;
+      }
+
+      .market-head {
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        font-size: clamp(32px, 12vw, 46px);
+      }
+
+      .market-head p {
+        font-size: 16px;
       }
 
       .course-grid {
@@ -459,6 +493,44 @@
 
       .course-card {
         min-height: 0;
+      }
+
+      .course-media {
+        height: 118px;
+      }
+
+      .course-body,
+      .course-actions,
+      .cart-panel {
+        padding-inline: 16px;
+      }
+
+      .course-card h3 {
+        font-size: 22px;
+      }
+
+      .primary-action,
+      .secondary-action {
+        width: 100%;
+      }
+
+      .cart-head {
+        align-items: center;
+      }
+
+      .cart-item button {
+        min-height: 34px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .nav {
+        grid-template-columns: 1fr;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
       }
     }
   </style>

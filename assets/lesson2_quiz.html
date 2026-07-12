@@ -27,6 +27,7 @@
     color:var(--charcoal);
     font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
   }
   .topbar{
     background:var(--navy);
@@ -307,9 +308,14 @@
   .btn-outline:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
 
   @media (max-width:420px){
+    .topbar{ align-items:flex-start; }
+    .wrap{ padding:22px 12px 50px; }
     .bit{ width:18px; height:18px; font-size:9px; }
     .hero h1{ font-size:22px; }
     .card{ padding:20px 18px 18px; }
+    .actions{ display:grid; grid-template-columns:1fr; }
+    .btn,
+    .btn-outline{ width:100%; }
     .score-hero .big{ font-size:38px; }
   }
 </style>

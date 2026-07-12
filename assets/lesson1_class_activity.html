@@ -25,6 +25,7 @@
     color:var(--charcoal);
     font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
   }
   .topbar{
     background:var(--navy);
@@ -115,6 +116,7 @@
   }
   input[type="text"], textarea{
     width:100%;
+    min-width:0;
     border:1.5px solid var(--line);
     border-radius:5px;
     padding:10px 12px;
@@ -191,9 +193,15 @@
   }
 
   @media (max-width:420px){
+    .topbar{ align-items:flex-start; }
+    .wrap{ padding:22px 12px 56px; }
     .hero h1{ font-size:22px; }
     .activity{ padding:18px 16px 18px; }
+    .activity-title{ align-items:flex-start; }
+    .activity-num{ flex:0 0 auto; }
     .activity-sub{ padding-left:0; }
+    .btn,
+    .btn-outline{ width:100%; }
   }
 </style>
 </head>

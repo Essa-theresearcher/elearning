@@ -30,6 +30,7 @@
       color: var(--ink);
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       line-height: 1.5;
+      overflow-x: hidden;
     }
 
     .wrap {
@@ -149,6 +150,7 @@
     textarea,
     select {
       width: 100%;
+      min-width: 0;
       border: 1px solid var(--line-strong);
       border-radius: 6px;
       padding: 10px 12px;
@@ -189,8 +191,26 @@
         padding: 16px;
       }
 
+      h1 {
+        font-size: 25px;
+      }
+
+      .panel {
+        padding: 16px;
+      }
+
+      code {
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
       .grid {
         grid-template-columns: 1fr;
+      }
+
+      button {
+        justify-self: stretch;
+        width: 100%;
       }
     }
   </style>
