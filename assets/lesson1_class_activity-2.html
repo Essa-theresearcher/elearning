@@ -191,6 +191,20 @@
     font-size:13px;
     margin-bottom:16px;
   }
+  .closing-actions{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .activity-status{
+    min-height:20px;
+    margin-top:12px;
+    color:var(--correct);
+    font-size:13px;
+    font-weight:700;
+  }
+  .activity-status.error{ color:#A04242; }
 
   @media (max-width:420px){
     .topbar{ align-items:flex-start; }
@@ -325,8 +339,12 @@ print(x, y)</div>
   </div>
 
   <div class="closing">
-    <p>Click the button before you close this tab. It saves your answers for the teacher and downloads your notes.</p>
-    <button class="btn-outline" id="downloadBtn">Save and download my activity notes</button>
+    <p>Submit your answers before you close this tab. You can download a copy for yourself too.</p>
+    <div class="closing-actions">
+      <button class="btn" id="submitBtn" type="button">Submit activity to teacher</button>
+      <button class="btn-outline" id="downloadBtn" type="button">Download my activity notes</button>
+    </div>
+    <p class="activity-status" id="activityStatus" role="status"></p>
   </div>
 
 </div>
@@ -358,45 +376,61 @@ print(x, y)</div>
   wireReveal('revealRefBtn', 'refReveal');
   wireReveal('revealMutBtn', 'mutReveal');
 
-  function saveActivityNotes(answers){
-    fetch('/api/progress/activity', {
+  const activityStatus = document.getElementById('activityStatus');
+
+  function setActivityStatus(message, isError){
+    activityStatus.textContent = message || '';
+    activityStatus.classList.toggle('error', Boolean(isError));
+  }
+
+  function collectAnswers(){
+    return {
+      binaryDetective: document.getElementById('letterInput').value || '(not answered)',
+      bytecode: document.getElementById('bytecodeInput').value || '(not answered)',
+      referenceOrCopy: document.getElementById('refInput').value || '(not answered)',
+      predictThenCheck: document.getElementById('mutInput').value || '(not answered)',
+      processSpotting: document.getElementById('processInput').value || '(not answered)',
+      reflection: document.getElementById('reflectionInput').value || '(not answered)'
+    };
+  }
+
+  function submitActivityNotes(answers){
+    setActivityStatus('Submitting...', false);
+    return fetch('/api/progress/activity', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lessonSlug: 'cs-fundamentals-lesson-1', answers: answers }),
-    }).catch(function(){ /* Keep the download working if opened without the backend. */ });
+    }).then(function(response){
+      if(!response.ok) throw new Error('Could not submit yet. Make sure you are signed in.');
+      setActivityStatus('Submitted. Your teacher can now see this work.', false);
+    }).catch(function(error){
+      setActivityStatus(error.message || 'Could not submit yet.', true);
+      throw error;
+    });
   }
 
-  document.getElementById('downloadBtn').addEventListener('click', function(){
-    const letter = document.getElementById('letterInput').value || '(not answered)';
-    const bytecode = document.getElementById('bytecodeInput').value || '(not answered)';
-    const ref = document.getElementById('refInput').value || '(not answered)';
-    const mut = document.getElementById('mutInput').value || '(not answered)';
-    const process = document.getElementById('processInput').value || '(not answered)';
-    const reflection = document.getElementById('reflectionInput').value || '(not answered)';
+  document.getElementById('submitBtn').addEventListener('click', function(){
+    submitActivityNotes(collectAnswers()).catch(function(){});
+  });
 
-    saveActivityNotes({
-      binaryDetective: letter,
-      bytecode: bytecode,
-      referenceOrCopy: ref,
-      predictThenCheck: mut,
-      processSpotting: process,
-      reflection: reflection
-    });
+  document.getElementById('downloadBtn').addEventListener('click', function(){
+    const answers = collectAnswers();
+    submitActivityNotes(answers).catch(function(){});
 
     const notes = `DIGITAL BRIDGE ACADEMY — Lesson 1 Class Activity Notes
 ========================================================
 
-1. Binary Detective — letter you tried: ${letter}
+1. Binary Detective — letter you tried: ${answers.binaryDetective}
 
-2. Bytecode Explorer — your answer: ${bytecode}
+2. Bytecode Explorer — your answer: ${answers.bytecode}
 
-3. Reference or Copy? — your prediction: ${ref}
+3. Reference or Copy? — your prediction: ${answers.referenceOrCopy}
 
-4. Predict, Then Check — your prediction/reasoning: ${mut}
+4. Predict, Then Check — your prediction/reasoning: ${answers.predictThenCheck}
 
-5. Field Notes: Spot the Processes — your observation: ${process}
+5. Field Notes: Spot the Processes — your observation: ${answers.processSpotting}
 
-6. In Your Own Words — your reflection: ${reflection}
+6. In Your Own Words — your reflection: ${answers.reflection}
 `;
     const blob = new Blob([notes], {type: 'text/plain'});
     const url = URL.createObjectURL(blob);

@@ -191,6 +191,20 @@
     font-size:13px;
     margin-bottom:16px;
   }
+  .closing-actions{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .activity-status{
+    min-height:20px;
+    margin-top:12px;
+    color:var(--correct);
+    font-size:13px;
+    font-weight:700;
+  }
+  .activity-status.error{ color:#A04242; }
 
   @media (max-width:420px){
     .topbar{ align-items:flex-start; }
@@ -312,8 +326,12 @@ Windows:      tracert google.com</div>
   </div>
 
   <div class="closing">
-    <p>Click the button before you close this tab. It saves your answers for the teacher and downloads your notes.</p>
-    <button class="btn-outline" id="downloadBtn">Save and download my activity notes</button>
+    <p>Submit your answers before you close this tab. You can download a copy for yourself too.</p>
+    <div class="closing-actions">
+      <button class="btn" id="submitBtn" type="button">Submit activity to teacher</button>
+      <button class="btn-outline" id="downloadBtn" type="button">Download my activity notes</button>
+    </div>
+    <p class="activity-status" id="activityStatus" role="status"></p>
   </div>
 
 </div>
@@ -394,45 +412,61 @@ Windows:      tracert google.com</div>
   wireReveal('revealHttpBtn', 'httpReveal');
   wireReveal('revealTcpBtn', 'tcpReveal');
 
-  function saveActivityNotes(answers){
-    fetch('/api/progress/activity', {
+  const activityStatus = document.getElementById('activityStatus');
+
+  function setActivityStatus(message, isError){
+    activityStatus.textContent = message || '';
+    activityStatus.classList.toggle('error', Boolean(isError));
+  }
+
+  function collectAnswers(){
+    return {
+      httpStatusSleuth: document.getElementById('httpInput').value || '(not answered)',
+      tcpOrUdp: document.getElementById('tcpInput').value || '(not answered)',
+      tracerouteNotes: document.getElementById('tracerouteInput').value || '(not answered)',
+      portChecker: document.getElementById('portInput').value || '(not answered)',
+      httpsChecker: document.getElementById('urlInput').value || '(not answered)',
+      reflection: document.getElementById('reflectionInput').value || '(not answered)'
+    };
+  }
+
+  function submitActivityNotes(answers){
+    setActivityStatus('Submitting...', false);
+    return fetch('/api/progress/activity', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lessonSlug: 'internet-fundamentals-lesson-2', day: dayParam || 'all', answers: answers }),
-    }).catch(function(){ /* no backend wired up yet - that's fine */ });
+    }).then(function(response){
+      if(!response.ok) throw new Error('Could not submit yet. Make sure you are signed in.');
+      setActivityStatus('Submitted. Your teacher can now see this work.', false);
+    }).catch(function(error){
+      setActivityStatus(error.message || 'Could not submit yet.', true);
+      throw error;
+    });
   }
 
-  document.getElementById('downloadBtn').addEventListener('click', function(){
-    const http = document.getElementById('httpInput').value || '(not answered)';
-    const tcp = document.getElementById('tcpInput').value || '(not answered)';
-    const traceroute = document.getElementById('tracerouteInput').value || '(not answered)';
-    const port = document.getElementById('portInput').value || '(not answered)';
-    const url = document.getElementById('urlInput').value || '(not answered)';
-    const reflection = document.getElementById('reflectionInput').value || '(not answered)';
+  document.getElementById('submitBtn').addEventListener('click', function(){
+    submitActivityNotes(collectAnswers()).catch(function(){});
+  });
 
-    saveActivityNotes({
-      httpStatusSleuth: http,
-      tcpOrUdp: tcp,
-      tracerouteNotes: traceroute,
-      portChecker: port,
-      httpsChecker: url,
-      reflection: reflection
-    });
+  document.getElementById('downloadBtn').addEventListener('click', function(){
+    const answers = collectAnswers();
+    submitActivityNotes(answers).catch(function(){});
 
     const notes = `DIGITAL BRIDGE ACADEMY — Lesson 2 Class Activity Notes
 ========================================================
 
-1. HTTP Status Sleuth — your guess: ${http}
+1. HTTP Status Sleuth — your guess: ${answers.httpStatusSleuth}
 
-2. TCP or UDP? — your prediction/reasoning: ${tcp}
+2. TCP or UDP? — your prediction/reasoning: ${answers.tcpOrUdp}
 
-3. Field Notes: Trace Your Own Route — your observation: ${traceroute}
+3. Field Notes: Trace Your Own Route — your observation: ${answers.tracerouteNotes}
 
-4. Port Checker — port you tried: ${port}
+4. Port Checker — port you tried: ${answers.portChecker}
 
-5. HTTPS Checker — URL you tried: ${url}
+5. HTTPS Checker — URL you tried: ${answers.httpsChecker}
 
-6. In Your Own Words — your reflection: ${reflection}
+6. In Your Own Words — your reflection: ${answers.reflection}
 `;
     const blob = new Blob([notes], {type: 'text/plain'});
     const url2 = URL.createObjectURL(blob);
