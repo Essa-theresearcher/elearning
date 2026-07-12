@@ -64,7 +64,7 @@ SYSTEM_ADMIN_USERNAME=admin
 SYSTEM_ADMIN_PASSWORD=change_this_admin_password
 SYSTEM_ADMIN_DISPLAY_NAME=Admin
 TEACHER_USERNAME=teacher
-TEACHER_PASSWORD=change_this_teacher_password
+TEACHER_PASSWORD=changeme123
 TEACHER_DISPLAY_NAME=Teacher
 STUDENT_USERNAME=student
 STUDENT_PASSWORD=change_this_student_password
@@ -129,11 +129,18 @@ Container Port: 8765
 
 Do not add a public host port in Advanced -> Ports unless you intentionally want direct access like `http://server-ip:8765`. For a multi-app Dokploy server, let Traefik own ports `80` and `443`.
 
-The app creates an admin account, a teacher account, and a student account when those usernames are missing. Set `SYSTEM_ADMIN_PASSWORD`, `TEACHER_PASSWORD`, and `STUDENT_PASSWORD` to strong passwords before sharing the public link. If an account already exists, changing the environment variable will not change that saved password automatically.
+The app creates an admin account, a teacher account, and a student account when those usernames are missing. Admin and teacher passwords are separate:
 
-Open `/admin.html` for management. Staff accounts are sent there when they sign in from the course pages. Admin accounts can use the Orders tab to approve or reject course checkout requests after confirming payment. Admin accounts can also use the Teachers and Students tabs to create accounts and reset teacher/student passwords. New students created by admin are automatically granted Computer Fundamentals access. For existing students, use the Students tab and click Grant Computer Fundamentals.
+- Admin path: `/admin.html`
+- Admin env vars: `SYSTEM_ADMIN_USERNAME` and `SYSTEM_ADMIN_PASSWORD`
+- Teacher path: `/teacher.html`
+- Teacher env vars: `TEACHER_USERNAME` and `TEACHER_PASSWORD`
 
-Teacher accounts can use the Classes & resources tab to add class links, readings, video links, assignments, downloads, and other resources to lessons. To add a Week 1 video link, choose Lesson 1 or Lesson 2, set Type to Video, paste the video URL, and save it. To upload a local MP4 directly, use the Direct MP4 upload form in Classes & resources, choose the lesson, choose the recording part, and upload the file. Staff can also change their own password from the My password tab.
+The default teacher login is `teacher` with password `changeme123`. Set `SYSTEM_ADMIN_PASSWORD` to a private admin-only password before sharing the public link. If an account already exists, changing the environment variable will not change that saved password automatically.
+
+Open `/admin.html` for admin management and `/teacher.html` for the teacher workspace. Staff accounts are sent to the correct workspace when they sign in from the course pages. Admin accounts can use the Orders tab to approve or reject course checkout requests after confirming payment. Admin accounts can also use the Teachers and Students tabs to create accounts and reset teacher/student passwords. New students created by admin are automatically granted Computer Fundamentals access. For existing students, use the Students tab and click Grant Computer Fundamentals.
+
+Teacher accounts can use `/teacher.html` to add class links, readings, video links, assignments, downloads, and other resources to lessons. To add a Week 1 video link, choose Lesson 1 or Lesson 2, set Type to Video, paste the video URL, and save it. To upload a local MP4 directly, use the Direct MP4 upload form in Classes & resources, choose the lesson, choose the recording part, and upload the file. Staff can also change their own password from the My password tab.
 
 Older deployments that already use `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_DISPLAY_NAME` will still use those values for the default teacher account unless the newer `TEACHER_*` variables are set.
 
@@ -205,7 +212,7 @@ The portal labels those files as:
 
 You do not need to restart the app after adding videos. Refresh the lesson page and uploaded parts will become playable.
 
-Teachers can also add hosted video links from `/admin.html` without uploading files to the server. Add a lesson resource with Type set to Video. Direct `.mp4`, `.m4v`, `.mov`, `.webm`, or `.ogg` URLs can play inside the lesson video area; YouTube, Vimeo, Google Drive, and other hosted links open in a new tab from the same video area.
+Teachers can also add hosted video links from `/teacher.html` without uploading files to the server. Add a lesson resource with Type set to Video. Direct `.mp4`, `.m4v`, `.mov`, `.webm`, or `.ogg` URLs can play inside the lesson video area; YouTube, Vimeo, Google Drive, and other hosted links open in a new tab from the same video area.
 
 ## Bad Gateway Checklist
 

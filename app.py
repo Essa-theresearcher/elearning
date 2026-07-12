@@ -33,7 +33,7 @@ REQUIRE_LOGIN = os.environ.get("REQUIRE_LOGIN", "1").lower() not in {"0", "false
 ALLOW_SIGNUP = os.environ.get("ALLOW_SIGNUP", "0").lower() not in {"0", "false", "no"}
 SESSION_DAYS = int(os.environ.get("SESSION_DAYS", "30"))
 SYSTEM_ADMIN_USERNAME = os.environ.get("SYSTEM_ADMIN_USERNAME", "admin").strip().lower()
-SYSTEM_ADMIN_PASSWORD = os.environ.get("SYSTEM_ADMIN_PASSWORD", "changeme123")
+SYSTEM_ADMIN_PASSWORD = os.environ.get("SYSTEM_ADMIN_PASSWORD", "adminchangeme123")
 SYSTEM_ADMIN_DISPLAY_NAME = os.environ.get("SYSTEM_ADMIN_DISPLAY_NAME", "Admin").strip() or "Admin"
 TEACHER_USERNAME = os.environ.get(
     "TEACHER_USERNAME",
@@ -944,8 +944,8 @@ def seed_default_accounts(conn):
         STUDENT_PASSWORD,
         "student",
     )
-    if SYSTEM_ADMIN_PASSWORD == "changeme123":
-        print("Default admin password is changeme123. Change SYSTEM_ADMIN_PASSWORD in production.")
+    if SYSTEM_ADMIN_PASSWORD == "adminchangeme123":
+        print("Default admin password is adminchangeme123. Change SYSTEM_ADMIN_PASSWORD in production.")
     if TEACHER_PASSWORD == "changeme123":
         print("Default teacher password is changeme123. Change TEACHER_PASSWORD in production.")
     if STUDENT_PASSWORD == "changeme123":
@@ -1126,6 +1126,8 @@ class LearningHandler(SimpleHTTPRequestHandler):
         request_path = parsed.path
         if request_path == "/":
             request_path = "/home.html"
+        if request_path == "/teacher.html":
+            request_path = "/admin.html"
 
         relative = Path(request_path.lstrip("/"))
         target = (ROOT / relative).resolve()
@@ -1461,7 +1463,13 @@ class LearningHandler(SimpleHTTPRequestHandler):
                 HTTPStatus.FORBIDDEN,
             )
             return
-        if login_role == "teacher" and not is_staff_role(user["role"]):
+        if login_role == "teacher" and not is_teacher_role(user["role"]):
+            if is_admin_role(user["role"]):
+                self.send_json(
+                    {"error": "This is an admin account. Use Admin login."},
+                    HTTPStatus.FORBIDDEN,
+                )
+                return
             self.send_json(
                 {"error": "This is a student account. Use Student login."},
                 HTTPStatus.FORBIDDEN,

@@ -1841,7 +1841,7 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
 
       function renderAuth(user, allowSignup) {
         if (shouldRedirectStaff(user)) {
-          window.location.href = "admin.html";
+          window.location.href = user.role === "teacher" ? "teacher.html" : "admin.html";
           return;
         }
         currentUser = user || null;

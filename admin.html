@@ -461,16 +461,10 @@
   <div class="auth-overlay" id="authOverlay">
     <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="authTitle">
       <form class="auth-form" id="loginForm">
-        <span class="eyebrow">Management access</span>
+        <span class="eyebrow" id="loginEyebrow">Management access</span>
         <h2 id="authTitle">Sign in</h2>
-        <p>Admin manages people. Teacher manages classes and resources.</p>
-        <label>
-          Login type
-          <select name="loginRole" required>
-            <option value="admin">Admin login</option>
-            <option value="teacher">Teacher login</option>
-          </select>
-        </label>
+        <p id="loginCopy">Use your assigned staff account.</p>
+        <input type="hidden" id="loginRole" name="loginRole" value="admin">
         <label>
           Username
           <input id="loginUsername" name="username" autocomplete="username" required>
@@ -488,11 +482,11 @@
   <div id="adminApp" hidden>
     <header class="topbar">
       <div class="topbar-inner">
-        <a class="brand-lockup" href="admin.html" aria-label="Digital Bridge Academy management home">
+        <a class="brand-lockup" id="workspaceHomeLink" href="admin.html" aria-label="Digital Bridge Academy management home">
           <span class="brand-mark">DB</span>
           <span class="brand-text">
             <strong>Digital Bridge Academy</strong>
-            <span>Management workspace</span>
+            <span id="workspaceLabel">Management workspace</span>
           </span>
         </a>
         <div class="topbar-actions">
@@ -512,9 +506,9 @@
 
     <main class="layout">
       <section class="hero">
-        <span class="eyebrow">Course management</span>
-        <h1>People, classes, and resources</h1>
-        <p>Admin approves course orders and oversees teachers and students. Teachers add the class links, lesson files, assignments, videos, and other resources students need.</p>
+        <span class="eyebrow" id="heroEyebrow">Course management</span>
+        <h1 id="heroTitle">People, classes, and resources</h1>
+        <p id="heroCopy">Admin approves course orders and oversees teachers and students. Teachers add the class links, lesson files, assignments, videos, and other resources students need.</p>
       </section>
 
       <div class="function-tabs" id="functionTabs" aria-label="Management functions">
@@ -714,7 +708,17 @@
       const enrollmentList = document.getElementById("enrollmentList");
       const ownPasswordForm = document.getElementById("ownPasswordForm");
       const ownPasswordStatus = document.getElementById("ownPasswordStatus");
+      const loginEyebrow = document.getElementById("loginEyebrow");
+      const authTitle = document.getElementById("authTitle");
+      const loginCopy = document.getElementById("loginCopy");
+      const loginRole = document.getElementById("loginRole");
+      const workspaceHomeLink = document.getElementById("workspaceHomeLink");
+      const workspaceLabel = document.getElementById("workspaceLabel");
+      const heroEyebrow = document.getElementById("heroEyebrow");
+      const heroTitle = document.getElementById("heroTitle");
+      const heroCopy = document.getElementById("heroCopy");
       const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
+      const pageRole = window.location.pathname.endsWith("/teacher.html") ? "teacher" : "admin";
 
       let lessonsLoaded = false;
       let lessonCatalog = [];
@@ -726,6 +730,36 @@
 
       function isSystemAdmin(user) {
         return user && user.role === "admin";
+      }
+
+      function isAllowedForPage(user) {
+        return Boolean(user && user.role === pageRole);
+      }
+
+      function configurePageRole() {
+        loginRole.value = pageRole;
+        if (pageRole === "teacher") {
+          document.title = "Teacher Workspace | Digital Bridge Academy";
+          loginEyebrow.textContent = "Teacher access";
+          authTitle.textContent = "Teacher sign in";
+          loginCopy.textContent = "Use the teacher account to add classes, videos, resources, and lesson materials.";
+          workspaceHomeLink.href = "teacher.html";
+          workspaceLabel.textContent = "Teacher workspace";
+          heroEyebrow.textContent = "Teacher workspace";
+          heroTitle.textContent = "Classes and resources";
+          heroCopy.textContent = "Add class links, lesson files, assignments, videos, and other resources students need.";
+          return;
+        }
+
+        document.title = "Admin Workspace | Digital Bridge Academy";
+        loginEyebrow.textContent = "Admin access";
+        authTitle.textContent = "Admin sign in";
+        loginCopy.textContent = "Use the admin account to approve orders, oversee teachers, and manage students.";
+        workspaceHomeLink.href = "admin.html";
+        workspaceLabel.textContent = "Admin workspace";
+        heroEyebrow.textContent = "Admin workspace";
+        heroTitle.textContent = "People, orders, and courses";
+        heroCopy.textContent = "Approve course orders, oversee teachers and students, and keep the learning portal organized.";
       }
 
       function setStatus(element, message, isError) {
@@ -776,7 +810,7 @@
 
       function renderAuth(user) {
         currentUser = user || null;
-        if (isStaff(currentUser)) {
+        if (isAllowedForPage(currentUser)) {
           authOverlay.hidden = true;
           adminApp.hidden = false;
           accountName.textContent = currentUser.displayName || currentUser.username;
@@ -791,6 +825,7 @@
         authOverlay.hidden = false;
         adminApp.hidden = true;
         accountName.textContent = "";
+        loginRole.value = pageRole;
       }
 
       function loadAuth() {
@@ -803,8 +838,10 @@
           .then(parseJsonResponse)
           .then(function (data) {
             renderAuth(data.user);
-            if (data.authenticated && !isStaff(data.user)) {
-              setStatus(loginMessage, "Teacher or admin login required for this page.", true);
+            if (data.authenticated && !isAllowedForPage(data.user)) {
+              setStatus(loginMessage, pageRole === "teacher"
+                ? "Teacher login required for this page."
+                : "Admin login required for this page.", true);
             }
           })
           .catch(function () {
@@ -1160,14 +1197,17 @@
         setStatus(loginMessage, "");
 
         postJson("/api/auth/login", {
-          loginRole: loginForm.elements.loginRole.value,
+          loginRole: loginRole.value,
           username: loginForm.elements.username.value,
           password: loginForm.elements.password.value
         }).then(function (data) {
-          if (!isStaff(data.user)) {
-            throw new Error("Teacher or admin login required for this page.");
+          if (!isAllowedForPage(data.user)) {
+            throw new Error(pageRole === "teacher"
+              ? "Teacher login required for this page."
+              : "Admin login required for this page.");
           }
           loginForm.reset();
+          loginRole.value = pageRole;
           renderAuth(data.user);
         }).catch(function (error) {
           setStatus(loginMessage, error.message, true);
@@ -1370,6 +1410,7 @@
         loadResources();
       });
 
+      configurePageRole();
       loadAuth();
     })();
   </script>
