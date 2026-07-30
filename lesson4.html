@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Week 1 Lesson 2 - How the Internet Actually Works</title>
+  <title>Week 4 Lesson 4 - How Web Applications Actually Work</title>
   <link rel="icon" href="data:,">
   <style>
     :root {
@@ -1236,11 +1236,11 @@
     <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="lessonLockTitle">
       <div class="auth-form">
         <span class="eyebrow">Lesson locked</span>
-        <h2 id="lessonLockTitle">Finish Week 1 Lesson 1 first</h2>
-        <p class="auth-copy" id="lessonLockMessage">Week 1 Lesson 2 unlocks after Lesson 1 and its quiz are complete.</p>
+        <h2 id="lessonLockTitle">Finish Week 3 Lesson 3 first</h2>
+        <p class="auth-copy" id="lessonLockMessage">Week 4 Lesson 4 unlocks after Lesson 3 and its quiz are complete.</p>
         <ul class="lesson-lock-list" id="lessonLockList"></ul>
         <div class="lesson-lock-actions">
-          <a class="primary-link" href="index.html">Open Week 1 Lesson 1</a>
+          <a class="primary-link" href="lesson3.html">Open Week 3 Lesson 3</a>
           <button class="secondary-link" id="refreshAccessButton" type="button">Check again</button>
         </div>
       </div>
@@ -1274,15 +1274,15 @@
   <div class="layout">
     <aside class="sidebar" aria-label="Lesson contents">
       <div class="sidebar-head">
-        <span class="eyebrow">Week 1 · Lesson 2</span>
-        <h1>How the Internet Actually Works</h1>
+        <span class="eyebrow">Week 4 · Lesson 4</span>
+        <h1>How Web Applications Actually Work</h1>
         <div class="sidebar-meta">2-hour session with notes, video, activity, quiz, and wrap-up</div>
         <div class="course-links" aria-label="Course lessons">
           <a class="course-link" href="prework.html">Week 0</a>
           <a class="course-link" href="index.html">Week 1 · L1</a>
-          <a class="course-link is-current" href="lesson2.html">Week 1 · L2</a>
-          <a class="course-link" href="lesson3.html">Week 3 · L3</a>
-          <a class="course-link" href="lesson4.html">Week 4 · L4</a>
+          <a class="course-link" href="lesson2.html">Week 1 · L2</a>
+          <a class="course-link " href="lesson3.html">Week 3 · L3</a>
+          <a class="course-link is-current" href="lesson4.html">Week 4 · L4</a>
         </div>
       </div>
       <nav class="lesson-nav" id="lessonNav">
@@ -1309,7 +1309,7 @@
         <a href="#quiz" data-section="quiz">
           <span class="nav-dot" aria-hidden="true"></span>
           <span>Practice Quiz</span>
-          <span class="duration">21 q</span>
+          <span class="duration">18 q</span>
         </a>
         <a href="#wrapup" data-section="wrapup">
           <span class="nav-dot" aria-hidden="true"></span>
@@ -1325,22 +1325,22 @@
           <div class="section-header">
             <div class="section-title">
               <span class="eyebrow">Welcome and framing</span>
-              <h2>How the Internet Actually Works</h2>
-              <p>What really happens between typing a URL and a page loading on your screen.</p>
+              <h2>How Web Applications Actually Work</h2>
+              <p>How the browser, frontend, backend, database, hosting, and security fit together.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="welcome">Mark complete</button>
           </div>
           <div class="section-body">
             <div class="welcome-grid">
               <div>
-                <p class="lead">Last lesson, we went inside one machine. This lesson zooms out to what happens when that machine talks to another one anywhere in the world, usually in under a second.</p>
+                <p class="lead">You have now looked inside the computer, the internet, and the database. This lesson puts the pieces together into the full web app architecture students will meet in real projects.</p>
                 <ul class="objective-list" aria-label="Learning objectives">
-                  <li>What happens step by step between typing a URL and seeing a page load.</li>
-                  <li>How a domain name like google.com becomes an IP address a computer can connect to.</li>
-                  <li>What HTTP requests and responses contain, including common status codes.</li>
-                  <li>Why internet data travels in packets instead of as one big chunk.</li>
-                  <li>What servers, ports, APIs, and webhooks really are underneath the terms.</li>
-                  <li>What HTTPS protects, why the TLS handshake matters, and where the padlock still has limits.</li>
+                  <li>Explain the roles of frontend, backend, database, and hosting in one app.</li>
+                  <li>Trace a user action from button click to API request to database result.</li>
+                  <li>Distinguish static websites from dynamic web applications.</li>
+                  <li>Describe authentication, sessions, cookies, and authorization in simple terms.</li>
+                  <li>Explain why environment variables, logs, and deployment settings matter.</li>
+                  <li>Read a basic production architecture and identify where failures can happen.</li>
                 </ul>
 
                 <table class="session-plan" aria-label="Session plan">
@@ -1355,58 +1355,58 @@
                     <tr>
                       <td>5 min</td>
                       <td>Welcome and framing</td>
-                      <td>Why this lesson matters and what students will walk away with.</td>
+                      <td>From separate concepts to one complete app.</td>
                     </tr>
                     <tr>
                       <td>20 min</td>
-                      <td>Names and addresses</td>
-                      <td>IP addresses, domain names, and how DNS resolves names.</td>
+                      <td>Frontend and user actions</td>
+                      <td>HTML, CSS, JavaScript, forms, and browser events.</td>
                     </tr>
                     <tr>
                       <td>20 min</td>
-                      <td>Request and response</td>
-                      <td>Client-server model, HTTP methods, status codes, and a live API demo.</td>
+                      <td>Backend and APIs</td>
+                      <td>Routes, request handlers, validation, and responses.</td>
                     </tr>
                     <tr>
                       <td>20 min</td>
-                      <td>Packets and routing</td>
-                      <td>TCP/IP, packets, routers, and traceroute.</td>
+                      <td>Database integration</td>
+                      <td>How the backend reads and writes saved state.</td>
                     </tr>
                     <tr>
                       <td>15 min</td>
-                      <td>Servers, ports, and APIs</td>
-                      <td>Listening servers, common ports, APIs, and webhooks.</td>
+                      <td>Login and permissions</td>
+                      <td>Authentication, sessions, cookies, roles, and access.</td>
                     </tr>
                     <tr>
                       <td>15 min</td>
-                      <td>HTTPS and encryption</td>
-                      <td>TLS handshake, encrypted transit, and why secure endpoints matter.</td>
+                      <td>Deployment and environment</td>
+                      <td>Domains, reverse proxies, ports, logs, and environment variables.</td>
                     </tr>
                     <tr>
                       <td>15 min</td>
                       <td>Wrap-up and Q&A</td>
-                      <td>Key terms recap, homework, and next lesson preview.</td>
+                      <td>Full app trace and project preparation.</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
               <figure class="notes-cover">
-                <img src="assets/lesson2-notes-cover.png" alt="Cover page preview of the Lesson 2 reading notes">
-                <figcaption>Reading notes attached below as the full 11-page PDF.</figcaption>
+                <img src="assets/school/icon-coding.png" alt="Lesson 4 course icon">
+                <figcaption>Structured reading notes are built into this lesson. Teachers can add a PDF later from the resources panel.</figcaption>
               </figure>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="lesson-section" id="video" data-track-section="video">
+      <section class="lesson-section" id="video" data-track-section="video">      <section class="lesson-section" id="video" data-track-section="video">
         <div class="section-surface">
           <div class="section-header">
             <div class="section-title">
               <span class="eyebrow">Lesson videos</span>
               <h2>Class Recordings</h2>
-              <p>Lesson 2 is organized into seven focused recordings that follow the reading notes.</p>
+              <p>Lesson 4 is organized into seven focused recordings that follow the reading notes.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="video">Mark complete</button>
           </div>
@@ -1416,12 +1416,12 @@
                 <video id="lessonVideo" controls preload="metadata"></video>
                 <div class="video-empty">
                   <strong>Recordings will appear here</strong>
-                  <span>Select a Lesson 2 recording part from the list when videos are available.</span>
+                  <span>Select a Lesson 4 recording part from the list when videos are available.</span>
                 </div>
               </div>
               <div class="video-panel">
                 <h3>Recording parts</h3>
-                <p>Upload the seven Lesson 2 videos into the Lesson 2 video folder, or preview multiple local files here.</p>
+                <p>Upload the seven Lesson 4 videos into the Lesson 4 video folder, or preview multiple local files here.</p>
                 <div class="teacher-video-resources" id="teacherVideoResources" hidden>
                   <h3>Teacher videos</h3>
                   <p>Videos added by your teacher for this lesson.</p>
@@ -1443,164 +1443,199 @@
             <div class="section-title">
               <span class="eyebrow">Reading notes</span>
               <h2>Lesson Notes</h2>
-              <p>The full PDF is attached, with the main concepts organized for reading on the page.</p>
+              <p>Read the structured notes below, then use the teacher resources area for any attached files.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="reading">Mark complete</button>
           </div>
           <div class="section-body">
             <div class="reader-layout">
               <div class="reader-actions">
-                <h3>Full PDF</h3>
-                <p>Open the student handbook supplement or keep reading the structured notes on this page.</p>
+                <h3>Teacher attachments</h3>
+                <p>When your teacher adds extra PDFs, links, or class files, they will appear in the teacher resources box below.</p>
                 <div class="button-row">
-                  <a class="primary-link" href="assets/lesson2-notes.pdf" target="_blank" rel="noopener">Open PDF</a>
-                  <a class="secondary-link" href="assets/lesson2-notes.pdf" download>Download</a>
+                  <a class="primary-link" href="#activity">Open activity</a>
+                  <a class="secondary-link" href="#quiz">Open quiz</a>
                 </div>
               </div>
 
               <div class="topic-stack">
                 <article class="topic">
-                  <h3>1. Names vs. Addresses: IP Addresses and DNS</h3>
-                  <p>Computers use numerical addresses to find each other. Humans use names. DNS is the system that turns a domain like <code>google.com</code> into an IP address that a browser can actually connect to.</p>
-                  <table class="note-table" aria-label="DNS lookup steps">
+                  <h3>1. Static Site vs. Web Application</h3>
+                  <p>A static site mostly sends files to the browser. A web application responds to users, talks to a backend, saves data, and changes based on who is signed in.</p>
+                  <table class="note-table" aria-label="1. Static Site vs. Web Application key ideas">
                     <thead>
                       <tr>
-                        <th>Step</th>
-                        <th>What happens</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Device asks</td>
-                        <td>Your browser asks a DNS resolver for the address behind a domain name.</td>
-                      </tr>
-                      <tr>
-                        <td>Cache check</td>
-                        <td>The resolver answers quickly if it has seen that domain recently.</td>
-                      </tr>
-                      <tr>
-                        <td>Root and TLD</td>
-                        <td>If not cached, servers point the resolver closer to the authoritative answer.</td>
-                      </tr>
-                      <tr>
-                        <td>Connection</td>
-                        <td>Once the browser has an IP address, it can open a connection to the server.</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <pre class="code-sample"><code>$ nslookup google.com
-
-&gt;&gt;&gt; import socket
-&gt;&gt;&gt; socket.gethostbyname('google.com')</code></pre>
-                </article>
-
-                <article class="topic">
-                  <h3>2. The Request-Response Cycle</h3>
-                  <p>HTTP is the shared language browsers and servers use. The client asks for something, and the server answers with a status code, headers, and a body.</p>
-                  <table class="note-table" aria-label="Common HTTP status codes">
-                    <thead>
-                      <tr>
-                        <th>Code</th>
+                        <th>Concept</th>
                         <th>Meaning</th>
-                        <th>What it tells you</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>200</td>
-                        <td>OK</td>
-                        <td>The request succeeded.</td>
+                        <td>Static site</td>
+                        <td>Same files for everyone.</td>
                       </tr>
                       <tr>
-                        <td>301 / 302</td>
-                        <td>Redirect</td>
-                        <td>The resource moved somewhere else.</td>
+                        <td>Dynamic app</td>
+                        <td>Responses can depend on user, data, and permissions.</td>
                       </tr>
                       <tr>
-                        <td>404</td>
-                        <td>Not Found</td>
-                        <td>The server exists, but that path does not.</td>
-                      </tr>
-                      <tr>
-                        <td>401 / 403</td>
-                        <td>Unauthorized / Forbidden</td>
-                        <td>You need to log in, or you are not allowed.</td>
-                      </tr>
-                      <tr>
-                        <td>500</td>
-                        <td>Server Error</td>
-                        <td>Something broke on the server side.</td>
+                        <td>Backend</td>
+                        <td>The server-side program that decides what happens.</td>
                       </tr>
                     </tbody>
                   </table>
-                  <pre class="code-sample"><code>&gt;&gt;&gt; import requests
-&gt;&gt;&gt; response = requests.get('https://api.github.com')
-&gt;&gt;&gt; response.status_code
-200
-&gt;&gt;&gt; response.headers['content-type']</code></pre>
+                  <pre class="code-sample"><code>Browser -> HTML/CSS/JS
+Browser -> API -> Database -> API response</code></pre>
                 </article>
 
                 <article class="topic">
-                  <h3>3. Data Travels in Packets</h3>
-                  <p>Your data does not travel as one continuous stream. It is split into packets, routed across machines, and reassembled when it arrives.</p>
-                  <table class="note-table" aria-label="TCP and UDP comparison">
+                  <h3>2. Frontend: What the User Touches</h3>
+                  <p>The frontend is the part in the browser: pages, forms, buttons, layouts, and JavaScript that reacts to clicks. It should be clear, fast, and hard to misuse.</p>
+                  <table class="note-table" aria-label="2. Frontend: What the User Touches key ideas">
                     <thead>
                       <tr>
-                        <th></th>
-                        <th>TCP</th>
-                        <th>UDP</th>
+                        <th>Concept</th>
+                        <th>Meaning</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>Delivery</td>
-                        <td>Reliable, confirms packets arrive.</td>
-                        <td>Best effort, no confirmation.</td>
+                        <td>HTML</td>
+                        <td>Structure and content.</td>
                       </tr>
                       <tr>
-                        <td>Order</td>
-                        <td>Guaranteed.</td>
-                        <td>Not guaranteed.</td>
+                        <td>CSS</td>
+                        <td>Layout and appearance.</td>
                       </tr>
                       <tr>
-                        <td>Used for</td>
-                        <td>Web pages, APIs, downloads.</td>
-                        <td>Video calls and live streaming.</td>
+                        <td>JavaScript</td>
+                        <td>Interaction and data requests.</td>
                       </tr>
                     </tbody>
                   </table>
-                  <pre class="code-sample"><code>$ traceroute google.com
-# Windows: tracert google.com</code></pre>
+                  <pre class="code-sample"><code>button click -> collect form values -> fetch("/api/checkout")</code></pre>
                 </article>
 
                 <article class="topic">
-                  <h3>4. Servers, Ports, and APIs</h3>
-                  <p>A server is a program listening for incoming requests. A port is the specific door that request goes through. APIs use the same request-response model, but return data for programs instead of pages for humans.</p>
-                  <ul>
-                    <li><strong>Port 80:</strong> standard plain HTTP traffic.</li>
-                    <li><strong>Port 443:</strong> standard HTTPS traffic.</li>
-                    <li><strong>Webhook:</strong> an API call triggered by an event, such as a payment confirmation.</li>
-                  </ul>
-                  <pre class="code-sample"><code>$ lsof -i -P | grep LISTEN
-python3   ... TCP *:8000 (LISTEN)
-node      ... TCP *:3000 (LISTEN)</code></pre>
+                  <h3>3. Backend: The App Brain</h3>
+                  <p>The backend receives requests, checks data, applies rules, talks to the database, and sends a response. It is where trusted decisions must happen.</p>
+                  <table class="note-table" aria-label="3. Backend: The App Brain key ideas">
+                    <thead>
+                      <tr>
+                        <th>Concept</th>
+                        <th>Meaning</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Route</td>
+                        <td>The URL path handled by the server.</td>
+                      </tr>
+                      <tr>
+                        <td>Validation</td>
+                        <td>Checking data before trusting it.</td>
+                      </tr>
+                      <tr>
+                        <td>Response</td>
+                        <td>What the server sends back.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <pre class="code-sample"><code>POST /api/auth/login
+GET /api/progress
+POST /api/progress/quiz</code></pre>
                 </article>
 
                 <article class="topic">
-                  <h3>5. HTTPS and Encryption</h3>
-                  <p>HTTPS adds encryption so packets are unreadable to machines they pass through. Before the real HTTP request is sent, the browser and server perform a TLS handshake to agree on secure communication.</p>
-                  <div class="callout"><strong>Practical rule:</strong> Never enter passwords or payment details on a page that is not using HTTPS. Payment integrations require HTTPS because sensitive data must be encrypted in transit.</div>
+                  <h3>4. Database: The App Memory</h3>
+                  <p>The backend should save important state in the database: users, enrollments, lesson progress, quiz results, orders, and resources. The browser alone is not enough for teacher/admin visibility.</p>
+                  <table class="note-table" aria-label="4. Database: The App Memory key ideas">
+                    <thead>
+                      <tr>
+                        <th>Concept</th>
+                        <th>Meaning</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>User table</td>
+                        <td>Who can sign in.</td>
+                      </tr>
+                      <tr>
+                        <td>Enrollment table</td>
+                        <td>Who has access.</td>
+                      </tr>
+                      <tr>
+                        <td>Progress table</td>
+                        <td>What the student completed.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <pre class="code-sample"><code>app_users -> course_enrollments -> lesson_progress</code></pre>
                 </article>
 
                 <article class="topic">
-                  <h3>6. The Full Journey</h3>
-                  <p>You type a URL -> DNS translates the domain to an IP address -> the browser connects to the right port -> HTTPS performs a TLS handshake if needed -> the browser sends an HTTP request as packets -> routers move those packets -> the server replies -> the browser reassembles and renders the page.</p>
+                  <h3>5. Login, Sessions, and Roles</h3>
+                  <p>Authentication proves who someone is. A session keeps them signed in. Authorization decides what that person is allowed to do.</p>
+                  <table class="note-table" aria-label="5. Login, Sessions, and Roles key ideas">
+                    <thead>
+                      <tr>
+                        <th>Concept</th>
+                        <th>Meaning</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Authentication</td>
+                        <td>Are you really this user?</td>
+                      </tr>
+                      <tr>
+                        <td>Session cookie</td>
+                        <td>Browser proof of a signed-in session.</td>
+                      </tr>
+                      <tr>
+                        <td>Role</td>
+                        <td>Student, teacher, or admin permissions.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <pre class="code-sample"><code>student: view lessons
+teacher: add resources
+admin: approve students</code></pre>
+                </article>
+
+                <article class="topic">
+                  <h3>6. Deployment: Making It Live</h3>
+                  <p>Production adds another layer: a domain points to the VPS, a reverse proxy routes the domain to the right app port, environment variables configure secrets, and logs tell you what broke.</p>
+                  <table class="note-table" aria-label="6. Deployment: Making It Live key ideas">
+                    <thead>
+                      <tr>
+                        <th>Concept</th>
+                        <th>Meaning</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Domain</td>
+                        <td>Human-friendly name.</td>
+                      </tr>
+                      <tr>
+                        <td>Reverse proxy</td>
+                        <td>Routes web traffic to the right app.</td>
+                      </tr>
+                      <tr>
+                        <td>Environment variable</td>
+                        <td>Configuration outside the code.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <pre class="code-sample"><code>digitalbrigdeacademy.com -> Traefik -> Learning MS :8765</code></pre>
                 </article>
               </div>
             </div>
 
             <div class="callout">
-              <strong>Full handbook:</strong> Use the Open PDF or Download buttons above when you want the original 11-page student supplement.
+              <strong>Study habit:</strong> After each topic, write one example from the LMS or a real app you use. That is how the vocabulary becomes practical.
             </div>
 
             <div class="teacher-resources" id="teacherResources" hidden>
@@ -1612,18 +1647,18 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
         </div>
       </section>
 
-      <section class="lesson-section" id="activity" data-track-section="activity">
+      <section class="lesson-section" id="activity" data-track-section="activity">      <section class="lesson-section" id="activity" data-track-section="activity">
         <div class="section-surface">
           <div class="section-header">
             <div class="section-title">
               <span class="eyebrow">Hands-on practice</span>
               <h2>Class Activity</h2>
-              <p>Six short activities for status codes, TCP vs UDP, traceroute, ports, HTTPS, and your own full-journey explanation.</p>
+              <p>Practice tracing a real web app flow from screen to backend to database and back.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="activity">Mark complete</button>
           </div>
           <div class="section-body">
-            <iframe class="embedded-frame activity-frame" src="assets/lesson2_class_activity.html" title="Lesson 2 class activity"></iframe>
+            <iframe class="embedded-frame activity-frame" src="assets/lesson4_class_activity.html" title="Lesson 4 class activity"></iframe>
           </div>
         </div>
       </section>
@@ -1634,12 +1669,12 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
             <div class="section-title">
               <span class="eyebrow">Post-lesson check</span>
               <h2>Practice Quiz</h2>
-              <p>Questions across DNS, HTTP, packets, routing, servers, ports, APIs, HTTPS, and encryption.</p>
+              <p>Questions across frontend, backend, APIs, databases, login, roles, deployment, domains, and environment variables.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="quiz">Mark complete</button>
           </div>
           <div class="section-body">
-            <iframe class="embedded-frame quiz-frame" src="assets/lesson2_quiz.html" title="Lesson 2 practice quiz"></iframe>
+            <iframe class="embedded-frame quiz-frame" src="assets/lesson4_quiz.html" title="Lesson 4 practice quiz"></iframe>
           </div>
         </div>
       </section>
@@ -1650,7 +1685,7 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
             <div class="section-title">
               <span class="eyebrow">Wrap-up and next steps</span>
               <h2>Before the Next Meetup</h2>
-              <p>Use the homework to make the internet journey explainable in your own words.</p>
+              <p>Use the homework to explain the lesson in your own words and connect it to real app behavior.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="wrapup">Mark complete</button>
           </div>
@@ -1658,46 +1693,43 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
             <div class="wrapup-grid">
               <div>
                 <ol class="homework-list">
-                  <li>Run <code>nslookup</code> or <code>socket.gethostbyname()</code> on three websites and note the IP addresses.</li>
-                  <li>Run <code>requests.get()</code> against a public API and print the status code plus one field from the response.</li>
-                  <li>Run <code>traceroute</code> or <code>tracert</code> to a website and count how many hops your data takes.</li>
-                  <li>Write 2-3 sentences explaining what the browser padlock guarantees, and what it does not guarantee.</li>
+                  <li>Draw the full journey for logging into the LMS: browser, backend, database, cookie, and page update.</li>
+                  <li>List three environment variables your LMS needs and what each one controls.</li>
+                  <li>Explain why admin approval must happen in the backend/database, not only in the browser.</li>
+                  <li>Write a short failure checklist for when a domain does not open.</li>
                 </ol>
 
                 <div class="term-cloud" aria-label="Key terms">
-                  <span>IP address</span>
-                  <span>Domain name</span>
-                  <span>DNS</span>
-                  <span>Resolver</span>
-                  <span>HTTP</span>
+                  <span>Frontend</span>
+                  <span>Backend</span>
+                  <span>API</span>
+                  <span>Route</span>
                   <span>Request</span>
                   <span>Response</span>
-                  <span>Status code</span>
-                  <span>TCP</span>
-                  <span>UDP</span>
-                  <span>Packet</span>
-                  <span>Router</span>
-                  <span>Traceroute</span>
-                  <span>Server</span>
+                  <span>Database</span>
+                  <span>Authentication</span>
+                  <span>Session</span>
+                  <span>Cookie</span>
+                  <span>Authorization</span>
+                  <span>Role</span>
+                  <span>Domain</span>
+                  <span>Reverse proxy</span>
                   <span>Port</span>
-                  <span>API</span>
-                  <span>Webhook</span>
-                  <span>HTTPS</span>
-                  <span>TLS</span>
-                  <span>Encryption</span>
+                  <span>Environment variable</span>
+                  <span>Deployment</span>
+                  <span>Logs</span>
                 </div>
               </div>
 
               <div class="next-lesson">
                 <h3>Next lesson</h3>
-                <p>How Databases Actually Store Your Data - what really happens to information after your program hits save.</p>
-                <p><a class="secondary-link" href="lesson3.html">Open Week 3 Lesson 3</a></p>
+                <p>Project build week - Next, students should use these fundamentals to build and explain a small working web app.</p>
               </div>
             </div>
           </div>
         </div>
       </section>
-    </main>
+    </main>    </main>
   </div>
 
   <script>
@@ -1723,8 +1755,8 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
       const teacherResourceList = document.getElementById("teacherResourceList");
       const teacherVideoResources = document.getElementById("teacherVideoResources");
       const teacherVideoList = document.getElementById("teacherVideoList");
-      const lessonSlug = "internet-fundamentals-lesson-2";
-      const baseStorageKey = "dba-lesson-2-complete";
+      const lessonSlug = "web-applications-lesson-4";
+      const baseStorageKey = "dba-lesson-4-complete";
       const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
       const total = sections.length;
       const sectionLabels = {
@@ -1949,16 +1981,16 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
         }
 
         const prerequisite = data.prerequisite || {};
-        const title = prerequisite.title || "Lesson 1";
+        const title = prerequisite.title || "Lesson 3";
         const missingSections = prerequisite.missingSections || [];
         const items = [];
 
         document.body.classList.add("lesson-locked");
         lessonLockOverlay.hidden = false;
-        lessonLockTitle.textContent = "Finish Week 1 Lesson 1 first";
-        lessonLockMessage.textContent = "Week 1 Lesson 2 unlocks after " + title + " is complete and its quiz has been submitted.";
-        lessonLockPrimaryLink.href = "index.html";
-        lessonLockPrimaryLink.textContent = "Open Lesson 1";
+        lessonLockTitle.textContent = "Finish Week 3 Lesson 3 first";
+        lessonLockMessage.textContent = "Week 4 Lesson 4 unlocks after " + title + " is complete and its quiz has been submitted.";
+        lessonLockPrimaryLink.href = "lesson3.html";
+        lessonLockPrimaryLink.textContent = "Open Lesson 3";
 
         missingSections.forEach(function (section) {
           items.push("Complete " + (sectionLabels[section] || section) + ".");
@@ -2005,7 +2037,7 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
             if (currentUser) {
               lockLesson({
                 prerequisite: {
-                  title: "Lesson 1",
+                  title: "Lesson 3",
                   missingSections: [],
                   quizCompleted: false
                 }
@@ -2274,7 +2306,7 @@ node      ... TCP *:3000 (LISTEN)</code></pre>
         if (firstUploadedIndex >= 0) {
           setActiveRecording(firstUploadedIndex);
         } else {
-          videoStatus.textContent = "Upload Lesson 2 recordings into assets/videos/lesson2.";
+          videoStatus.textContent = "Upload Lesson 4 recordings into assets/videos/lesson4.";
         }
       }
 

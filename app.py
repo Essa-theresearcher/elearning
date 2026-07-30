@@ -169,6 +169,106 @@ LESSONS = {
             },
         ],
     },
+    "data-storage-lesson-3": {
+        "title": "How Databases Actually Store Your Data",
+        "section_ids": ["welcome", "video", "reading", "activity", "quiz", "wrapup"],
+        "prerequisite": "internet-fundamentals-lesson-2",
+        "video_dir": os.environ.get("LESSON3_VIDEO_DIR", "assets/videos/lesson3"),
+        "recording_segments": [
+            {
+                "part": 1,
+                "title": "Welcome & Why Databases Matter",
+                "duration": "~5 min",
+                "slug": "welcome-why-databases-matter",
+            },
+            {
+                "part": 2,
+                "title": "Tables, Rows, Columns, and Keys",
+                "duration": "~20 min",
+                "slug": "tables-rows-columns-keys",
+            },
+            {
+                "part": 3,
+                "title": "CRUD and SQL Thinking",
+                "duration": "~20 min",
+                "slug": "crud-sql-thinking",
+            },
+            {
+                "part": 4,
+                "title": "Relationships and Normalization",
+                "duration": "~20 min",
+                "slug": "relationships-normalization",
+            },
+            {
+                "part": 5,
+                "title": "Indexes and Query Speed",
+                "duration": "~15 min",
+                "slug": "indexes-query-speed",
+            },
+            {
+                "part": 6,
+                "title": "Reliability, Backups, and Permissions",
+                "duration": "~15 min",
+                "slug": "reliability-backups-permissions",
+            },
+            {
+                "part": 7,
+                "title": "Summary: The Full Data Journey",
+                "duration": "~15 min",
+                "slug": "summary-full-data-journey",
+            },
+        ],
+    },
+    "web-applications-lesson-4": {
+        "title": "How Web Applications Actually Work",
+        "section_ids": ["welcome", "video", "reading", "activity", "quiz", "wrapup"],
+        "prerequisite": "data-storage-lesson-3",
+        "video_dir": os.environ.get("LESSON4_VIDEO_DIR", "assets/videos/lesson4"),
+        "recording_segments": [
+            {
+                "part": 1,
+                "title": "Welcome & Full-App Framing",
+                "duration": "~5 min",
+                "slug": "welcome-full-app-framing",
+            },
+            {
+                "part": 2,
+                "title": "Frontend: What the User Touches",
+                "duration": "~20 min",
+                "slug": "frontend-user-actions",
+            },
+            {
+                "part": 3,
+                "title": "Backend Routes and APIs",
+                "duration": "~20 min",
+                "slug": "backend-routes-apis",
+            },
+            {
+                "part": 4,
+                "title": "Database Integration",
+                "duration": "~20 min",
+                "slug": "database-integration",
+            },
+            {
+                "part": 5,
+                "title": "Login, Sessions, and Roles",
+                "duration": "~15 min",
+                "slug": "login-sessions-roles",
+            },
+            {
+                "part": 6,
+                "title": "Deployment, Domains, and Environment",
+                "duration": "~15 min",
+                "slug": "deployment-domains-environment",
+            },
+            {
+                "part": 7,
+                "title": "Summary: The Full Web App Journey",
+                "duration": "~15 min",
+                "slug": "summary-full-web-app-journey",
+            },
+        ],
+    },
 }
 
 COURSES = {
@@ -181,17 +281,22 @@ COURSES = {
         "price_label": "Manual checkout",
         "description": (
             "Understand how computers, memory, operating systems, and the "
-            "internet actually work before deeper programming lessons."
+            "internet, databases, and web applications actually work before "
+            "deeper programming lessons."
         ),
         "highlights": [
             "Week 0 readiness assessment",
             "How Computers Actually Work",
             "How the Internet Actually Works",
+            "How Databases Actually Store Your Data",
+            "How Web Applications Actually Work",
         ],
         "lesson_slugs": [
             "intermediate-readiness-week",
             "cs-fundamentals-lesson-1",
             "internet-fundamentals-lesson-2",
+            "data-storage-lesson-3",
+            "web-applications-lesson-4",
         ],
     },
     "python-fundamentals": {
