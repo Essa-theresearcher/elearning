@@ -1,0 +1,52 @@
+name: Deploy Learning MS
+
+on:
+  push:
+    branches:
+      - codex/python-course-backend
+  workflow_dispatch:
+
+concurrency:
+  group: learning-ms-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_PORT: ${{ secrets.VPS_PORT }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${VPS_HOST:-}" ] || [ -z "${VPS_USER:-}" ] || [ -z "${VPS_SSH_KEY:-}" ]; then
+            echo "Deployment secrets are not configured yet. Add VPS_HOST, VPS_USER, and VPS_SSH_KEY to enable deploys."
+            exit 0
+          fi
+
+          VPS_PORT="${VPS_PORT:-22}"
+
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/learning_ms_deploy_key
+          chmod 600 ~/.ssh/learning_ms_deploy_key
+          ssh-keyscan -p "$VPS_PORT" "$VPS_HOST" >> ~/.ssh/known_hosts
+
+          ssh -i ~/.ssh/learning_ms_deploy_key -p "$VPS_PORT" "$VPS_USER@$VPS_HOST" <<'DEPLOY'
+          set -euo pipefail
+          cd /root/elearning
+          git fetch origin codex/python-course-backend
+          git checkout codex/python-course-backend
+          git pull --ff-only origin codex/python-course-backend
+          if [ "$(id -u)" -eq 0 ]; then
+            systemctl restart learning-ms
+            systemctl is-active --quiet learning-ms
+          else
+            sudo systemctl restart learning-ms
+            sudo systemctl is-active --quiet learning-ms
+          fi
+          DEPLOY
