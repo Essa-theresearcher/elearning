@@ -269,6 +269,28 @@ LESSONS = {
             },
         ],
     },
+    "python-beginner-lesson-1": {
+        "title": "Getting Started with Python",
+        "section_ids": ["welcome", "video", "reading", "activity", "quiz", "wrapup"],
+        "prerequisite": "web-applications-lesson-4",
+        "video_dir": os.environ.get(
+            "PYTHON_LESSON1_VIDEO_DIR", "assets/videos/python-lesson1"
+        ),
+        "recording_segments": [
+            {
+                "part": 1,
+                "title": "What Python Is & Getting Set Up",
+                "duration": "Recording 1",
+                "slug": "what-is-python-and-setup",
+            },
+            {
+                "part": 2,
+                "title": "First Programs & print() Practice",
+                "duration": "Recording 2",
+                "slug": "first-programs-and-print",
+            },
+        ],
+    },
 }
 
 COURSES = {
@@ -302,20 +324,23 @@ COURSES = {
     "python-fundamentals": {
         "title": "Python Fundamentals",
         "category": "Programming",
-        "status": "planned",
+        "status": "open",
         "image": "assets/school/icon-coding.png",
-        "entry_path": "",
+        "entry_path": "python-lesson1.html",
         "price_label": "Manual checkout",
         "description": (
             "A beginner-friendly path for students who need Python foundations "
-            "before intermediate work."
+            "before intermediate work. Start with installation, your first "
+            "programs, and confident use of print()."
         ),
         "highlights": [
-            "Variables and data types",
-            "Control flow and functions",
-            "Lists, dictionaries, and files",
+            "Lesson 1: Getting started with Python",
+            "Install Python and VS Code",
+            "First programs, errors, and print() practice",
         ],
-        "lesson_slugs": [],
+        "lesson_slugs": [
+            "python-beginner-lesson-1",
+        ],
     },
     "web-development-coding": {
         "title": "Web Development & Coding",
@@ -460,6 +485,23 @@ def direct_access_student_usernames():
         if normalized and normalized not in usernames:
             usernames.append(normalized)
     return usernames
+
+
+def is_direct_access_student(conn, student_id):
+    row = db_execute(
+        conn,
+        "SELECT username FROM app_users WHERE id = ? AND role = 'student'",
+        (student_id,),
+    ).fetchone()
+    if not row:
+        return False
+    return normalize_username(row["username"]) in direct_access_student_usernames()
+
+
+DIRECT_ACCESS_COURSE_SLUGS = (
+    "computer-fundamentals",
+    "python-fundamentals",
+)
 
 
 def parse_json_field(raw_value, fallback):
@@ -956,17 +998,21 @@ def grant_direct_access_students(conn):
     ).fetchall()
 
     for student in rows:
-        grant_course_enrollment(
-            conn,
-            student["id"],
-            course_slug="computer-fundamentals",
-            payment_reference="Direct student access",
-            payment_note="Bypasses checkout approval",
-        )
+        for course_slug in DIRECT_ACCESS_COURSE_SLUGS:
+            grant_course_enrollment(
+                conn,
+                student["id"],
+                course_slug=course_slug,
+                payment_reference="Direct student access",
+                payment_note="Bypasses checkout approval",
+            )
 
     if rows:
         granted = ", ".join(row["username"] for row in rows)
-        print(f"Granted Computer Fundamentals direct access to: {granted}")
+        print(
+            "Granted direct course access (Computer Fundamentals + Python Fundamentals) to: "
+            f"{granted}"
+        )
 
 
 def lesson_access_status(conn, student_id, lesson_slug):
@@ -981,6 +1027,20 @@ def lesson_access_status(conn, student_id, lesson_slug):
                 "course": course_status,
                 "prerequisite": None,
             }
+
+    if (
+        lesson_slug == "python-beginner-lesson-1"
+        and is_direct_access_student(conn, student_id)
+    ):
+        return {
+            "lessonSlug": lesson_slug,
+            "unlocked": True,
+            "course": course_access_status(conn, student_id, course_slug)
+            if course_slug
+            else None,
+            "prerequisite": None,
+            "directAccessBypass": True,
+        }
 
     prerequisite_slug = config.get("prerequisite")
     if not prerequisite_slug:

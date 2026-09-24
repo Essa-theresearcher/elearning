@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Python Lesson 1 Class Activity — Digital Bridge Academy</title>
+<style>
+  :root{--navy:#132A4C;--navy-dark:#0B1B33;--gold:#C9A227;--ivory:#FAF6EC;--charcoal:#2B2B2B;--soft-grey:#6E6E6E;--line:#E3D9BE;--correct:#2F6B52;--correct-bg:#EAF3EE;--code-bg:#0F1F38;--code-text:#E8E3D3;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--charcoal);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  .topbar{background:var(--navy);border-bottom:3px solid var(--gold);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
+  .topbar .brand{color:#fff;font-weight:700;font-size:14px;letter-spacing:0.03em;}
+  .topbar .lesson-tag{color:#D9CDA3;font-size:12.5px;}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 18px 70px;}
+  .hero{text-align:center;margin-bottom:8px;}
+  .hero .kicker{color:var(--gold);font-weight:700;font-size:11.5px;letter-spacing:0.08em;text-transform:uppercase;}
+  .hero h1{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:26px;margin:6px 0 4px;}
+  .hero p{color:var(--soft-grey);font-size:14px;margin:0 auto 8px;max-width:560px;}
+  .runtime-note{text-align:center;font-size:12px;color:var(--soft-grey);background:#fff;border:1px dashed var(--line);border-radius:5px;padding:8px 14px;margin:18px 0 24px;}
+  .phase{margin:28px 0 10px;font-family:Georgia,serif;color:var(--navy-dark);font-size:20px;border-bottom:2px solid var(--gold);padding-bottom:6px;}
+  .activity{background:#fff;border:1px solid var(--line);border-radius:6px;padding:22px 22px 20px;margin-bottom:18px;box-shadow:0 1px 3px rgba(19,42,76,0.06);}
+  .activity-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:var(--navy);color:var(--gold);font-family:"Courier New",monospace;font-weight:700;font-size:12.5px;border-radius:3px;margin-right:10px;}
+  .activity-title{display:flex;align-items:center;font-family:Georgia,serif;font-size:17px;color:var(--navy-dark);margin:0 0 6px;}
+  .activity-sub{color:var(--soft-grey);font-size:13px;margin:0 0 14px;padding-left:36px;}
+  .code-block{background:var(--code-bg);color:var(--code-text);font-family:"Courier New",Courier,monospace;font-size:13px;padding:14px 16px;border-radius:4px;margin:0 0 12px;white-space:pre;overflow-x:auto;}
+  label.field-label{display:block;font-size:12.5px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+  input[type="text"],textarea{width:100%;min-width:0;border:1.5px solid var(--line);border-radius:5px;padding:10px 12px;font-size:14px;font-family:inherit;color:var(--charcoal);background:#fff;margin-bottom:10px;}
+  textarea{min-height:72px;resize:vertical;}
+  .checklist label{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin-bottom:8px;}
+  .checklist input{margin-top:3px;}
+  .btn{background:var(--navy);color:#fff;border:none;padding:9px 16px;font-size:13px;font-weight:700;border-radius:5px;cursor:pointer;font-family:inherit;margin-right:8px;margin-bottom:8px;}
+  .btn:hover{background:var(--navy-dark);}
+  .btn-outline{background:none;border:1.5px solid var(--navy);color:var(--navy);padding:8px 14px;font-size:13px;font-weight:700;border-radius:5px;cursor:pointer;font-family:inherit;}
+  .reveal{display:none;margin-top:10px;padding:12px 14px;background:var(--correct-bg);border:1px solid var(--correct);border-radius:5px;font-size:13.5px;line-height:1.55;color:var(--charcoal);}
+  .reveal.show{display:block;}
+  .reveal b{color:var(--navy-dark);}
+  .closing{text-align:center;margin-top:12px;}
+  .closing p{color:var(--soft-grey);font-size:13px;margin-bottom:14px;}
+  .activity-status{min-height:20px;margin-top:12px;color:var(--correct);font-size:13px;font-weight:700;}
+  .activity-status.error{color:#A04242;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="brand">DIGITAL BRIDGE ACADEMY</span>
+  <span class="lesson-tag">Python Fundamentals · Lesson 1 Class Activity</span>
+</div>
+<div class="wrap">
+  <div class="hero">
+    <div class="kicker">Hands-on · Do this after watching both recordings</div>
+    <h1>Getting Started with Python — Full Lab</h1>
+    <p>Work through setup, guided practice, and ten independent problems. Type real code in VS Code on your machine, then paste outputs or reflections here before you submit.</p>
+  </div>
+  <div class="runtime-note">Plan 60–90 minutes · Python 3 + VS Code required · Save each program as its own <code>.py</code> file</div>
+
+  <h2 class="phase">Phase A — Environment setup</h2>
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">A</span>Install and verify</p>
+    <p class="activity-sub">Complete every step on your own computer. Ask for help only after you try twice.</p>
+    <div class="checklist">
+      <label><input type="checkbox" id="setup1"> I ran <code>python3 --version</code> (or <code>python --version</code>) and saw a version number.</label>
+      <label><input type="checkbox" id="setup2"> On Windows, I ticked <strong>Add Python to PATH</strong> during install (or Python was already on PATH).</label>
+      <label><input type="checkbox" id="setup3"> VS Code is installed with the official Microsoft <strong>Python</strong> extension.</label>
+      <label><input type="checkbox" id="setup4"> I created <code>hello.py</code>, ran it, and saw output in the terminal.</label>
+    </div>
+    <label class="field-label" for="setupNotes">If anything failed, what happened and what fixed it?</label>
+    <textarea id="setupNotes" placeholder="Example: python was not recognized — reinstalled with Add to PATH checked."></textarea>
+  </div>
+
+  <h2 class="phase">Phase B — Guided practice (do together, then alone)</h2>
+
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">1</span>Three-line introduction</p>
+    <p class="activity-sub">Write three <code>print()</code> lines: your name, age, favourite food. Run in VS Code.</p>
+    <label class="field-label" for="p11code">Paste your three print() lines</label>
+    <textarea id="p11code"></textarea>
+    <label class="field-label" for="p11out">Paste the terminal output</label>
+    <textarea id="p11out"></textarea>
+  </div>
+
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">2</span>Predict the output</p>
+    <div class="code-block">print("I love")
+print("Python")
+print("programming")</div>
+    <label class="field-label" for="p12pred">Your prediction (three lines)</label>
+    <textarea id="p12pred"></textarea>
+    <button class="btn" type="button" data-reveal="p12ans">Show answer</button>
+    <div class="reveal" id="p12ans"><b>Three separate lines:</b> I love · Python · programming — each <code>print()</code> starts a new line.</div>
+  </div>
+
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">3</span>Fix the missing quote</p>
+    <div class="code-block">print("Karibu Digital Bridge)</div>
+    <label class="field-label" for="p13fix">Your corrected line</label>
+    <input type="text" id="p13fix" />
+    <button class="btn" type="button" data-reveal="p13ans">Show answer</button>
+    <div class="reveal" id="p13ans"><b>print("Karibu Digital Bridge")</b> — closing quotation mark was missing (SyntaxError).</div>
+  </div>
+
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">4</span>Fix the extra bracket</p>
+    <div class="code-block">print("Hello World"))</div>
+    <label class="field-label" for="p14fix">Your corrected line</label>
+    <input type="text" id="p14fix" />
+    <button class="btn" type="button" data-reveal="p14ans">Show answer</button>
+    <div class="reveal" id="p14ans"><b>print("Hello World")</b> — one extra <code>)</code> caused a syntax error.</div>
+  </div>
+
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">5</span>Text poster (5+ lines)</p>
+    <p class="activity-sub">Use only <code>print()</code> to advertise Digital Bridge Professional Skills. Include a border with <code>*</code> or <code>=</code>.</p>
+    <label class="field-label" for="p15code">Paste your program</label>
+    <textarea id="p15code" style="min-height:120px;"></textarea>
+  </div>
+
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">6</span>Case sensitivity</p>
+    <div class="code-block">Print("Wrong capitalisation")</div>
+    <label class="field-label" for="p16err">What error type/message did you get when you ran this?</label>
+    <textarea id="p16err"></textarea>
+    <button class="btn" type="button" data-reveal="p16ans">Show answer</button>
+    <div class="reveal" id="p16ans"><b>NameError:</b> name 'Print' is not defined — Python treats <code>print</code> and <code>Print</code> as different names.</div>
+  </div>
+
+  <h2 class="phase">Phase C — Independent practice (10 problems)</h2>
+  <p style="font-size:13.5px;color:var(--soft-grey);margin:0 0 16px;">Create a separate <code>.py</code> file for each problem (e.g. <code>problem1.py</code>). Paste your final code or output in each box.</p>
+
+  <div class="activity"><p class="activity-title"><span class="activity-num">7</span>Name and town</p><p class="activity-sub">Full name on one line, town on the next.</p><textarea id="p17"></textarea></div>
+  <div class="activity"><p class="activity-title"><span class="activity-num">8</span>Numbers 1–5</p><p class="activity-sub">Five <code>print()</code> calls, one number per line.</p><textarea id="p18"></textarea></div>
+  <div class="activity"><p class="activity-title"><span class="activity-num">9</span>Shopping list</p><p class="activity-sub">Three items, one per line.</p><textarea id="p19"></textarea></div>
+  <div class="activity"><p class="activity-title"><span class="activity-num">10</span>Quote + author</p><p class="activity-sub">Favourite quote, then who said it on the next line.</p><textarea id="p110"></textarea></div>
+  <div class="activity"><p class="activity-title"><span class="activity-num">11</span>Break on purpose (quote)</p><p class="activity-sub">Remove a quote, run, read the error, fix it. Describe what you learned.</p><textarea id="p111"></textarea></div>
+  <div class="activity"><p class="activity-title"><span class="activity-num">12</span>Break on purpose (prit)</p><p class="activity-sub">Misspell <code>print</code> as <code>prit</code>, run, fix.</p><textarea id="p112"></textarea></div>
+  <div class="activity"><p class="activity-title"><span class="activity-num">13</span>3×3 hash box</p><p class="activity-sub">Print a small box using only <code>#</code>.</p><textarea id="p113"></textarea></div>
+  <div class="activity"><p class="activity-title"><span class="activity-num">14</span>Days of the week</p><p class="activity-sub">Monday through Sunday — seven print statements.</p><textarea id="p114"></textarea></div>
+  <div class="activity"><p class="activity-title"><span class="activity-num">15</span>Two-line joke</p><p class="activity-sub">Setup on line 1, punchline on line 2.</p><textarea id="p115"></textarea></div>
+  <div class="activity"><p class="activity-title"><span class="activity-num">16</span>ASCII smiley (challenge)</p><p class="activity-sub">Print a simple smiley using characters like <code>: )</code>.</p><textarea id="p116"></textarea></div>
+
+  <h2 class="phase">Phase D — Homework program</h2>
+  <div class="activity">
+    <p class="activity-title"><span class="activity-num">H</span>Six-line self introduction</p>
+    <p class="activity-sub">At least six <code>print()</code> statements introducing yourself to the class. Optional: ASCII art header.</p>
+    <label class="field-label" for="homeworkCode">Paste your homework program</label>
+    <textarea id="homeworkCode" style="min-height:140px;"></textarea>
+    <label class="field-label" for="homeworkOut">Paste the output</label>
+    <textarea id="homeworkOut"></textarea>
+  </div>
+
+  <div class="closing">
+    <p>Submit when you have finished Phase A and at least six problems from Phase C, plus your homework program.</p>
+    <button class="btn" id="submitBtn" type="button">Submit activity to teacher</button>
+    <button class="btn-outline" id="downloadBtn" type="button">Download my activity notes</button>
+    <p class="activity-status" id="activityStatus" role="status"></p>
+  </div>
+</div>
+<script>
+(function(){
+  document.querySelectorAll('[data-reveal]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var id = btn.getAttribute('data-reveal');
+      document.getElementById(id).classList.add('show');
+    });
+  });
+  var ids = ['setupNotes','p11code','p11out','p12pred','p13fix','p14fix','p15code','p16err','p17','p18','p19','p110','p111','p112','p113','p114','p115','p116','homeworkCode','homeworkOut'];
+  var status = document.getElementById('activityStatus');
+  function val(id){ var el = document.getElementById(id); return el ? (el.value || el.checked || '') : ''; }
+  function collect(){
+    var o = {};
+    ids.forEach(function(id){ o[id] = String(val(id)); });
+    o.setup1 = document.getElementById('setup1').checked;
+    o.setup2 = document.getElementById('setup2').checked;
+    o.setup3 = document.getElementById('setup3').checked;
+    o.setup4 = document.getElementById('setup4').checked;
+    return o;
+  }
+  function setStatus(msg, err){ status.textContent = msg || ''; status.classList.toggle('error', !!err); }
+  function submit(answers){
+    setStatus('Submitting...', false);
+    return fetch('/api/progress/activity', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lessonSlug: 'python-beginner-lesson-1', answers: answers })
+    }).then(function(r){
+      if(!r.ok) throw new Error('Sign in on the lesson page first, then submit again.');
+      setStatus('Submitted. Your teacher can review this work.', false);
+    }).catch(function(e){ setStatus(e.message || 'Could not submit.', true); throw e; });
+  }
+  document.getElementById('submitBtn').addEventListener('click', function(){ submit(collect()).catch(function(){}); });
+  document.getElementById('downloadBtn').addEventListener('click', function(){
+    var a = collect();
+    submit(a).catch(function(){});
+    var text = 'Python Lesson 1 Activity\n' + JSON.stringify(a, null, 2);
+    var blob = new Blob([text], { type: 'text/plain' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = 'python_lesson1_activity.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  });
+})();
+</script>
+</body>
+</html>

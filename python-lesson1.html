@@ -1,0 +1,2245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Fundamentals · Lesson 1 - Getting Started with Python</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --navy: #132a4c;
+      --navy-dark: #0b1b33;
+      --gold: #c9a227;
+      --paper: #ffffff;
+      --canvas: #f4f5f0;
+      --ivory: #faf6ec;
+      --line: #ded9c9;
+      --line-strong: #c8bea3;
+      --ink: #202633;
+      --muted: #66707d;
+      --teal: #206d6f;
+      --teal-soft: #e2f0ec;
+      --blue: #436a9f;
+      --rose: #9b594c;
+      --shadow: 0 16px 34px rgba(19, 42, 76, 0.08);
+      --radius: 8px;
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+      min-width: 0;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    code {
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      background: #eef1f3;
+      color: var(--navy-dark);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.92em;
+      white-space: nowrap;
+    }
+
+    pre code {
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      color: inherit;
+      font-size: inherit;
+      white-space: pre;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(19, 42, 76, 0.04);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 14px 24px;
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--navy);
+      color: var(--gold);
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-text strong {
+      display: block;
+      color: var(--navy-dark);
+      font-size: 14px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-text span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 230px;
+    }
+
+    .progress-copy {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      position: relative;
+      flex: 1;
+      height: 8px;
+      min-width: 120px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #e9e3d2;
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--teal);
+      transition: width 180ms ease;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .account-menu {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .account-name {
+      max-width: 180px;
+      overflow: hidden;
+      color: var(--navy-dark);
+      font-size: 13px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .logout-btn,
+    .auth-switch {
+      border: 0;
+      background: transparent;
+      color: var(--teal);
+      cursor: pointer;
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .logout-btn {
+      padding: 6px 0;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(11, 27, 51, 0.72);
+    }
+
+    .auth-panel {
+      width: min(440px, 100%);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.24);
+      overflow: hidden;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 16px;
+      padding: 28px;
+    }
+
+    .auth-form h2 {
+      margin: 0;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .auth-copy {
+      margin: -6px 0 4px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .auth-field {
+      display: grid;
+      gap: 7px;
+      color: var(--navy-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .auth-field input,
+    .auth-field select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .auth-field input:focus,
+    .auth-field select:focus {
+      outline: 3px solid rgba(32, 109, 111, 0.18);
+      border-color: var(--teal);
+    }
+
+    .auth-submit {
+      min-height: 44px;
+      border: 0;
+      border-radius: 6px;
+      background: var(--navy);
+      color: var(--paper);
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .auth-submit:hover {
+      background: var(--navy-dark);
+    }
+
+    .auth-error {
+      min-height: 20px;
+      margin: 0;
+      color: #a33b31;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .auth-footer {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    body.auth-locked .topbar,
+    body.auth-locked .layout {
+      pointer-events: none;
+      user-select: none;
+    }
+
+    body.lesson-locked .layout {
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .lesson-lock-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding-left: 20px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .lesson-lock-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+      gap: 28px;
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 28px 24px 56px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 82px;
+      align-self: start;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 24px rgba(19, 42, 76, 0.05);
+      overflow: hidden;
+    }
+
+    .sidebar-head {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--ivory);
+    }
+
+    .eyebrow {
+      display: block;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .sidebar h1 {
+      margin: 6px 0 8px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .sidebar-meta {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .course-links {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .course-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 7px 9px;
+      background: var(--paper);
+      color: var(--navy);
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .course-link:hover,
+    .course-link.is-current {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+      color: var(--navy-dark);
+    }
+
+    .lesson-nav {
+      display: grid;
+      padding: 8px;
+    }
+
+    .lesson-nav a {
+      display: grid;
+      grid-template-columns: 22px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 10px;
+      border-radius: 7px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .lesson-nav a:hover,
+    .lesson-nav a.active {
+      background: var(--teal-soft);
+      color: var(--navy-dark);
+    }
+
+    .nav-dot {
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--line-strong);
+      border-radius: 50%;
+      background: var(--paper);
+    }
+
+    .lesson-nav a.done .nav-dot {
+      border-color: var(--teal);
+      background: var(--teal);
+      box-shadow: inset 0 0 0 3px var(--paper);
+    }
+
+    .duration {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .main {
+      min-width: 0;
+    }
+
+    .lesson-section {
+      margin-bottom: 26px;
+      scroll-margin-top: 94px;
+    }
+
+    .section-surface {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 28px 30px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-title {
+      max-width: 780px;
+    }
+
+    .section-title h2 {
+      margin: 4px 0 8px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .section-body {
+      padding: 26px 30px 30px;
+    }
+
+    .complete-btn,
+    .primary-link,
+    .secondary-link,
+    .file-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .complete-btn {
+      background: var(--navy);
+      color: var(--paper);
+    }
+
+    .complete-btn:hover {
+      background: var(--navy-dark);
+    }
+
+    .complete-btn.is-done {
+      background: var(--teal);
+    }
+
+    .primary-link {
+      background: var(--navy);
+      color: var(--paper);
+    }
+
+    .primary-link:hover {
+      background: var(--navy-dark);
+    }
+
+    .secondary-link,
+    .file-label {
+      background: var(--paper);
+      color: var(--navy);
+      border-color: var(--navy);
+    }
+
+    .secondary-link:hover,
+    .file-label:hover {
+      background: var(--ivory);
+    }
+
+    .welcome-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .lead {
+      margin: 0 0 22px;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .objective-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .objective-list li {
+      display: grid;
+      grid-template-columns: 12px 1fr;
+      gap: 12px;
+      color: var(--ink);
+    }
+
+    .objective-list li::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      margin-top: 9px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    .notes-cover {
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+    }
+
+    .notes-cover img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .notes-cover figcaption {
+      border-top: 1px solid var(--line);
+      padding: 12px 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .session-plan {
+      width: 100%;
+      margin-top: 24px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .session-plan th,
+    .session-plan td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .session-plan th {
+      background: var(--navy);
+      color: var(--paper);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .session-plan td:first-child {
+      width: 90px;
+      color: var(--teal);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .video-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .video-frame {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 420px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: #111827;
+      border: 1px solid #101827;
+      color: var(--paper);
+    }
+
+    .video-frame video {
+      display: none;
+      width: 100%;
+      height: 100%;
+      min-height: 420px;
+      object-fit: contain;
+      background: #000000;
+    }
+
+    .video-frame.has-video video {
+      display: block;
+    }
+
+    .video-frame.has-video .video-empty {
+      display: none;
+    }
+
+    .video-empty {
+      max-width: 440px;
+      padding: 36px 28px;
+      text-align: center;
+    }
+
+    .video-empty strong {
+      display: block;
+      margin-bottom: 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .video-empty span {
+      color: #ccd7e6;
+      font-size: 15px;
+    }
+
+    .video-panel {
+      display: grid;
+      gap: 18px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--ivory);
+    }
+
+    .video-panel h3,
+    .reader-actions h3 {
+      margin: 0;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    .video-panel p,
+    .reader-actions p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .teacher-video-resources {
+      display: grid;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 14px;
+      background: var(--paper);
+    }
+
+    .teacher-video-resources h3 {
+      font-size: 18px;
+    }
+
+    .teacher-video-resources p {
+      margin: 0;
+    }
+
+    .video-file {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .video-status {
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .recording-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .recording-item {
+      display: grid;
+      gap: 3px;
+      width: 100%;
+      min-height: 52px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 10px;
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .recording-item:hover,
+    .recording-item.is-active {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+    }
+
+    .recording-item:disabled {
+      cursor: not-allowed;
+      opacity: 0.62;
+    }
+
+    .recording-item:disabled:hover {
+      border-color: var(--line);
+      background: var(--paper);
+    }
+
+    .recording-item strong {
+      color: var(--navy-dark);
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .recording-item span {
+      color: var(--muted);
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .reader-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .reader-actions {
+      display: grid;
+      gap: 14px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--ivory);
+    }
+
+    .reader-actions .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .topic-stack {
+      display: grid;
+      gap: 20px;
+    }
+
+    .topic {
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topic:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .topic h3 {
+      margin: 0 0 10px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .topic p {
+      margin: 0 0 12px;
+      color: var(--ink);
+    }
+
+    .topic ul {
+      margin: 0 0 14px;
+      padding-left: 20px;
+    }
+
+    .topic li {
+      margin: 6px 0;
+    }
+
+    .note-table {
+      width: 100%;
+      margin: 14px 0 16px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .note-table th,
+    .note-table td {
+      padding: 12px 12px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .note-table th {
+      background: var(--teal-soft);
+      color: var(--navy-dark);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .code-sample {
+      margin: 14px 0;
+      padding: 16px;
+      overflow-x: auto;
+      border-radius: 6px;
+      background: #101827;
+      color: #edf2f7;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .callout {
+      margin-top: 14px;
+      padding: 15px 16px;
+      border-left: 4px solid var(--gold);
+      background: var(--ivory);
+      color: var(--ink);
+    }
+
+    .callout strong {
+      color: var(--navy-dark);
+    }
+
+    .teacher-resources {
+      margin-top: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: #fffdf7;
+    }
+
+    .teacher-resources h3 {
+      margin: 0 0 6px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .teacher-resources p {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .teacher-resource-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .teacher-resource-link {
+      display: grid;
+      gap: 4px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px 14px;
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      text-align: left;
+    }
+
+    .teacher-resource-link:hover {
+      border-color: var(--teal);
+    }
+
+    .teacher-resource-type {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .teacher-resource-link strong {
+      color: var(--navy-dark);
+      font-size: 15px;
+    }
+
+    .teacher-resource-link span:last-child {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .embedded-frame {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--ivory);
+    }
+
+    .activity-frame {
+      min-height: 1540px;
+    }
+
+    .quiz-frame {
+      min-height: 1040px;
+    }
+
+    .wrapup-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.75fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .term-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .term-cloud span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--paper);
+      color: var(--navy-dark);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .homework-list {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .homework-list li {
+      margin: 10px 0;
+    }
+
+    .next-lesson {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--teal-soft);
+    }
+
+    .next-lesson h3 {
+      margin: 0 0 8px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .next-lesson p {
+      margin: 0;
+      color: var(--ink);
+    }
+
+    @media (max-width: 1060px) {
+      .layout,
+      .welcome-grid,
+      .video-layout,
+      .reader-layout,
+      .wrapup-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .lesson-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .video-frame,
+      .video-frame video {
+        min-height: 340px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        position: static;
+      }
+
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px 16px;
+      }
+
+      .brand-lockup {
+        width: 100%;
+      }
+
+      .brand-text strong,
+      .brand-text span {
+        white-space: normal;
+      }
+
+      .progress-wrap {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .topbar-actions {
+        align-items: stretch;
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+      }
+
+      .account-menu {
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .logout-btn {
+        min-width: 96px;
+      }
+
+      .account-name {
+        max-width: min(260px, 70vw);
+      }
+
+      .auth-overlay {
+        padding: 14px;
+      }
+
+      .auth-form {
+        padding: 24px 20px;
+      }
+
+      .layout {
+        padding: 18px 14px 40px;
+      }
+
+      .sidebar,
+      .content-card,
+      .next-lesson {
+        border-radius: 6px;
+      }
+
+      .lesson-nav {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
+        flex-direction: column;
+        padding: 22px 18px 16px;
+      }
+
+      .section-title h2 {
+        font-size: 25px;
+      }
+
+      .section-body {
+        padding: 20px 18px 22px;
+      }
+
+      code {
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      .lead {
+        font-size: 16px;
+      }
+
+      .session-plan {
+        display: block;
+        overflow-x: auto;
+      }
+
+      .video-frame,
+      .video-frame video {
+        min-height: 240px;
+      }
+
+      .video-empty strong {
+        font-size: 22px;
+      }
+
+      .activity-frame {
+        min-height: 1760px;
+      }
+
+      .quiz-frame {
+        min-height: 1160px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .account-menu {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .account-name {
+        max-width: 100%;
+      }
+
+      .progress-wrap {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .video-frame,
+      .video-frame video {
+        min-height: 210px;
+      }
+
+      .activity-frame {
+        min-height: 5200px;
+      }
+
+      .quiz-frame {
+        min-height: 1280px;
+      }
+    }
+  </style>
+</head>
+<body class="auth-locked">
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <form class="auth-form" id="loginForm">
+        <span class="eyebrow">Course access</span>
+        <h2 id="authTitle">Sign in</h2>
+        <p class="auth-copy">Use the student account you were given.</p>
+        <input type="hidden" id="loginRole" name="loginRole" value="student">
+        <label class="auth-field">
+          Username
+          <input id="loginUsername" name="username" autocomplete="username" required>
+        </label>
+        <label class="auth-field">
+          Password
+          <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <button class="auth-submit" type="submit">Sign in</button>
+        <p class="auth-error" id="loginMessage" role="alert"></p>
+        <p class="auth-footer">Need access? Ask your teacher for your student login.</p>
+      </form>
+    </div>
+  </div>
+
+  <div class="auth-overlay" id="lessonLockOverlay" hidden>
+    <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="lessonLockTitle">
+      <div class="auth-form">
+        <span class="eyebrow">Lesson locked</span>
+        <h2 id="lessonLockTitle">Finish Computer Fundamentals first</h2>
+        <p class="auth-copy" id="lessonLockMessage">Python Lesson 1 unlocks after you complete the Computer Fundamentals course (through Lesson 4) and its quizzes.</p>
+        <ul class="lesson-lock-list" id="lessonLockList"></ul>
+        <div class="lesson-lock-actions">
+          <a class="primary-link" href="lesson4.html">Open Computer Fundamentals · Lesson 4</a>
+          <button class="secondary-link" id="refreshAccessButton" type="button">Check again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand-lockup" href="home.html" aria-label="Digital Bridge School home">
+        <span class="brand-mark">DB</span>
+        <span class="brand-text">
+          <strong>Digital Bridge Academy</strong>
+          <span>Python Fundamentals for Beginners</span>
+        </span>
+      </a>
+      <div class="topbar-actions">
+        <div class="progress-wrap" aria-label="Lesson progress">
+          <span class="progress-copy" id="progressCopy">0 of 6 complete</span>
+          <span class="progress-track" aria-hidden="true">
+            <span class="progress-fill" id="progressFill"></span>
+          </span>
+        </div>
+        <div class="account-menu" id="accountMenu" hidden>
+          <span class="account-name" id="accountName"></span>
+          <button class="logout-btn" id="logoutButton" type="button">Log out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Lesson contents">
+      <div class="sidebar-head">
+        <span class="eyebrow">Python · Lesson 1</span>
+        <h1>Getting Started with Python</h1>
+        <div class="sidebar-meta">Install Python, write first programs, practice print(), and complete the full lab</div>
+        <div class="course-links" aria-label="Course lessons">
+          <a class="course-link" href="courses.html">Courses</a>
+          <a class="course-link" href="prework.html">CF · Week 0</a>
+          <a class="course-link" href="index.html">CF · L1</a>
+          <a class="course-link is-current" href="python-lesson1.html">Python · L1</a>
+        </div>
+      </div>
+      <nav class="lesson-nav" id="lessonNav">
+        <a href="#welcome" data-section="welcome">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Welcome</span>
+          <span class="duration">5 min</span>
+        </a>
+        <a href="#video" data-section="video">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Video</span>
+          <span class="duration">2 parts</span>
+        </a>
+        <a href="#reading" data-section="reading">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Reading Notes</span>
+          <span class="duration">45 min</span>
+        </a>
+        <a href="#activity" data-section="activity">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Class Activity</span>
+          <span class="duration">90 min</span>
+        </a>
+        <a href="#quiz" data-section="quiz">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Practice Quiz</span>
+          <span class="duration">12 q</span>
+        </a>
+        <a href="#wrapup" data-section="wrapup">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Wrap-up</span>
+          <span class="duration">15 min</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <section class="lesson-section" id="welcome" data-track-section="welcome">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Welcome and framing</span>
+              <h2>Getting Started with Python</h2>
+              <p>Install Python, run your first programs, and practice print() until it feels natural.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="welcome">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="welcome-grid">
+                            <div>
+                <p class="lead">Welcome to Python Fundamentals. You have already learned how computers work; now you will write real programs. This lesson gets Python and VS Code working on your machine, then builds confidence with <code>print()</code> and reading error messages without fear.</p>
+                <ul class="objective-list" aria-label="Learning objectives">
+                  <li>Explain what Python is and why beginners and professionals use it.</li>
+                  <li>Install Python and VS Code, and verify both with a version check and a first run.</li>
+                  <li>Write and run your first <code>.py</code> programs unassisted.</li>
+                  <li>Understand the interpreter, terminal, and code editor roles.</li>
+                  <li>Read simple error messages and fix missing quotes, brackets, and typos.</li>
+                  <li>Complete guided and independent <code>print()</code> practice in the class activity lab.</li>
+                </ul>
+                <div class="callout"><strong>Prerequisite:</strong> Complete Computer Fundamentals first. You should be comfortable opening files, saving work, and typing on your computer.</div>
+                <table class="session-plan" aria-label="Session plan">
+                  <thead><tr><th>Segment</th><th>Focus</th></tr></thead>
+                  <tbody>
+                    <tr><td>Recording 1</td><td>What Python is, install Python, install VS Code.</td></tr>
+                    <tr><td>Recording 2</td><td>First programs, <code>print()</code>, errors, guided practice intro.</td></tr>
+                    <tr><td>Reading notes</td><td>Expanded step-by-step reference on this page.</td></tr>
+                    <tr><td>Class activity</td><td>Full lab: setup checklist, guided fixes, 10 independent problems, homework program.</td></tr>
+                    <tr><td>Quiz</td><td>12 questions to confirm readiness for Lesson 2.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <figure class="notes-cover">
+                <img src="assets/school/icon-coding.png" alt="Python Fundamentals">
+                <figcaption>Instructor notes (Word) are available below as a download.</figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="video" data-track-section="video">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Lesson videos</span>
+              <h2>Class Recordings</h2>
+              <p>Two recordings cover setup, your first programs, and <code>print()</code> practice.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="video">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="video-layout">
+              <div class="video-frame" id="videoFrame">
+                <video id="lessonVideo" controls preload="metadata"></video>
+                <div class="video-empty">
+                  <strong>Recordings will appear here</strong>
+                  <span>Select Recording 1 or 2 from the list.</span>
+                </div>
+              </div>
+              <div class="video-panel">
+                <h3>Recording parts</h3>
+                <p>Recording 1: What Python is and getting set up. Recording 2: First programs and print() practice.</p>
+                <div class="teacher-video-resources" id="teacherVideoResources" hidden>
+                  <h3>Teacher videos</h3>
+                  <p>Videos added by your teacher for this lesson.</p>
+                  <div class="teacher-resource-list" id="teacherVideoList"></div>
+                </div>
+                <div class="recording-list" id="recordingList"></div>
+                <label class="file-label" for="videoInput">Choose video files</label>
+                <input class="video-file" id="videoInput" type="file" accept="video/*" multiple>
+                <div class="video-status" id="videoStatus">No recordings selected yet.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="reading" data-track-section="reading">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Reading notes</span>
+              <h2>Lesson 1 Notes (expanded)</h2>
+              <p>Concepts from your instructor notes, expanded so you can work independently.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="reading">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="reader-layout">
+              <div class="reader-actions">
+                <h3>How to use these notes</h3>
+                <p>Read sections <strong>1–10 on this page</strong> while you watch the two recordings. Then complete the <strong>Class Activity</strong> lab (guided + independent problems). The download is the original instructor Word file; this page is the expanded student version with every practical step.</p>
+                <div class="button-row">
+                  <a class="primary-link" href="assets/python-beginner-lesson1-notes.docx" download>Download instructor Word notes</a>
+                  <a class="secondary-link" href="#activity">Jump to class activity lab</a>
+                </div>
+              </div>
+              <div class="topic-stack">
+                <article class="topic">
+                  <h3>1. What is Python?</h3>
+                  <p>Python is a programming language — strict rules for instructions the computer follows <em>exactly</em>, line by line, in order. If you forget a step, the program keeps going the wrong way even when your intention was obvious.</p>
+                  <p><strong>Analogy:</strong> giving directions to a boda rider. Every turn must be stated. Python is readable, free, cross-platform, and widely used for web, data, automation, and learning.</p>
+                </article>
+                <article class="topic">
+                  <h3>2. Install Python (step-by-step)</h3>
+                  <ol>
+                    <li>Open terminal (Command Prompt on Windows, Terminal on Mac).</li>
+                    <li>Run <code>python3 --version</code> or <code>python --version</code>.</li>
+                    <li>If missing: download from <code>python.org/downloads</code>.</li>
+                    <li>On Windows: tick <strong>Add Python to PATH</strong> before Install.</li>
+                    <li>Close and reopen terminal; run the version command again.</li>
+                  </ol>
+                  <div class="callout"><strong>Common fix:</strong> “python is not recognized” → reinstall with Add to PATH checked.</div>
+                </article>
+                <article class="topic">
+                  <h3>3. Install VS Code + Python extension</h3>
+                  <ol>
+                    <li>Download VS Code from <code>code.visualstudio.com</code>.</li>
+                    <li>Open Extensions (four squares), search <strong>Python</strong>, install Microsoft’s official extension.</li>
+                    <li>Create a folder for your work; open it in VS Code.</li>
+                  </ol>
+                </article>
+                <article class="topic">
+                  <h3>4. Your first program</h3>
+                  <pre class="code-sample"><code>print("Hello, Digital Bridge!")
+print("My name is [your name]")
+print("I am learning Python!")</code></pre>
+                  <p>Save as <code>hello.py</code>. Run via <strong>Run Python File in Terminal</strong> or the green play button. Each <code>print()</code> shows on its own line.</p>
+                </article>
+                <article class="topic">
+                  <h3>5. Understanding print()</h3>
+                  <p><code>print()</code> is a built-in <strong>function</strong>. Text inside must be a <strong>string</strong> in quotation marks. You will use <code>print()</code> heavily until you learn variables in Lesson 2.</p>
+                </article>
+                <article class="topic">
+                  <h3>6. Read errors without fear</h3>
+                  <p>Break code on purpose to learn:</p>
+                  <pre class="code-sample"><code>print("Hello, Digital Bridge!)   # missing closing quote
+Print("Hi")                     # wrong capital P</code></pre>
+                  <p>Read the error slowly. Note the <strong>line number</strong>. Python is <strong>case-sensitive</strong>: <code>print</code> ≠ <code>Print</code>.</p>
+                </article>
+                <article class="topic">
+                  <h3>7. Guided practice — do these in VS Code</h3>
+                  <p>Type each program, predict the output out loud, then run it. Sample answers are shown so you can self-check.</p>
+                  <table class="note-table" aria-label="Guided practice">
+                    <thead><tr><th>Exercise</th><th>Task</th><th>Sample answer</th></tr></thead>
+                    <tbody>
+                      <tr><td>1.1</td><td>Three <code>print()</code> lines: name, age, favourite food.</td><td><code>print("Amina")</code> etc.</td></tr>
+                      <tr><td>1.2</td><td>Predict output of three prints: "I love", "Python", "programming".</td><td>Three separate lines.</td></tr>
+                      <tr><td>1.3</td><td>Fix: <code>print("Karibu Digital Bridge)</code></td><td>Add closing <code>"</code></td></tr>
+                      <tr><td>1.4</td><td>Fix: <code>print("Hello World"))</code></td><td>Remove extra <code>)</code></td></tr>
+                      <tr><td>1.5</td><td>Text poster with 5+ lines and a <code>*</code> or <code>=</code> border.</td><td>Border + school name + tagline.</td></tr>
+                    </tbody>
+                  </table>
+                </article>
+                <article class="topic">
+                  <h3>8. Independent practice — ten problems</h3>
+                  <p>Complete each in its own <code>.py</code> file. Use the Class Activity form to paste code or output and submit to your teacher.</p>
+                  <ol>
+                    <li>Print full name on one line, town on the next.</li>
+                    <li>Print numbers 1–5 using five separate <code>print()</code> calls.</li>
+                    <li>Print a 3-line shopping list (one item per line).</li>
+                    <li>Print a favourite quote, then who said it on the next line.</li>
+                    <li>Remove a quotation mark on purpose, read the error, fix it.</li>
+                    <li>Misspell <code>print</code> as <code>prit</code>, read the error, fix it.</li>
+                    <li>Print a small 3×3 box using only <code>#</code>.</li>
+                    <li>Print Monday through Sunday (seven lines).</li>
+                    <li>Print a two-line joke (punchline on line 2).</li>
+                    <li>Challenge: ASCII smiley with characters like <code>: )</code>.</li>
+                  </ol>
+                </article>
+                <article class="topic">
+                  <h3>9. Homework</h3>
+                  <ul>
+                    <li>Confirm Python and VS Code work at home (or note where you can practice).</li>
+                    <li>Finish any independent problems not done in class.</li>
+                    <li>Write a program with <strong>at least six</strong> <code>print()</code> statements introducing yourself.</li>
+                    <li>Optional: ASCII art header using only <code>print()</code>.</li>
+                  </ul>
+                </article>
+                <article class="topic">
+                  <h3>10. Key vocabulary</h3>
+                  <table class="note-table" aria-label="Key vocabulary">
+                    <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+                    <tbody>
+                      <tr><td>Programming language</td><td>Rules for giving instructions to a computer.</td></tr>
+                      <tr><td>Interpreter</td><td>Program that reads and runs Python line by line.</td></tr>
+                      <tr><td>Terminal</td><td>Text-based way to run commands and scripts.</td></tr>
+                      <tr><td>Code editor</td><td>VS Code — where you write and organize code.</td></tr>
+                      <tr><td>Function</td><td>Reusable instruction block, e.g. <code>print()</code>.</td></tr>
+                      <tr><td>String</td><td>Text in quotation marks.</td></tr>
+                      <tr><td>Syntax error</td><td>Code written incorrectly (missing quote, bracket, etc.).</td></tr>
+                      <tr><td>Case-sensitive</td><td><code>print</code> and <code>Print</code> are different names.</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="callout"><strong>Next step:</strong> Open <a href="#activity">Class Activity</a> and work through Phases A–D. Submit when you finish Phase A, at least six independent problems, and your homework program.</div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="activity" data-track-section="activity">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Hands-on practice</span>
+              <h2>Class Activity — Full Python Lab</h2>
+              <p>Complete the full lab: environment setup, guided practice, ten independent problems, and your six-line introduction program. Submit from the activity page.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="activity">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <iframe class="embedded-frame activity-frame" src="assets/python_lesson1_class_activity.html" title="Python Lesson 1 class activity"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="quiz" data-track-section="quiz">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Post-lesson check</span>
+              <h2>Practice Quiz</h2>
+              <p>12 questions on Python basics, setup, print(), errors, and mindset.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="quiz">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <iframe class="embedded-frame quiz-frame" src="assets/python_lesson1_quiz.html" title="Python Lesson 1 practice quiz"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="wrapup" data-track-section="wrapup">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Wrap-up and next steps</span>
+              <h2>Before the Next Meetup</h2>
+              <p>Finish homework, keep your setup working at home, and prepare for Lesson 2.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="wrapup">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="wrapup-grid">
+              <div>
+                <ol class="homework-list">
+                  <li>Confirm Python and VS Code work at home (or note where you can practice).</li>
+                  <li>Finish any independent practice problems not done in class.</li>
+                  <li>Submit the six-line (or longer) introduction program in the activity section.</li>
+                  <li>Optional: ASCII art header using only <code>print()</code>.</li>
+                </ol>
+                <div class="term-cloud" aria-label="Key terms">
+                  <span>Programming language</span><span>Interpreter</span><span>Terminal</span><span>VS Code</span><span>Function</span><span>String</span><span>Syntax error</span><span>Case-sensitive</span><span>print()</span><span>.py file</span>
+                </div>
+              </div>
+              <div class="next-lesson">
+                <h3>Coming next</h3>
+                <p>Lesson 2 — variables, data types, <code>input()</code>, and type conversion. Complete this lesson’s activity and quiz first.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const sections = Array.from(document.querySelectorAll("[data-track-section]"));
+      const navLinks = Array.from(document.querySelectorAll("[data-section]"));
+      const completeButtons = Array.from(document.querySelectorAll("[data-complete]"));
+      const progressCopy = document.getElementById("progressCopy");
+      const progressFill = document.getElementById("progressFill");
+      const authOverlay = document.getElementById("authOverlay");
+      const accountMenu = document.getElementById("accountMenu");
+      const accountName = document.getElementById("accountName");
+      const logoutButton = document.getElementById("logoutButton");
+      const loginForm = document.getElementById("loginForm");
+      const loginMessage = document.getElementById("loginMessage");
+      const lessonLockOverlay = document.getElementById("lessonLockOverlay");
+      const lessonLockTitle = document.getElementById("lessonLockTitle");
+      const lessonLockList = document.getElementById("lessonLockList");
+      const lessonLockMessage = document.getElementById("lessonLockMessage");
+      const lessonLockPrimaryLink = lessonLockOverlay.querySelector(".primary-link");
+      const refreshAccessButton = document.getElementById("refreshAccessButton");
+      const teacherResources = document.getElementById("teacherResources");
+      const teacherResourceList = document.getElementById("teacherResourceList");
+      const teacherVideoResources = document.getElementById("teacherVideoResources");
+      const teacherVideoList = document.getElementById("teacherVideoList");
+      const lessonSlug = "python-beginner-lesson-1";
+      const baseStorageKey = "dba-python-lesson-1-complete";
+      const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
+      const total = sections.length;
+      const sectionLabels = {
+        welcome: "Welcome",
+        video: "Video recordings",
+        reading: "Reading notes",
+        activity: "Class activity",
+        quiz: "Practice quiz",
+        wrapup: "Wrap-up"
+      };
+
+      let currentUser = null;
+      let storageKey = baseStorageKey + "-guest";
+      let completed = readLocalProgress();
+
+      function readLocalProgress() {
+        try {
+          return new Set(JSON.parse(localStorage.getItem(storageKey) || "[]"));
+        } catch (_) {
+          return new Set();
+        }
+      }
+
+      function switchLocalProgress(user) {
+        storageKey = baseStorageKey + "-" + (user ? user.id : "guest");
+        completed = readLocalProgress();
+      }
+
+      function setAuthMessage(element, message) {
+        element.textContent = message || "";
+      }
+
+      function parseJsonResponse(response) {
+        return response.json().catch(function () {
+          return {};
+        }).then(function (data) {
+          if (!response.ok) {
+            throw new Error(data.error || "Request failed.");
+          }
+          return data;
+        });
+      }
+
+      function postJson(url, payload) {
+        return fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload || {})
+        }).then(parseJsonResponse);
+      }
+
+      function shouldRedirectStaff(user) {
+        const params = new URLSearchParams(window.location.search);
+        return canUseBackend
+          && user
+          && (user.role === "admin" || user.role === "teacher")
+          && params.get("preview") !== "1";
+      }
+
+      function resourceTypeLabel(type) {
+        const labels = {
+          class: "Class link",
+          reading: "Reading",
+          video: "Video",
+          link: "Link",
+          assignment: "Assignment",
+          download: "Download",
+          other: "Resource"
+        };
+        return labels[type] || "Resource";
+      }
+
+      function isDirectVideoUrl(url) {
+        return /\.(mp4|m4v|mov|webm|ogg)(\?.*)?(#.*)?$/i.test(url || "");
+      }
+
+      function fillResourceLink(element, resource) {
+        const type = document.createElement("span");
+        type.className = "teacher-resource-type";
+        type.textContent = resourceTypeLabel(resource.resourceType);
+
+        const title = document.createElement("strong");
+        title.textContent = resource.title;
+
+        const description = document.createElement("span");
+        description.textContent = resource.description || resource.url;
+
+        element.appendChild(type);
+        element.appendChild(title);
+        element.appendChild(description);
+      }
+
+      function renderTeacherVideos(resources) {
+        teacherVideoList.innerHTML = "";
+        teacherVideoResources.hidden = !resources.length;
+
+        resources.forEach(function (resource) {
+          const directVideo = isDirectVideoUrl(resource.url);
+          const link = document.createElement(directVideo ? "button" : "a");
+          link.className = "teacher-resource-link";
+
+          if (directVideo) {
+            link.type = "button";
+            link.addEventListener("click", function () {
+              video.src = resource.url;
+              video.load();
+              videoFrame.classList.add("has-video");
+              videoStatus.hidden = false;
+              videoStatus.textContent = "Selected: " + resource.title;
+            });
+          } else {
+            link.href = resource.url;
+            link.target = "_blank";
+            link.rel = "noopener";
+          }
+
+          fillResourceLink(link, resource);
+          teacherVideoList.appendChild(link);
+        });
+      }
+
+      function renderTeacherResources(resources) {
+        teacherResourceList.innerHTML = "";
+        teacherResources.hidden = !resources.length;
+
+        resources.forEach(function (resource) {
+          const link = document.createElement("a");
+          link.className = "teacher-resource-link";
+          link.href = resource.url;
+          link.target = "_blank";
+          link.rel = "noopener";
+          fillResourceLink(link, resource);
+          teacherResourceList.appendChild(link);
+        });
+      }
+
+      function loadTeacherResources() {
+        if (!canUseBackend || !currentUser) {
+          renderTeacherVideos([]);
+          renderTeacherResources([]);
+          return;
+        }
+
+        fetch("/api/resources?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(function (response) {
+            if (response.status === 401) {
+              renderAuth(null, true);
+              throw new Error("Login required");
+            }
+            if (response.status === 423) {
+              response.json().then(lockLesson).catch(function () {
+                checkLessonAccess();
+              });
+              throw new Error("Lesson locked");
+            }
+            if (!response.ok) throw new Error("Could not load resources");
+            return response.json();
+          })
+          .then(function (data) {
+            const resources = Array.isArray(data.resources) ? data.resources : [];
+            renderTeacherVideos(resources.filter(function (resource) {
+              return resource.resourceType === "video";
+            }));
+            renderTeacherResources(resources.filter(function (resource) {
+              return resource.resourceType !== "video";
+            }));
+          })
+          .catch(function () {
+            renderTeacherVideos([]);
+            renderTeacherResources([]);
+          });
+      }
+
+      function renderAuth(user, allowSignup) {
+        if (shouldRedirectStaff(user)) {
+          window.location.href = user.role === "teacher" ? "teacher.html" : "admin.html";
+          return;
+        }
+        currentUser = user || null;
+        switchLocalProgress(currentUser);
+        document.body.classList.toggle("auth-locked", !currentUser && canUseBackend);
+        authOverlay.hidden = Boolean(currentUser) || !canUseBackend;
+        accountMenu.hidden = !currentUser;
+        accountName.textContent = currentUser ? currentUser.displayName || currentUser.username : "";
+        renderProgress();
+      }
+
+      function unlockLesson() {
+        document.body.classList.remove("lesson-locked");
+        lessonLockOverlay.hidden = true;
+      }
+
+      function lockLesson(data) {
+        if (data.course && !data.course.approved) {
+          const course = data.course.course || {};
+          const enrollment = data.course.enrollment;
+          const items = [];
+
+          document.body.classList.add("lesson-locked");
+          lessonLockOverlay.hidden = false;
+          lessonLockTitle.textContent = "Checkout approval required";
+          lessonLockMessage.textContent = (course.title || "This course") + " opens after checkout and admin approval.";
+          lessonLockPrimaryLink.href = "courses.html";
+          lessonLockPrimaryLink.textContent = "Open marketplace";
+
+          if (!enrollment) {
+            items.push("Add the course to your cart and submit checkout.");
+          } else if (enrollment.status === "pending") {
+            items.push("Your checkout is waiting for admin approval.");
+          } else if (enrollment.status === "rejected") {
+            items.push("Your checkout was rejected. Contact the school or submit checkout again.");
+          }
+          items.push("After admin approval, click Check again.");
+
+          lessonLockList.innerHTML = "";
+          items.forEach(function (item) {
+            const listItem = document.createElement("li");
+            listItem.textContent = item;
+            lessonLockList.appendChild(listItem);
+          });
+          return;
+        }
+
+        const prerequisite = data.prerequisite || {};
+        const title = prerequisite.title || "Lesson 2";
+        const missingSections = prerequisite.missingSections || [];
+        const items = [];
+
+        document.body.classList.add("lesson-locked");
+        lessonLockOverlay.hidden = false;
+        lessonLockTitle.textContent = "Finish Computer Fundamentals first";
+        lessonLockMessage.textContent = "Python Lesson 1 unlocks after " + title + " is complete and its quiz has been submitted.";
+        lessonLockPrimaryLink.href = "lesson4.html";
+        lessonLockPrimaryLink.textContent = "Open Lesson 4";
+
+        missingSections.forEach(function (section) {
+          items.push("Complete " + (sectionLabels[section] || section) + ".");
+        });
+        if (!prerequisite.quizCompleted) {
+          items.push("Submit the Lesson 1 practice quiz.");
+        }
+        if (!items.length) {
+          items.push("Return to Lesson 1 and finish the remaining requirements.");
+        }
+
+        lessonLockList.innerHTML = "";
+        items.forEach(function (item) {
+          const listItem = document.createElement("li");
+          listItem.textContent = item;
+          lessonLockList.appendChild(listItem);
+        });
+      }
+
+      function checkLessonAccess() {
+        if (!canUseBackend || !currentUser) {
+          unlockLesson();
+          return Promise.resolve(true);
+        }
+
+        return fetch("/api/lesson-access?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(function (response) {
+            if (response.status === 401) {
+              renderAuth(null, true);
+              throw new Error("Login required");
+            }
+            if (!response.ok) throw new Error("Could not check lesson access");
+            return response.json();
+          })
+          .then(function (data) {
+            if (data.unlocked) {
+              unlockLesson();
+              return true;
+            }
+            lockLesson(data);
+            return false;
+          })
+          .catch(function () {
+            if (currentUser) {
+              lockLesson({
+                prerequisite: {
+                  title: "Computer Fundamentals Lesson 4",
+                  missingSections: [],
+                  quizCompleted: false
+                }
+              });
+            }
+            return false;
+          });
+      }
+
+      function loadUnlockedLessonData() {
+        return checkLessonAccess().then(function (unlocked) {
+          if (unlocked) {
+            loadProgressFromBackend();
+            loadRecordingsFromBackend();
+            loadTeacherResources();
+          }
+          return unlocked;
+        });
+      }
+
+      function loadAuth() {
+        if (!canUseBackend) {
+          renderAuth(null, false);
+          return;
+        }
+
+        fetch("/api/auth/me")
+          .then(parseJsonResponse)
+          .then(function (data) {
+            renderAuth(data.user, data.allowSignup);
+            if (data.authenticated) {
+              loadUnlockedLessonData();
+            }
+          })
+          .catch(function () {
+            renderAuth(null, true);
+          });
+      }
+
+      function saveProgress() {
+        localStorage.setItem(storageKey, JSON.stringify(Array.from(completed)));
+        saveProgressToBackend();
+      }
+
+      function saveProgressToBackend() {
+        if (!canUseBackend || document.body.classList.contains("lesson-locked")) return;
+
+        fetch("/api/progress/lesson", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lessonSlug: lessonSlug,
+            completedSections: Array.from(completed)
+          })
+        }).then(function (response) {
+          if (response.status === 401) {
+            renderAuth(null, true);
+            return;
+          }
+          if (response.status === 423) {
+            response.json().then(lockLesson).catch(function () {
+              checkLessonAccess();
+            });
+          }
+        }).catch(function () {
+          // Keep local progress if the backend is temporarily unavailable.
+        });
+      }
+
+      function loadProgressFromBackend() {
+        if (!canUseBackend) {
+          renderProgress();
+          return;
+        }
+
+        fetch("/api/progress/lesson?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(function (response) {
+            if (response.status === 401) {
+              renderAuth(null, true);
+              throw new Error("Login required");
+            }
+            if (response.status === 423) {
+              response.json().then(lockLesson).catch(function () {
+                checkLessonAccess();
+              });
+              throw new Error("Lesson locked");
+            }
+            if (!response.ok) throw new Error("Could not load progress");
+            return response.json();
+          })
+          .then(function (data) {
+            if (Array.isArray(data.completedSections)) {
+              completed = new Set(data.completedSections);
+              localStorage.setItem(storageKey, JSON.stringify(Array.from(completed)));
+              renderProgress();
+            }
+          })
+          .catch(function () {
+            renderProgress();
+          });
+      }
+
+      function renderProgress() {
+        const count = completed.size;
+        progressCopy.textContent = count + " of " + total + " complete";
+        progressFill.style.width = Math.round((count / total) * 100) + "%";
+
+        navLinks.forEach(function (link) {
+          const id = link.dataset.section;
+          link.classList.toggle("done", completed.has(id));
+        });
+
+        completeButtons.forEach(function (button) {
+          const id = button.dataset.complete;
+          const isDone = completed.has(id);
+          button.classList.toggle("is-done", isDone);
+          button.textContent = isDone ? "Completed" : "Mark complete";
+        });
+      }
+
+      completeButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          if (document.body.classList.contains("lesson-locked")) return;
+          const id = button.dataset.complete;
+          if (completed.has(id)) {
+            completed.delete(id);
+          } else {
+            completed.add(id);
+          }
+          saveProgress();
+          renderProgress();
+        });
+      });
+
+      loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setAuthMessage(loginMessage, "");
+
+        postJson("/api/auth/login", {
+          loginRole: loginForm.elements.loginRole.value,
+          username: loginForm.elements.username.value,
+          password: loginForm.elements.password.value
+        }).then(function (data) {
+          loginForm.reset();
+          renderAuth(data.user, data.allowSignup);
+          loadUnlockedLessonData();
+        }).catch(function (error) {
+          setAuthMessage(loginMessage, error.message);
+        });
+      });
+
+      logoutButton.addEventListener("click", function () {
+        postJson("/api/auth/logout", {}).finally(function () {
+          unlockLesson();
+          renderAuth(null, true);
+          clearRecordings();
+          renderTeacherVideos([]);
+          renderTeacherResources([]);
+          document.getElementById("loginUsername").focus();
+        });
+      });
+
+      refreshAccessButton.addEventListener("click", function () {
+        loadUnlockedLessonData();
+      });
+
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          const id = entry.target.id;
+          navLinks.forEach(function (link) {
+            link.classList.toggle("active", link.dataset.section === id);
+          });
+        });
+      }, {
+        rootMargin: "-30% 0px -58% 0px",
+        threshold: 0.01
+      });
+
+      sections.forEach(function (section) {
+        observer.observe(section);
+      });
+
+      const videoInput = document.getElementById("videoInput");
+      const video = document.getElementById("lessonVideo");
+      const videoFrame = document.getElementById("videoFrame");
+      const videoStatus = document.getElementById("videoStatus");
+      const recordingList = document.getElementById("recordingList");
+      let recordingItems = [];
+      let localVideoUrls = [];
+      let activeRecordingIndex = -1;
+
+      function clearRecordings() {
+        localVideoUrls.forEach(function (url) {
+          URL.revokeObjectURL(url);
+        });
+        localVideoUrls = [];
+        recordingItems = [];
+        activeRecordingIndex = -1;
+        video.removeAttribute("src");
+        video.load();
+        videoFrame.classList.remove("has-video");
+        recordingList.innerHTML = "";
+        videoStatus.textContent = "No recordings selected yet.";
+      }
+
+      function formatFileSize(bytes) {
+        if (!bytes) return "";
+        const mb = bytes / (1024 * 1024);
+        if (mb >= 1) return mb.toFixed(mb >= 10 ? 0 : 1) + " MB";
+        return Math.max(1, Math.round(bytes / 1024)) + " KB";
+      }
+
+      function setActiveRecording(index) {
+        const item = recordingItems[index];
+        if (!item) return;
+        if (!item.url) {
+          videoStatus.textContent = "Part " + item.part + " is not uploaded yet.";
+          return;
+        }
+        activeRecordingIndex = index;
+        video.src = item.url;
+        video.load();
+        videoFrame.classList.add("has-video");
+        videoStatus.textContent = "Selected: " + item.name;
+
+        Array.from(recordingList.querySelectorAll(".recording-item")).forEach(function (button, buttonIndex) {
+          button.classList.toggle("is-active", buttonIndex === index);
+        });
+      }
+
+      function renderRecordingList() {
+        recordingList.innerHTML = "";
+        recordingItems.forEach(function (item, index) {
+          const button = document.createElement("button");
+          button.className = "recording-item";
+          button.type = "button";
+          button.disabled = !item.url;
+
+          const title = document.createElement("strong");
+          title.textContent = item.name || "Part " + (item.part || index + 1);
+
+          const detail = document.createElement("span");
+          if (item.url) {
+            detail.textContent = [item.duration, item.fileName, formatFileSize(item.size)]
+              .filter(Boolean)
+              .join(" - ");
+          } else {
+            detail.textContent = [item.duration, "Not uploaded yet"].filter(Boolean).join(" - ");
+          }
+
+          button.appendChild(title);
+          button.appendChild(detail);
+
+          if (item.url) {
+            button.addEventListener("click", function () {
+              setActiveRecording(index);
+            });
+          }
+          recordingList.appendChild(button);
+        });
+
+        const firstUploadedIndex = recordingItems.findIndex(function (item) {
+          return Boolean(item.url);
+        });
+        if (firstUploadedIndex >= 0) {
+          setActiveRecording(firstUploadedIndex);
+        } else {
+          videoStatus.textContent = "Upload Python Lesson 1 recordings into assets/videos/python-lesson1.";
+        }
+      }
+
+      function loadRecordingsFromBackend() {
+        if (!canUseBackend || !currentUser) return;
+
+        fetch("/api/recordings?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(function (response) {
+            if (response.status === 423) {
+              response.json().then(lockLesson).catch(function () {
+                checkLessonAccess();
+              });
+              throw new Error("Lesson locked");
+            }
+            if (!response.ok) throw new Error("Could not load recordings");
+            return response.json();
+          })
+          .then(function (data) {
+            if (Array.isArray(data.recordings) && data.recordings.length) {
+              clearRecordings();
+              recordingItems = data.recordings;
+              renderRecordingList();
+            }
+          })
+          .catch(function () {
+            if (!recordingItems.length) {
+              videoStatus.textContent = "No recordings selected yet.";
+            }
+          });
+      }
+
+      videoInput.addEventListener("change", function () {
+        const files = Array.from(videoInput.files || []);
+        if (!files.length) return;
+
+        clearRecordings();
+        localVideoUrls = files.map(function (file) {
+          return URL.createObjectURL(file);
+        });
+        recordingItems = files.map(function (file, index) {
+          return {
+            name: file.name,
+            size: file.size,
+            url: localVideoUrls[index]
+          };
+        });
+
+        renderRecordingList();
+      });
+
+      function resizeEmbeddedFrame(frame) {
+        try {
+          const doc = frame.contentDocument;
+          if (!doc || !doc.body) return;
+          const height = Math.max(
+            doc.body.scrollHeight,
+            doc.documentElement ? doc.documentElement.scrollHeight : 0
+          );
+          if (height > 0) {
+            frame.style.height = height + 24 + "px";
+          }
+        } catch (_) {
+          // Keep the CSS fallback height if the browser blocks iframe measurement.
+        }
+      }
+
+      document.querySelectorAll(".embedded-frame").forEach(function (frame) {
+        frame.addEventListener("load", function () {
+          resizeEmbeddedFrame(frame);
+        });
+      });
+
+      renderProgress();
+      loadAuth();
+    })();
+  </script>
+</body>
+</html>

@@ -144,7 +144,7 @@ Teacher accounts can use `/teacher.html` to view student work, quiz grades, subm
 
 Quiz answer details are captured for new quiz attempts. Older quiz attempts saved before this feature still show score and date, but not answer-by-answer details.
 
-`DIRECT_ACCESS_STUDENT_USERNAMES=zakariya` grants Computer Fundamentals automatically to matching student usernames on app startup, so those students do not need checkout approval. Add more usernames with commas, for example `DIRECT_ACCESS_STUDENT_USERNAMES=zakariya,amina`.
+`DIRECT_ACCESS_STUDENT_USERNAMES=zakariya` grants **Computer Fundamentals** and **Python Fundamentals** automatically to matching student usernames on app startup, so those students do not need checkout approval. Direct-access students can open **Python Lesson 1** without finishing all Computer Fundamentals lessons first. Add more usernames with commas, for example `DIRECT_ACCESS_STUDENT_USERNAMES=zakariya,amina`.
 
 Older deployments that already use `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_DISPLAY_NAME` will still use those values for the default teacher account unless the newer `TEACHER_*` variables are set.
 
