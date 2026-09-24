@@ -63,6 +63,22 @@ PASSWORD_ITERATIONS = 260_000
 MIN_PASSWORD_LENGTH = 8
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v", ".webm", ".ogg"}
 RESOURCE_TYPES = {"class", "reading", "video", "link", "assignment", "download", "other"}
+LESSON_PAGE_PATHS = {
+    "intermediate-readiness-week": "prework.html",
+    "cs-fundamentals-lesson-1": "index.html",
+    "internet-fundamentals-lesson-2": "lesson2.html",
+    "data-storage-lesson-3": "lesson3.html",
+    "web-applications-lesson-4": "lesson4.html",
+    "python-beginner-lesson-1": "python-lesson1.html",
+}
+COURSE_NAV_LABELS = {
+    "intermediate-readiness-week": "Week 0",
+    "cs-fundamentals-lesson-1": "Week 1 · L1",
+    "internet-fundamentals-lesson-2": "Week 1 · L2",
+    "data-storage-lesson-3": "Week 3 · L3",
+    "web-applications-lesson-4": "Week 4 · L4",
+    "python-beginner-lesson-1": "Week 1",
+}
 MAX_VIDEO_UPLOAD_BYTES = int(os.environ.get("MAX_VIDEO_UPLOAD_MB", "250")) * 1024 * 1024
 LESSONS = {
     "intermediate-readiness-week": {
@@ -292,6 +308,12 @@ LESSONS = {
                 "title": "First Programs & print() Practice",
                 "duration": "Recording 2",
                 "slug": "first-programs-and-print",
+            },
+            {
+                "part": 3,
+                "title": "Class Recording (24 Sep)",
+                "duration": "Recording 3",
+                "slug": "class-recording-sep-24",
             },
         ],
     },
@@ -557,18 +579,53 @@ def public_resource(row):
     }
 
 
+def course_entry_path(course_slug, entry_path):
+    if not entry_path:
+        return entry_path
+    separator = "&" if "?" in entry_path else "?"
+    return f"{entry_path}{separator}course={course_slug}"
+
+
+def course_navigation_links(course_slug):
+    config = COURSES.get(course_slug, {})
+    links = []
+    for lesson_slug in config.get("lesson_slugs", []):
+        page = LESSON_PAGE_PATHS.get(lesson_slug)
+        if not page:
+            continue
+        href = page
+        if lesson_slug == "intermediate-readiness-week":
+            href = course_entry_path(course_slug, page)
+        label = COURSE_NAV_LABELS.get(
+            lesson_slug,
+            lesson_config(lesson_slug).get("title", lesson_slug),
+        )
+        links.append(
+            {
+                "label": label,
+                "href": href,
+                "lessonSlug": lesson_slug,
+            }
+        )
+    return links
+
+
 def public_course(slug, config):
+    entry_path = config["entry_path"]
+    if entry_path:
+        entry_path = course_entry_path(slug, entry_path)
     return {
         "slug": slug,
         "title": config["title"],
         "category": config["category"],
         "status": config["status"],
         "image": config["image"],
-        "entryPath": config["entry_path"],
+        "entryPath": entry_path,
         "priceLabel": config["price_label"],
         "description": config["description"],
         "highlights": list(config["highlights"]),
         "lessonSlugs": list(config["lesson_slugs"]),
+        "navigationLinks": course_navigation_links(slug),
     }
 
 

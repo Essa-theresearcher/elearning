@@ -1240,7 +1240,7 @@
         <p class="auth-copy" id="lessonLockMessage">Week 1 unlocks after Week 0 is complete: all sections, the Python diagnostic quiz, and the coding review.</p>
         <ul class="lesson-lock-list" id="lessonLockList"></ul>
         <div class="lesson-lock-actions">
-          <a class="primary-link" href="prework.html">Open Week 0</a>
+          <a class="primary-link" href="prework.html?course=python-fundamentals">Open Week 0</a>
           <button class="secondary-link" id="refreshAccessButton" type="button">Check again</button>
         </div>
       </div>
@@ -1279,7 +1279,7 @@
         <div class="sidebar-meta">Install Python, write first programs, practice print(), and complete the full lab</div>
         <div class="course-links" aria-label="Python Fundamentals lessons">
           <a class="course-link" href="courses.html">Courses</a>
-          <a class="course-link" href="prework.html">Week 0</a>
+          <a class="course-link" href="prework.html?course=python-fundamentals">Week 0</a>
           <a class="course-link is-current" href="python-lesson1.html">Week 1</a>
         </div>
       </div>
@@ -1292,7 +1292,7 @@
         <a href="#video" data-section="video">
           <span class="nav-dot" aria-hidden="true"></span>
           <span>Video</span>
-          <span class="duration">2 parts</span>
+          <span class="duration">3 parts</span>
         </a>
         <a href="#reading" data-section="reading">
           <span class="nav-dot" aria-hidden="true"></span>
@@ -1340,12 +1340,13 @@
                   <li>Read simple error messages and fix missing quotes, brackets, and typos.</li>
                   <li>Complete guided and independent <code>print()</code> practice in the class activity lab.</li>
                 </ul>
-                <div class="callout"><strong>Prerequisite:</strong> Finish <a href="prework.html">Week 0</a> first (all sections, Python diagnostic quiz, and coding review). You should also be comfortable opening files, saving work, and typing on your computer.</div>
+                <div class="callout"><strong>Prerequisite:</strong> Finish <a href="prework.html?course=python-fundamentals">Week 0</a> first (all sections, Python diagnostic quiz, and coding review). You should also be comfortable opening files, saving work, and typing on your computer.</div>
                 <table class="session-plan" aria-label="Session plan">
                   <thead><tr><th>Segment</th><th>Focus</th></tr></thead>
                   <tbody>
                     <tr><td>Recording 1</td><td>What Python is, install Python, install VS Code.</td></tr>
                     <tr><td>Recording 2</td><td>First programs, <code>print()</code>, errors, guided practice intro.</td></tr>
+                    <tr><td>Recording 3</td><td>Class recording (24 Sep) — follow along with setup and practice.</td></tr>
                     <tr><td>Reading notes</td><td>Expanded step-by-step reference on this page.</td></tr>
                     <tr><td>Class activity</td><td>Full lab: setup checklist, guided fixes, 10 independent problems, homework program.</td></tr>
                     <tr><td>Quiz</td><td>12 questions to confirm readiness for Lesson 2.</td></tr>
@@ -1367,7 +1368,7 @@
             <div class="section-title">
               <span class="eyebrow">Lesson videos</span>
               <h2>Class Recordings</h2>
-              <p>Two recordings cover setup, your first programs, and <code>print()</code> practice.</p>
+              <p>Three recordings cover setup, your first programs, and <code>print()</code> practice.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="video">Mark complete</button>
           </div>
@@ -1377,12 +1378,12 @@
                 <video id="lessonVideo" controls preload="metadata"></video>
                 <div class="video-empty">
                   <strong>Recordings will appear here</strong>
-                  <span>Select Recording 1 or 2 from the list.</span>
+                  <span>Select Recording 1, 2, or 3 from the list.</span>
                 </div>
               </div>
               <div class="video-panel">
                 <h3>Recording parts</h3>
-                <p>Recording 1: What Python is and getting set up. Recording 2: First programs and print() practice.</p>
+                <p>Recording 1: What Python is and getting set up. Recording 2: First programs and print() practice. Recording 3: Class recording (24 Sep).</p>
                 <div class="teacher-video-resources" id="teacherVideoResources" hidden>
                   <h3>Teacher videos</h3>
                   <p>Videos added by your teacher for this lesson.</p>
@@ -1846,7 +1847,7 @@ Print("Hi")                     # wrong capital P</code></pre>
         lessonLockOverlay.hidden = false;
         lessonLockTitle.textContent = "Finish Week 0 first";
         lessonLockMessage.textContent = "Week 1 unlocks after " + title + " is complete, the quiz is submitted, and the coding review is submitted.";
-        lessonLockPrimaryLink.href = "prework.html";
+        lessonLockPrimaryLink.href = "prework.html?course=python-fundamentals";
         lessonLockPrimaryLink.textContent = "Open Week 0";
 
         missingSections.forEach(function (section) {

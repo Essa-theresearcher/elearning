@@ -845,11 +845,7 @@
         <span class="eyebrow">Week 0</span>
         <h1>Python Readiness Assessment</h1>
         <div class="sidebar-meta">Diagnostic quiz and coding review before Week 1 begins</div>
-        <div class="course-links" aria-label="Course lessons">
-          <a class="course-link is-current" href="prework.html">Week 0</a>
-          <a class="course-link" href="index.html">Week 1 · L1</a>
-          <a class="course-link" href="lesson2.html">Week 1 · L2</a>
-        </div>
+        <div class="course-links" id="courseLinksNav" aria-label="Course lessons"></div>
       </div>
       <nav class="lesson-nav" id="lessonNav">
         <a href="#welcome" data-section="welcome">
@@ -1094,7 +1090,7 @@
             <div class="next-lesson">
               <h3>Next step</h3>
               <p>After the diagnostic map, quiz, coding review, and readiness check are complete, Week 1 Lesson 1 will unlock.</p>
-              <p><a class="secondary-link" href="index.html">Open Week 1 Lesson 1</a></p>
+              <p><a class="secondary-link" id="week1NextLink" href="python-lesson1.html">Open Week 1</a></p>
             </div>
           </div>
         </div>
@@ -1125,8 +1121,23 @@
       const baseStorageKey = "dba-week-0-complete";
       const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
       const total = sections.length;
+      const courseLinksNav = document.getElementById("courseLinksNav");
+      const week1NextLink = document.getElementById("week1NextLink");
+      const COURSE_CONTEXT_KEY = "dba-active-course-slug";
+      const FALLBACK_NAV = {
+        "computer-fundamentals": [
+          { label: "Week 0", href: "prework.html?course=computer-fundamentals", lessonSlug: "intermediate-readiness-week" },
+          { label: "Week 1 · L1", href: "index.html", lessonSlug: "cs-fundamentals-lesson-1" },
+          { label: "Week 1 · L2", href: "lesson2.html", lessonSlug: "internet-fundamentals-lesson-2" }
+        ],
+        "python-fundamentals": [
+          { label: "Week 0", href: "prework.html?course=python-fundamentals", lessonSlug: "intermediate-readiness-week" },
+          { label: "Week 1", href: "python-lesson1.html", lessonSlug: "python-beginner-lesson-1" }
+        ]
+      };
 
       let currentUser = null;
+      let catalogCourses = [];
       let storageKey = baseStorageKey + "-guest";
       let completed = readLocalProgress();
 
@@ -1136,6 +1147,92 @@
         } catch (_) {
           return new Set();
         }
+      }
+
+      function courseFromQuery() {
+        return new URLSearchParams(window.location.search).get("course") || "";
+      }
+
+      function navigationLinksForCourse(courseSlug) {
+        const course = catalogCourses.find(function (item) {
+          return item.slug === courseSlug;
+        });
+        if (course && Array.isArray(course.navigationLinks) && course.navigationLinks.length) {
+          return course.navigationLinks;
+        }
+        return FALLBACK_NAV[courseSlug] || FALLBACK_NAV["computer-fundamentals"];
+      }
+
+      function pickCourseSlug(enrollments) {
+        const fromQuery = courseFromQuery();
+        if (fromQuery && (catalogCourses.some(function (c) { return c.slug === fromQuery; }) || FALLBACK_NAV[fromQuery])) {
+          return fromQuery;
+        }
+        const stored = localStorage.getItem(COURSE_CONTEXT_KEY);
+        if (stored && (catalogCourses.some(function (c) { return c.slug === stored; }) || FALLBACK_NAV[stored])) {
+          return stored;
+        }
+        const approved = (enrollments || []).filter(function (enrollment) {
+          return enrollment.status === "approved";
+        });
+        if (approved.length === 1) {
+          return approved[0].courseSlug;
+        }
+        const hasPython = approved.some(function (enrollment) {
+          return enrollment.courseSlug === "python-fundamentals";
+        });
+        const hasComputer = approved.some(function (enrollment) {
+          return enrollment.courseSlug === "computer-fundamentals";
+        });
+        if (hasPython && !hasComputer) {
+          return "python-fundamentals";
+        }
+        return "computer-fundamentals";
+      }
+
+      function renderCourseNavigation(courseSlug) {
+        const links = navigationLinksForCourse(courseSlug);
+        const course = catalogCourses.find(function (item) {
+          return item.slug === courseSlug;
+        });
+        localStorage.setItem(COURSE_CONTEXT_KEY, courseSlug);
+        courseLinksNav.innerHTML = "";
+        links.forEach(function (link, index) {
+          const anchor = document.createElement("a");
+          anchor.className = "course-link" + (index === 0 ? " is-current" : "");
+          anchor.href = link.href;
+          anchor.textContent = link.label;
+          courseLinksNav.appendChild(anchor);
+        });
+        courseLinksNav.setAttribute(
+          "aria-label",
+          course ? course.title + " lessons" : "Course lessons"
+        );
+        const week1Link = links.find(function (link) {
+          return link.lessonSlug !== "intermediate-readiness-week";
+        });
+        if (week1Link && week1NextLink) {
+          week1NextLink.href = week1Link.href;
+          week1NextLink.textContent = courseSlug === "python-fundamentals"
+            ? "Open Python Week 1"
+            : "Open Week 1 Lesson 1";
+        }
+      }
+
+      function initializeCourseNavigation(enrollments) {
+        renderCourseNavigation(pickCourseSlug(enrollments));
+      }
+
+      function loadCourseNavigation() {
+        fetch("/api/catalog")
+          .then(parseJsonResponse)
+          .then(function (data) {
+            catalogCourses = Array.isArray(data.courses) ? data.courses : [];
+            initializeCourseNavigation(data.enrollments || []);
+          })
+          .catch(function () {
+            initializeCourseNavigation([]);
+          });
       }
 
       function switchLocalProgress(user) {
@@ -1519,6 +1616,7 @@
       });
 
       renderProgress();
+      loadCourseNavigation();
       loadAuth();
     })();
   </script>

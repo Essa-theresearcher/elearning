@@ -764,6 +764,9 @@
             const openLink = document.createElement("a");
             openLink.className = "primary-action";
             openLink.href = course.entryPath;
+            openLink.addEventListener("click", function () {
+              localStorage.setItem("dba-active-course-slug", course.slug);
+            });
             openLink.textContent = "Open course";
             actions.appendChild(openLink);
             const note = document.createElement("span");
