@@ -274,9 +274,9 @@ LESSONS = {
         ],
     },
     "python-beginner-lesson-1": {
-        "title": "Getting Started with Python",
+        "title": "Week 1 · Getting Started with Python",
         "section_ids": ["welcome", "video", "reading", "activity", "quiz", "wrapup"],
-        "prerequisite": "web-applications-lesson-4",
+        "prerequisite": "intermediate-readiness-week",
         "video_dir": os.environ.get(
             "PYTHON_LESSON1_VIDEO_DIR", "assets/videos/python-lesson1"
         ),
@@ -330,19 +330,19 @@ COURSES = {
         "category": "Programming",
         "status": "open",
         "image": "assets/school/icon-coding.png",
-        "entry_path": "python-lesson1.html",
+        "entry_path": "prework.html",
         "price_label": "Manual checkout",
         "description": (
-            "A beginner-friendly path for students who need Python foundations "
-            "before intermediate work. Start with installation, your first "
-            "programs, and confident use of print()."
+            "Week 0 Python readiness, then Week 1 getting started with Python: "
+            "install tools, first programs, print() practice, and class lab work."
         ),
         "highlights": [
-            "Lesson 1: Getting started with Python",
-            "Install Python and VS Code",
-            "First programs, errors, and print() practice",
+            "Week 0: Python readiness quiz and coding review",
+            "Week 1: Class recordings and expanded notes",
+            "Week 1: Full practical lab and quiz",
         ],
         "lesson_slugs": [
+            "intermediate-readiness-week",
             "python-beginner-lesson-1",
         ],
     },
@@ -581,6 +581,25 @@ def course_for_lesson(lesson_slug):
         if lesson_slug in config.get("lesson_slugs", []):
             return slug
     return None
+
+
+def courses_for_lesson(lesson_slug):
+    return [
+        slug
+        for slug, config in COURSES.items()
+        if lesson_slug in config.get("lesson_slugs", [])
+    ]
+
+
+def approved_course_access_for_lesson(conn, student_id, lesson_slug):
+    approved_status = None
+    for course_slug in courses_for_lesson(lesson_slug):
+        course_status = course_access_status(conn, student_id, course_slug)
+        if course_status and course_status["approved"]:
+            return course_status
+        if approved_status is None and course_status:
+            approved_status = course_status
+    return approved_status
 
 
 def public_enrollment(row):
@@ -1036,10 +1055,11 @@ def grant_direct_access_students(conn):
 
 def lesson_access_status(conn, student_id, lesson_slug):
     config = lesson_config(lesson_slug)
-    course_slug = course_for_lesson(lesson_slug)
-    if course_slug:
-        course_status = course_access_status(conn, student_id, course_slug)
-        if course_status and not course_status["approved"]:
+    course_slugs = courses_for_lesson(lesson_slug)
+    course_status = None
+    if course_slugs:
+        course_status = approved_course_access_for_lesson(conn, student_id, lesson_slug)
+        if not course_status or not course_status["approved"]:
             return {
                 "lessonSlug": lesson_slug,
                 "unlocked": False,
@@ -1047,26 +1067,13 @@ def lesson_access_status(conn, student_id, lesson_slug):
                 "prerequisite": None,
             }
 
-    if (
-        lesson_slug == "python-beginner-lesson-1"
-        and is_direct_access_student(conn, student_id)
-    ):
-        return {
-            "lessonSlug": lesson_slug,
-            "unlocked": True,
-            "course": course_access_status(conn, student_id, course_slug)
-            if course_slug
-            else None,
-            "prerequisite": None,
-            "directAccessBypass": True,
-        }
-
+    course_slug = course_for_lesson(lesson_slug)
     prerequisite_slug = config.get("prerequisite")
     if not prerequisite_slug:
         return {
             "lessonSlug": lesson_slug,
             "unlocked": True,
-            "course": course_access_status(conn, student_id, course_slug) if course_slug else None,
+            "course": course_status,
             "prerequisite": None,
         }
 
@@ -1120,7 +1127,7 @@ def lesson_access_status(conn, student_id, lesson_slug):
     return {
         "lessonSlug": lesson_slug,
         "unlocked": unlocked,
-        "course": course_access_status(conn, student_id, course_slug) if course_slug else None,
+        "course": course_status,
         "prerequisite": {
             "lessonSlug": prerequisite_slug,
             "title": prerequisite.get("title", prerequisite_slug),

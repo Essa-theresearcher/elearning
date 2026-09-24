@@ -16,13 +16,18 @@ http://127.0.0.1:8765/
 
 ## Course Sequence
 
-The homepage opens `home.html`, which introduces Digital Bridge School and links to `courses.html`, the student course marketplace. The marketplace sells full courses, not individual lessons. The existing Week 0 and Week 1 lessons sit inside the Computer Fundamentals course.
+The homepage opens `home.html`, which links to `courses.html`. **Computer Fundamentals** is unchanged: Week 0 through Lesson 4. **Python Fundamentals** is a separate checkout with its own Week 1 page (`python-lesson1.html`).
 
-- Week 0 includes an auto-scored Python readiness quiz and an open-ended coding review.
-- Week 1 Lesson 1 is reading-based while videos are not ready. Students work through `assets/lesson1-notes.pdf`, then complete the activity and quiz.
-- Students must checkout for Computer Fundamentals and admin must approve the enrollment before Week 0, Lesson 1, or Lesson 2 can open.
-- Week 1 Lesson 1 unlocks after Week 0 sections are complete, the Week 0 quiz is submitted, and the Week 0 coding review is submitted.
-- Week 1 Lesson 2 sits under Week 1 and unlocks after Lesson 1 sections are complete and the Lesson 1 quiz is submitted.
+**Computer Fundamentals** (original path)
+
+- Week 0 (`prework.html`), then Lessons 1–4 (`index.html`, `lesson2.html`, `lesson3.html`, `lesson4.html`).
+- Lesson 1 unlocks after Week 0 is complete (sections, quiz, and coding review).
+
+**Python Fundamentals** (separate)
+
+- Week 0 uses the same readiness page (`prework.html`); Week 1 is `python-lesson1.html` (recordings, notes, lab, quiz).
+- Week 1 stays locked until Week 0 requirements are complete.
+- Navigation on Python Week 1 does not link into Computer Fundamentals lessons.
 
 ## Database
 
@@ -144,7 +149,7 @@ Teacher accounts can use `/teacher.html` to view student work, quiz grades, subm
 
 Quiz answer details are captured for new quiz attempts. Older quiz attempts saved before this feature still show score and date, but not answer-by-answer details.
 
-`DIRECT_ACCESS_STUDENT_USERNAMES=zakariya` grants **Computer Fundamentals** and **Python Fundamentals** automatically to matching student usernames on app startup, so those students do not need checkout approval. Direct-access students can open **Python Lesson 1** without finishing all Computer Fundamentals lessons first. Add more usernames with commas, for example `DIRECT_ACCESS_STUDENT_USERNAMES=zakariya,amina`.
+`DIRECT_ACCESS_STUDENT_USERNAMES=zakariya` grants **Computer Fundamentals** and **Python Fundamentals** enrollments on startup (no checkout approval). Python **Week 1 still stays locked until Week 0** is complete. Add more usernames with commas, for example `DIRECT_ACCESS_STUDENT_USERNAMES=zakariya,amina`.
 
 Older deployments that already use `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_DISPLAY_NAME` will still use those values for the default teacher account unless the newer `TEACHER_*` variables are set.
 

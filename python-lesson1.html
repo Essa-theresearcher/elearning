@@ -1236,11 +1236,11 @@
     <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="lessonLockTitle">
       <div class="auth-form">
         <span class="eyebrow">Lesson locked</span>
-        <h2 id="lessonLockTitle">Finish Computer Fundamentals first</h2>
-        <p class="auth-copy" id="lessonLockMessage">Python Lesson 1 unlocks after you complete the Computer Fundamentals course (through Lesson 4) and its quizzes.</p>
+        <h2 id="lessonLockTitle">Finish Week 0 first</h2>
+        <p class="auth-copy" id="lessonLockMessage">Week 1 unlocks after Week 0 is complete: all sections, the Python diagnostic quiz, and the coding review.</p>
         <ul class="lesson-lock-list" id="lessonLockList"></ul>
         <div class="lesson-lock-actions">
-          <a class="primary-link" href="lesson4.html">Open Computer Fundamentals · Lesson 4</a>
+          <a class="primary-link" href="prework.html">Open Week 0</a>
           <button class="secondary-link" id="refreshAccessButton" type="button">Check again</button>
         </div>
       </div>
@@ -1277,11 +1277,10 @@
         <span class="eyebrow">Python · Lesson 1</span>
         <h1>Getting Started with Python</h1>
         <div class="sidebar-meta">Install Python, write first programs, practice print(), and complete the full lab</div>
-        <div class="course-links" aria-label="Course lessons">
+        <div class="course-links" aria-label="Python Fundamentals lessons">
           <a class="course-link" href="courses.html">Courses</a>
-          <a class="course-link" href="prework.html">CF · Week 0</a>
-          <a class="course-link" href="index.html">CF · L1</a>
-          <a class="course-link is-current" href="python-lesson1.html">Python · L1</a>
+          <a class="course-link" href="prework.html">Week 0</a>
+          <a class="course-link is-current" href="python-lesson1.html">Week 1</a>
         </div>
       </div>
       <nav class="lesson-nav" id="lessonNav">
@@ -1845,10 +1844,10 @@ Print("Hi")                     # wrong capital P</code></pre>
 
         document.body.classList.add("lesson-locked");
         lessonLockOverlay.hidden = false;
-        lessonLockTitle.textContent = "Finish Computer Fundamentals first";
-        lessonLockMessage.textContent = "Python Lesson 1 unlocks after " + title + " is complete and its quiz has been submitted.";
-        lessonLockPrimaryLink.href = "lesson4.html";
-        lessonLockPrimaryLink.textContent = "Open Lesson 4";
+        lessonLockTitle.textContent = "Finish Week 0 first";
+        lessonLockMessage.textContent = "Week 1 unlocks after " + title + " is complete, the quiz is submitted, and the coding review is submitted.";
+        lessonLockPrimaryLink.href = "prework.html";
+        lessonLockPrimaryLink.textContent = "Open Week 0";
 
         missingSections.forEach(function (section) {
           items.push("Complete " + (sectionLabels[section] || section) + ".");
@@ -1895,7 +1894,7 @@ Print("Hi")                     # wrong capital P</code></pre>
             if (currentUser) {
               lockLesson({
                 prerequisite: {
-                  title: "Computer Fundamentals Lesson 4",
+                  title: "Week 0 Python Readiness",
                   missingSections: [],
                   quizCompleted: false
                 }
