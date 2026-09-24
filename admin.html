@@ -1141,31 +1141,56 @@
           const created = document.createElement("span");
           created.textContent = "Created: " + student.createdAt;
 
-          const computerFundamentalsEnrollment = (student.courseEnrollments || []).find(function (enrollment) {
-            return enrollment.courseSlug === "computer-fundamentals";
-          });
+          function enrollmentFor(slug) {
+            return (student.courseEnrollments || []).find(function (enrollment) {
+              return enrollment.courseSlug === slug;
+            });
+          }
 
-          const access = document.createElement("span");
-          access.textContent = "Computer Fundamentals: "
+          const computerFundamentalsEnrollment = enrollmentFor("computer-fundamentals");
+          const pythonFundamentalsEnrollment = enrollmentFor("python-fundamentals");
+
+          const accessComputer = document.createElement("span");
+          accessComputer.textContent = "Computer Fundamentals: "
             + (computerFundamentalsEnrollment ? enrollmentStatusLabel(computerFundamentalsEnrollment.status) : "No access yet");
 
-          const grantButton = document.createElement("button");
-          grantButton.type = "button";
-          grantButton.className = "secondary";
-          grantButton.dataset.grantCourse = "computer-fundamentals";
-          grantButton.dataset.userId = student.id;
-          grantButton.textContent = computerFundamentalsEnrollment && computerFundamentalsEnrollment.status === "approved"
-            ? "Access granted"
-            : "Grant Computer Fundamentals";
-          grantButton.disabled = computerFundamentalsEnrollment && computerFundamentalsEnrollment.status === "approved";
+          const accessPython = document.createElement("span");
+          accessPython.textContent = "Python Fundamentals: "
+            + (pythonFundamentalsEnrollment ? enrollmentStatusLabel(pythonFundamentalsEnrollment.status) : "No access yet");
+
+          function createGrantButton(courseSlug, label, enrollment) {
+            const grantButton = document.createElement("button");
+            grantButton.type = "button";
+            grantButton.className = "secondary";
+            grantButton.dataset.grantCourse = courseSlug;
+            grantButton.dataset.userId = student.id;
+            grantButton.textContent = enrollment && enrollment.status === "approved"
+              ? label + " granted"
+              : "Grant " + label;
+            grantButton.disabled = enrollment && enrollment.status === "approved";
+            return grantButton;
+          }
+
+          const grantComputerButton = createGrantButton(
+            "computer-fundamentals",
+            "Computer Fundamentals",
+            computerFundamentalsEnrollment
+          );
+          const grantPythonButton = createGrantButton(
+            "python-fundamentals",
+            "Python Fundamentals",
+            pythonFundamentalsEnrollment
+          );
 
           const resetForm = createPasswordResetForm(student.id, "student");
 
           item.appendChild(name);
           item.appendChild(username);
           item.appendChild(created);
-          item.appendChild(access);
-          item.appendChild(grantButton);
+          item.appendChild(accessComputer);
+          item.appendChild(accessPython);
+          item.appendChild(grantComputerButton);
+          item.appendChild(grantPythonButton);
           item.appendChild(resetForm);
           studentList.appendChild(item);
         });

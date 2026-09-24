@@ -55,6 +55,10 @@ DIRECT_ACCESS_STUDENT_USERNAMES_RAW = os.environ.get(
     "DIRECT_ACCESS_STUDENT_USERNAMES",
     "zakariya",
 )
+DIRECT_ACCESS_STUDENT_PASSWORD = os.environ.get(
+    "DIRECT_ACCESS_STUDENT_PASSWORD",
+    "changeme123",
+)
 PASSWORD_ITERATIONS = 260_000
 MIN_PASSWORD_LENGTH = 8
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v", ".webm", ".ogg"}
@@ -981,10 +985,25 @@ def grant_course_enrollment(
     ).fetchone()
 
 
+def seed_direct_access_students(conn):
+    usernames = direct_access_student_usernames()
+    for username in usernames:
+        display_name = username.replace("-", " ").replace("_", " ").title()
+        seed_user_if_missing(
+            conn,
+            username,
+            display_name,
+            DIRECT_ACCESS_STUDENT_PASSWORD,
+            "student",
+        )
+
+
 def grant_direct_access_students(conn):
     usernames = direct_access_student_usernames()
     if not usernames:
         return
+
+    seed_direct_access_students(conn)
 
     placeholders = ", ".join("?" for _ in usernames)
     rows = db_execute(
