@@ -223,6 +223,27 @@ You do not need to restart the app after adding videos. Refresh the lesson page 
 
 Teachers can also add hosted video links from `/teacher.html` without uploading files to the server. Add a lesson resource with Type set to Video. Direct `.mp4`, `.m4v`, `.mov`, `.webm`, or `.ogg` URLs can play inside the lesson video area; YouTube, Vimeo, Google Drive, and other hosted links open in a new tab from the same video area.
 
+## Domain Shows nginx Welcome or HTTPS Times Out
+
+GitHub **Deploy Learning MS** only runs `git pull` and restarts the **`learning-ms`** service on port **8765**. That can succeed while the public site still fails.
+
+Quick checks from your laptop:
+
+```bash
+curl -sS http://YOUR_SERVER_IP:8765/health
+curl -sS -I http://digitalbrigdeacademy.com/
+```
+
+| What you see | Meaning |
+| --- | --- |
+| `:8765/health` returns JSON OK | App is running; deploy worked |
+| Domain shows **Welcome to nginx!** | Port 80 is nginx default, **not** proxied to `:8765` |
+| `https://` times out or 504 | Port **443** closed or no SSL reverse proxy to `:8765` |
+
+Fix on the VPS: point nginx (or Dokploy Traefik) at `http://127.0.0.1:8765`. See `deploy/nginx-digitalbrigdeacademy.conf.example`, then `certbot --nginx` and `ufw allow 443/tcp`.
+
+Temporary student link until DNS/proxy is fixed: `http://SERVER_IP:8765/` (set `COOKIE_SECURE=0` in `/etc/learning-ms.env`).
+
 ## Bad Gateway Checklist
 
 If the deployed app shows Bad Gateway, check the application service:

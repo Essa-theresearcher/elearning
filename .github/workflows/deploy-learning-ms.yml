@@ -49,4 +49,6 @@ jobs:
             sudo systemctl restart learning-ms
             sudo systemctl is-active --quiet learning-ms
           fi
+          curl -fsS --max-time 10 http://127.0.0.1:8765/health >/dev/null
+          echo "learning-ms health OK on 127.0.0.1:8765"
           DEPLOY

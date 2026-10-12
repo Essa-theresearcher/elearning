@@ -355,6 +355,130 @@
       word-break: break-word;
     }
 
+    .course-grant-fieldset {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin: 0;
+    }
+
+    .course-grant-fieldset legend {
+      font-weight: 700;
+      color: var(--navy-dark);
+      padding: 0 4px;
+    }
+
+    .course-grant-hint {
+      margin: 0 0 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .course-grant-option {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      font-size: 14px;
+      color: var(--navy-dark);
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .course-grant-option span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    .course-access-guide {
+      margin: 0 0 12px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .course-access-table {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .course-access-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, auto);
+      gap: 8px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .course-access-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .course-access-row .course-name {
+      color: var(--navy-dark);
+      font-weight: 600;
+    }
+
+    .access-badge {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 4px 8px;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+
+    .access-badge.approved {
+      background: #e8f5ec;
+      color: #1f7a43;
+    }
+
+    .access-badge.pending {
+      background: #fff6e6;
+      color: #9a6b00;
+    }
+
+    .access-badge.missing {
+      background: #fdecea;
+      color: #b42318;
+    }
+
+    .access-badge.rejected {
+      background: #f0f0f0;
+      color: #555;
+    }
+
+    .access-badge.locked {
+      background: #fdecea;
+      color: #b42318;
+    }
+
+    .course-access-row button.secondary {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+
+    .course-access-row button.danger {
+      font-size: 12px;
+      padding: 6px 10px;
+      background: #fdecea;
+      color: #b42318;
+      border: 1px solid #f5c2c0;
+    }
+
+    @media (max-width: 640px) {
+      .course-access-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .password-reset-form {
       display: grid;
       grid-template-columns: minmax(160px, 1fr) auto;
@@ -766,9 +890,33 @@
               Temporary password
               <input name="password" type="text" autocomplete="off" minlength="8" required>
             </label>
-            <button type="submit">Create student</button>
+            <fieldset class="course-grant-fieldset">
+              <legend>Grant course access now</legend>
+              <p class="course-grant-hint">Check every class this student should open on day one. You can change access later in the list below.</p>
+              <label class="course-grant-option">
+                <input type="checkbox" name="grantCourse" value="computer-fundamentals" checked>
+                Computer Fundamentals <span>(Week 0 + CS lessons 1–4)</span>
+              </label>
+              <label class="course-grant-option">
+                <input type="checkbox" name="grantCourse" value="python-fundamentals">
+                Python Fundamentals <span>(Python Week 0 + Week 1)</span>
+              </label>
+              <label class="course-grant-option">
+                <input type="checkbox" name="grantCourse" value="python-practical">
+                Python Practical <span>(daily practice track)</span>
+              </label>
+            </fieldset>
+            <button type="submit">Create student &amp; grant access</button>
             <p class="status" id="studentStatus" role="status"></p>
           </form>
+
+          <p class="course-access-guide">
+            <strong>Course access:</strong> each student needs an <strong>Approved</strong> row below to open that course.
+            <strong>No access yet</strong> or <strong>Pending</strong> means lessons stay locked — click <strong>Grant</strong> for the course they paid for.
+            When you create a student, use the checkboxes to grant classes immediately.
+            Use <strong>Lock access</strong> when payment is not confirmed; use <strong>Grant access</strong> again after they pay.
+            Checkout requests also appear under the <strong>Orders</strong> tab.
+          </p>
 
           <div class="compact-list" id="studentList" aria-live="polite"></div>
         </section>
@@ -1118,6 +1266,46 @@
         });
       }
 
+      const MANAGED_COURSES = [
+        {
+          slug: "computer-fundamentals",
+          label: "Computer Fundamentals",
+          hint: "Week 0 + CS lessons 1–4"
+        },
+        {
+          slug: "python-fundamentals",
+          label: "Python Fundamentals",
+          hint: "Python Week 0 + Week 1 lesson"
+        },
+        {
+          slug: "python-practical",
+          label: "Python Practical",
+          hint: "Daily predict / code / visual practice"
+        }
+      ];
+
+      function accessBadgeClass(enrollment) {
+        if (!enrollment) return "missing";
+        if (enrollment.status === "approved") return "approved";
+        if (enrollment.status === "locked") return "locked";
+        if (enrollment.status === "rejected") return "rejected";
+        return "pending";
+      }
+
+      function accessBadgeText(enrollment) {
+        if (!enrollment) return "No access yet";
+        if (enrollment.status === "approved") return "Approved";
+        if (enrollment.status === "locked") return "Locked";
+        return enrollmentStatusLabel(enrollment.status);
+      }
+
+      function courseLabelForSlug(slug) {
+        const course = MANAGED_COURSES.find(function (entry) {
+          return entry.slug === slug;
+        });
+        return course ? course.label : slug;
+      }
+
       function renderStudents(students) {
         studentList.innerHTML = "";
         if (!students.length) {
@@ -1147,62 +1335,59 @@
             });
           }
 
-          const computerFundamentalsEnrollment = enrollmentFor("computer-fundamentals");
-          const pythonFundamentalsEnrollment = enrollmentFor("python-fundamentals");
-          const pythonPracticalEnrollment = enrollmentFor("python-practical");
+          const accessTable = document.createElement("div");
+          accessTable.className = "course-access-table";
+          accessTable.setAttribute("aria-label", "Course access for " + student.displayName);
 
-          const accessComputer = document.createElement("span");
-          accessComputer.textContent = "Computer Fundamentals: "
-            + (computerFundamentalsEnrollment ? enrollmentStatusLabel(computerFundamentalsEnrollment.status) : "No access yet");
+          MANAGED_COURSES.forEach(function (course) {
+            const enrollment = enrollmentFor(course.slug);
+            const row = document.createElement("div");
+            row.className = "course-access-row";
 
-          const accessPython = document.createElement("span");
-          accessPython.textContent = "Python Fundamentals: "
-            + (pythonFundamentalsEnrollment ? enrollmentStatusLabel(pythonFundamentalsEnrollment.status) : "No access yet");
+            const nameCell = document.createElement("div");
+            nameCell.className = "course-name";
+            nameCell.textContent = course.label + " — " + course.hint;
 
-          const accessPythonPractical = document.createElement("span");
-          accessPythonPractical.textContent = "Python Practical: "
-            + (pythonPracticalEnrollment ? enrollmentStatusLabel(pythonPracticalEnrollment.status) : "No access yet");
+            const badge = document.createElement("span");
+            badge.className = "access-badge " + accessBadgeClass(enrollment);
+            badge.textContent = accessBadgeText(enrollment);
 
-          function createGrantButton(courseSlug, label, enrollment) {
+            const actions = document.createElement("div");
+            actions.className = "course-access-actions";
+
             const grantButton = document.createElement("button");
             grantButton.type = "button";
             grantButton.className = "secondary";
-            grantButton.dataset.grantCourse = courseSlug;
+            grantButton.dataset.grantCourse = course.slug;
+            grantButton.dataset.courseLabel = course.label;
             grantButton.dataset.userId = student.id;
-            grantButton.textContent = enrollment && enrollment.status === "approved"
-              ? label + " granted"
-              : "Grant " + label;
+            grantButton.textContent = "Grant access";
             grantButton.disabled = enrollment && enrollment.status === "approved";
-            return grantButton;
-          }
 
-          const grantComputerButton = createGrantButton(
-            "computer-fundamentals",
-            "Computer Fundamentals",
-            computerFundamentalsEnrollment
-          );
-          const grantPythonButton = createGrantButton(
-            "python-fundamentals",
-            "Python Fundamentals",
-            pythonFundamentalsEnrollment
-          );
-          const grantPythonPracticalButton = createGrantButton(
-            "python-practical",
-            "Python Practical",
-            pythonPracticalEnrollment
-          );
+            const lockButton = document.createElement("button");
+            lockButton.type = "button";
+            lockButton.className = "danger";
+            lockButton.dataset.lockCourse = course.slug;
+            lockButton.dataset.courseLabel = course.label;
+            lockButton.dataset.userId = student.id;
+            lockButton.textContent = "Lock access";
+            lockButton.disabled = !enrollment || enrollment.status !== "approved";
+
+            actions.appendChild(grantButton);
+            actions.appendChild(lockButton);
+
+            row.appendChild(nameCell);
+            row.appendChild(badge);
+            row.appendChild(actions);
+            accessTable.appendChild(row);
+          });
 
           const resetForm = createPasswordResetForm(student.id, "student");
 
           item.appendChild(name);
           item.appendChild(username);
           item.appendChild(created);
-          item.appendChild(accessComputer);
-          item.appendChild(accessPython);
-          item.appendChild(accessPythonPractical);
-          item.appendChild(grantComputerButton);
-          item.appendChild(grantPythonButton);
-          item.appendChild(grantPythonPracticalButton);
+          item.appendChild(accessTable);
           item.appendChild(resetForm);
           studentList.appendChild(item);
         });
@@ -1316,6 +1501,7 @@
 
       function enrollmentStatusLabel(status) {
         if (status === "approved") return "Approved";
+        if (status === "locked") return "Locked";
         if (status === "rejected") return "Rejected";
         return "Pending";
       }
@@ -1791,23 +1977,52 @@
       });
 
       studentList.addEventListener("click", function (event) {
-        const button = event.target.closest("[data-grant-course]");
-        if (!button) return;
+        const grantButton = event.target.closest("[data-grant-course]");
+        if (grantButton) {
+          setStatus(studentStatus, "");
+          grantButton.disabled = true;
+
+          postJson("/api/admin/enrollments/grant", {
+            userId: grantButton.dataset.userId,
+            courseSlug: grantButton.dataset.grantCourse
+          }).then(function () {
+            setStatus(
+              studentStatus,
+              courseLabelForSlug(grantButton.dataset.grantCourse) + " access granted."
+            );
+            loadStudents();
+            loadEnrollments();
+            loadStudentWork();
+          }).catch(function (error) {
+            setStatus(studentStatus, error.message, true);
+            grantButton.disabled = false;
+          });
+          return;
+        }
+
+        const lockButton = event.target.closest("[data-lock-course]");
+        if (!lockButton) return;
+
+        const courseLabel = lockButton.dataset.courseLabel || courseLabelForSlug(lockButton.dataset.lockCourse);
+        if (!window.confirm("Lock " + courseLabel + " for this student? They will not be able to open that course until you grant access again.")) {
+          return;
+        }
 
         setStatus(studentStatus, "");
-        button.disabled = true;
+        lockButton.disabled = true;
 
-        postJson("/api/admin/enrollments/grant", {
-          userId: button.dataset.userId,
-          courseSlug: button.dataset.grantCourse
+        postJson("/api/admin/enrollments/lock", {
+          userId: lockButton.dataset.userId,
+          courseSlug: lockButton.dataset.lockCourse,
+          paymentNote: "Locked by admin — payment not confirmed"
         }).then(function () {
-          setStatus(studentStatus, "Computer Fundamentals access granted.");
+          setStatus(studentStatus, courseLabel + " locked (payment required).");
           loadStudents();
           loadEnrollments();
           loadStudentWork();
         }).catch(function (error) {
           setStatus(studentStatus, error.message, true);
-          button.disabled = false;
+          lockButton.disabled = false;
         });
       });
 
@@ -1863,18 +2078,41 @@
         });
       });
 
+      function selectedCourseSlugsFromForm(form) {
+        return Array.from(form.querySelectorAll('input[name="grantCourse"]:checked')).map(function (input) {
+          return input.value;
+        });
+      }
+
       studentForm.addEventListener("submit", function (event) {
         event.preventDefault();
         setStatus(studentStatus, "");
 
+        const courseSlugs = selectedCourseSlugsFromForm(studentForm);
+        if (!courseSlugs.length) {
+          setStatus(studentStatus, "Select at least one course to grant access.", true);
+          return;
+        }
+
         postJson("/api/admin/students", {
           displayName: studentForm.elements.displayName.value,
           username: studentForm.elements.username.value,
-          password: studentForm.elements.password.value
+          password: studentForm.elements.password.value,
+          courseSlugs: courseSlugs
         }).then(function (data) {
           const username = data.student ? data.student.username : "student";
+          const granted = (data.student && data.student.courseEnrollments || [])
+            .map(function (enrollment) {
+              return enrollment.courseTitle || enrollment.courseSlug;
+            })
+            .join(", ");
           studentForm.reset();
-          setStatus(studentStatus, "Created student login: " + username + " and granted Computer Fundamentals.");
+          const cfBox = studentForm.querySelector('input[value="computer-fundamentals"]');
+          if (cfBox) cfBox.checked = true;
+          setStatus(
+            studentStatus,
+            "Created " + username + ". Access granted: " + (granted || courseSlugs.join(", ")) + "."
+          );
           loadStudents();
           loadEnrollments();
           loadStudentWork();

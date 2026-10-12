@@ -1094,6 +1094,56 @@ def grant_course_enrollment(
     ).fetchone()
 
 
+def lock_course_enrollment(
+    conn,
+    student_id,
+    course_slug,
+    reviewed_by=None,
+    payment_reference="Admin lock",
+    payment_note="Access locked — payment not confirmed",
+):
+    if course_slug not in COURSES:
+        raise ValueError("Choose a valid course.")
+    reviewed_at = utc_now()
+    requested_at = reviewed_at
+    db_execute(
+        conn,
+        """
+        INSERT INTO course_enrollments (
+            student_id, course_slug, status, payment_reference, payment_note,
+            requested_at, reviewed_by, reviewed_at
+        )
+        VALUES (?, ?, 'locked', ?, ?, ?, ?, ?)
+        ON CONFLICT(student_id, course_slug)
+        DO UPDATE SET
+            status = 'locked',
+            payment_reference = excluded.payment_reference,
+            payment_note = excluded.payment_note,
+            reviewed_by = excluded.reviewed_by,
+            reviewed_at = excluded.reviewed_at
+        """,
+        (
+            student_id,
+            course_slug,
+            payment_reference,
+            payment_note,
+            requested_at,
+            reviewed_by,
+            reviewed_at,
+        ),
+    )
+    return db_execute(
+        conn,
+        """
+        SELECT id, student_id, course_slug, status, payment_reference,
+            payment_note, requested_at, reviewed_by, reviewed_at
+        FROM course_enrollments
+        WHERE student_id = ? AND course_slug = ?
+        """,
+        (student_id, course_slug),
+    ).fetchone()
+
+
 def seed_direct_access_students(conn):
     usernames = direct_access_student_usernames()
     for username in usernames:
@@ -1627,6 +1677,9 @@ class LearningHandler(SimpleHTTPRequestHandler):
             return
         if parsed.path == "/api/admin/enrollments/grant":
             self.handle_admin_grant_enrollment()
+            return
+        if parsed.path == "/api/admin/enrollments/lock":
+            self.handle_admin_lock_enrollment()
             return
         if parsed.path == "/api/admin/resources":
             self.handle_admin_create_resource()
@@ -2379,6 +2432,58 @@ class LearningHandler(SimpleHTTPRequestHandler):
             }
         )
 
+    def handle_admin_lock_enrollment(self):
+        admin = self.current_admin_user()
+        if not admin:
+            self.send_admin_required()
+            return
+
+        try:
+            data = self.read_json_body()
+        except ValueError as exc:
+            self.send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+
+        user_id = (data.get("userId") or "").strip()
+        course_slug = (data.get("courseSlug") or "").strip()
+        payment_note = (data.get("paymentNote") or "").strip()
+        if course_slug not in COURSES:
+            self.send_json({"error": "Choose a valid course."}, HTTPStatus.BAD_REQUEST)
+            return
+        if not user_id:
+            self.send_json({"error": "Student is required."}, HTTPStatus.BAD_REQUEST)
+            return
+
+        with connect_db() as conn:
+            student = db_execute(
+                conn,
+                """
+                SELECT id, username, display_name, role, created_at
+                FROM app_users
+                WHERE id = ?
+                """,
+                (user_id,),
+            ).fetchone()
+            if not student or student["role"] != "student":
+                self.send_json({"error": "Student not found."}, HTTPStatus.NOT_FOUND)
+                return
+
+            row = lock_course_enrollment(
+                conn,
+                student["id"],
+                course_slug=course_slug,
+                reviewed_by=admin["id"],
+                payment_note=payment_note or "Access locked — payment not confirmed",
+            )
+
+        self.send_json(
+            {
+                "ok": True,
+                "student": public_student(student),
+                "enrollment": public_enrollment(row),
+            }
+        )
+
     def handle_admin_students(self):
         admin = self.current_admin_user()
         if not admin:
@@ -2401,7 +2506,7 @@ class LearningHandler(SimpleHTTPRequestHandler):
                 SELECT id, student_id, course_slug, status, payment_reference,
                     payment_note, requested_at, reviewed_by, reviewed_at
                 FROM course_enrollments
-                WHERE course_slug = 'computer-fundamentals'
+                ORDER BY requested_at DESC
                 """,
             ).fetchall()
 
@@ -2556,14 +2661,40 @@ class LearningHandler(SimpleHTTPRequestHandler):
                     created_at,
                 ),
             )
-            enrollment = grant_course_enrollment(
-                conn,
-                user_id,
-                course_slug="computer-fundamentals",
-                reviewed_by=admin["id"],
-                payment_reference="Admin-created student",
-                payment_note="Computer Fundamentals access granted automatically",
-            )
+            raw_slugs = data.get("courseSlugs")
+            if raw_slugs is None:
+                course_slugs = ["computer-fundamentals"]
+            elif isinstance(raw_slugs, list):
+                course_slugs = []
+                for entry in raw_slugs:
+                    slug = str(entry or "").strip()
+                    if slug and slug in COURSES and slug not in course_slugs:
+                        course_slugs.append(slug)
+            else:
+                self.send_json(
+                    {"error": "courseSlugs must be a list of course slugs."},
+                    HTTPStatus.BAD_REQUEST,
+                )
+                return
+
+            if not course_slugs:
+                self.send_json(
+                    {"error": "Select at least one course to grant access."},
+                    HTTPStatus.BAD_REQUEST,
+                )
+                return
+
+            enrollments = []
+            for course_slug in course_slugs:
+                row = grant_course_enrollment(
+                    conn,
+                    user_id,
+                    course_slug=course_slug,
+                    reviewed_by=admin["id"],
+                    payment_reference="Admin-created student",
+                    payment_note="Granted when admin created the student account",
+                )
+                enrollments.append(public_enrollment(row))
 
         self.send_json(
             {
@@ -2573,7 +2704,7 @@ class LearningHandler(SimpleHTTPRequestHandler):
                     "displayName": display_name,
                     "role": "student",
                     "createdAt": created_at,
-                    "courseEnrollments": [public_enrollment(enrollment)],
+                    "courseEnrollments": enrollments,
                 }
             },
             status=HTTPStatus.CREATED,
