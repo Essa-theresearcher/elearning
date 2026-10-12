@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daily Python Quest</title>
+<style>
+:root{--bg:#FBF7EA;--card:#fff;--ink:#14284B;--mut:#5b6679;--gold:#C9A227;--ok:#1f9d57;--bad:#d64545;--code:#EEF1F7;--line:#d9dde6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a33;--card:#16264a;--ink:#f3efe0;--mut:#a9b3c7;--code:#0b1530;--line:#2b3d68}}
+:root[data-theme="dark"]{--bg:#0e1a33;--card:#16264a;--ink:#f3efe0;--mut:#a9b3c7;--code:#0b1530;--line:#2b3d68}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:660px;margin:0 auto;padding:14px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+h1{font-size:20px;margin:0}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:4px 12px;font-weight:700;font-size:14px}
+.path{display:flex;align-items:center;margin:14px 4px}
+.node{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);background:var(--card);display:grid;place-items:center;font-size:13px;font-weight:700;flex:none}
+.node.cur{border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,162,39,.25)}
+.node.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.bar{height:4px;background:var(--line);flex:1}.bar.done{background:var(--ok)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:10px}
+.tag{display:inline-block;font-size:12px;font-weight:700;color:#14284B;background:var(--gold);border-radius:6px;padding:2px 8px;margin-bottom:8px}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{background:var(--ink);color:var(--bg);border:0;border-radius:12px;padding:10px 16px;font-weight:700}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+button:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+textarea{width:100%;min-height:200px;background:var(--code);color:var(--ink);border:2px solid var(--line);border-left:4px solid var(--gold);border-radius:10px;padding:10px;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;tab-size:4;resize:vertical;white-space:pre;overflow:auto}
+.hint{background:rgba(201,162,39,.16);border-radius:10px;padding:8px 12px;margin-top:8px;font-size:14px;white-space:pre-wrap}
+.bulb{display:flex;gap:4px;font-size:18px}.bulb span{opacity:.25}.bulb span.on{opacity:1}
+.lv{display:flex;gap:12px;align-items:center;text-align:left;width:100%;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px;margin-top:10px}
+.lv:hover{border-color:var(--gold)}.lv big{font-size:32px}.lv small{display:block;color:var(--mut)}
+.tr{font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;padding:6px 10px;border-radius:8px;margin-top:6px;background:var(--code);border-left:4px solid var(--line)}
+.tr.ok{border-color:var(--ok)}.tr.no{border-color:var(--bad)}
+.mem{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.box{border:2px solid var(--ink);border-radius:8px;min-width:78px;text-align:center;overflow:hidden;font-family:ui-monospace,Menlo,monospace;font-size:13px;animation:pop .4s}
+.box b{display:block;background:var(--ink);color:var(--bg);padding:1px 6px}.box i{display:block;font-style:normal;padding:4px 6px}
+@keyframes pop{50%{transform:scale(1.12)}}
+.fb{margin-top:10px;font-weight:700}
+.week{display:flex;gap:6px;justify-content:center;margin-top:10px}
+.day{width:34px;text-align:center;font-size:11px;color:var(--mut)}
+.day div{width:26px;height:26px;margin:2px auto;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
+.day div.on{background:var(--gold);border-color:var(--gold);color:#14284B;font-weight:700}
+.center{text-align:center}.big{font-size:44px}.mut{color:var(--mut);font-size:13px}
+</style>
+<link rel="stylesheet" href="thinking-coach.css">
+</head>
+<body><div class="wrap">
+<div class="top"><h1>🐍 Daily Python Quest</h1><div><span class="pill" id="streak">🔥 0</span> <span class="pill" id="xp">⭐ 0</span></div></div>
+<div class="path" id="path"></div>
+<div id="main"></div>
+<p class="center mut" id="codeBlurb">5 coding challenges today. Failed tests show step-by-step debugging — hints cost stars.</p>
+</div>
+<script src="thinking-coach.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+<script>
+var LV=[
+{n:"Beginner",e:"🌱",d:"Variables, input, print, simple maths and if/else",c:[
+{t:"Greet",q:"Read a name with input() and print Hello, NAME! (for example Hello, Amina!)",s:"name = input()\n# print the greeting below\n",T:[[["Amina"],"Hello, Amina!"],[["Yusuf"],"Hello, Yusuf!"]],h:["input() gives you the text the user typed.","Join text with +, or use an f-string.","print(\"Hello, \" + name + \"!\")"]},
+{t:"Double it",q:"Read a whole number and print it doubled.",s:"n = int(input())\n",T:[[["4"],"8"],[["10"],"20"]],h:["int() already turned the text into a number.","Multiply it by 2.","print(n * 2)"]},
+{t:"Area",q:"Read a length and a width (two separate inputs). Print the area.",s:"length = int(input())\nwidth = int(input())\n",T:[[["3","4"],"12"],[["5","6"],"30"]],h:["Area is length times width.","Store the result in a variable first if you like.","print(length * width)"]},
+{t:"Even or odd",q:"Read a number. Print even or odd.",s:"n = int(input())\n",T:[[["4"],"even"],[["7"],"odd"],[["0"],"even"]],h:["The % operator gives the remainder after dividing.","n % 2 is 0 for even numbers.","if n % 2 == 0:\n    print(\"even\")\nelse:\n    print(\"odd\")"]},
+{t:"Price with VAT",q:"Read a price. Print the price plus 16% VAT, rounded to 2 decimal places.",s:"price = float(input())\n",T:[[["100"],"116.0"],[["250"],"290.0"]],h:["Adding 16% means multiplying by 1.16.","round(number, 2) keeps 2 decimal places.","print(round(price * 1.16, 2))"]},
+{t:"Join words",q:"Read two words on separate lines. Print them joined with a space in between.",s:"a = input()\nb = input()\n",T:[[["Hello","world"],"Hello world"],[["Python","rocks"],"Python rocks"]],h:["Both inputs are text.","Join with + and a space in the middle.","print(a + \" \" + b)"]},
+{t:"Initials",q:"Read a first name and a last name (two lines). Print the initials in capitals with a dot, like A.M.",s:"first = input()\nlast = input()\n",T:[[["amina","hassan"],"A.H."],[["yusuf","ali"],"Y.A."]],h:["The first letter of each name is first[0] and last[0].","Use .upper() on each letter.","print(first[0].upper() + \".\" + last[0].upper() + \".\")"]}]},
+{n:"Intermediate",e:"🌿",d:"Loops, conditions, strings and lists",c:[
+{t:"Sum to n",q:"Read n. Print the sum of 1 + 2 + ... + n.",s:"n = int(input())\ntotal = 0\n",T:[[["5"],"15"],[["10"],"55"]],h:["Use a for loop: for i in range(1, n + 1):","Inside the loop, add i to total (indented).","Print total after the loop, not inside it."]},
+{t:"Grade",q:"Read a mark. Print A if it is 80 or more, B if 60 or more, otherwise C.",s:"mark = int(input())\n",T:[[["85"],"A"],[["65"],"B"],[["40"],"C"],[["80"],"A"]],h:["Check the highest grade first.","Use if, then elif, then else.","if mark >= 80: ... elif mark >= 60: ... else: ..."]},
+{t:"Count vowels",q:"Read a word. Print how many vowels (a, e, i, o, u) it has.",s:"word = input()\ncount = 0\n",T:[[["banana"],"3"],[["sky"],"0"],[["education"],"5"]],h:["Loop over each letter: for ch in word:","Check if ch in \"aeiou\"","Add 1 to count when it matches. Print count at the end."]},
+{t:"Largest number",q:"Read numbers on one line, separated by spaces. Print the largest.",s:"parts = input().split()\n",T:[[["3 9 2"],"9"],[["10 4 7 22 1"],"22"]],h:["split() gave you a list of text pieces.","Convert each piece with int().","max(list) finds the biggest, or loop and compare."]},
+{t:"FizzBuzz",q:"Read n. For 1 to n print the number, but print Fizz for multiples of 3, Buzz for multiples of 5, and FizzBuzz for both.",s:"n = int(input())\n",T:[[["5"],"1\n2\nFizz\n4\nBuzz"],[["15"],"1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz"]],h:["Loop from 1 to n with range(1, n + 1).","Check for multiples of both 3 and 5 FIRST.","i % 3 == 0 and i % 5 == 0"]}]},
+{n:"Advanced",e:"🌳",d:"Functions, dictionaries and parsing data",c:[
+{t:"Word counter",q:"Read a sentence. Print each different word with its count, in alphabetical order, like: the 2",s:"words = input().split()\ncounts = {}\n",T:[[["the cat the dog"],"cat 1\ndog 1\nthe 2"],[["to be or not to be"],"be 2\nnot 1\nor 1\nto 2"]],h:["Use a dictionary to count.","counts[w] = counts.get(w, 0) + 1","for w in sorted(counts): print(w, counts[w])"]},
+{t:"Prime checker",q:"Finish the function is_prime(n) so the program prints prime or not prime.",s:"def is_prime(n):\n    # return True or False\n    pass\n\nn = int(input())\nif is_prime(n):\n    print(\"prime\")\nelse:\n    print(\"not prime\")\n",T:[[["7"],"prime"],[["9"],"not prime"],[["1"],"not prime"],[["2"],"prime"]],h:["Numbers below 2 are not prime.","Try dividing by every number from 2 up to n - 1.","If n % i == 0 for any i, return False. Otherwise return True at the end."]},
+{t:"Palindrome",q:"Finish is_palindrome(word). A palindrome reads the same backwards. The program prints True or False.",s:"def is_palindrome(word):\n    pass\n\nprint(is_palindrome(input()))\n",T:[[["level"],"True"],[["python"],"False"],[["racecar"],"True"]],h:["Compare the word to itself reversed.","word[::-1] reverses a string.","return word == word[::-1]"]},
+{t:"Stock total",q:"Read a line like rice:3,milk:2,sugar:5 and print the total quantity.",s:"line = input()\ntotal = 0\n",T:[[["rice:3,milk:2,sugar:5"],"10"],[["bread:1"],"1"]],h:["split(\",\") gives each item:qty piece.","split(\":\") on a piece gives the name and the quantity.","Convert the quantity with int() and add it to total."]},
+{t:"Parse a record",q:"Read a line like name=Amina;age=17 and print: Amina will be 18",s:"line = input()\nrecord = {}\n",T:[[["name=Amina;age=17"],"Amina will be 18"],[["name=Bilal;age=20"],"Bilal will be 21"]],h:["Split on \";\" first.","Split each piece on \"=\" and store it in the dictionary.","print(record[\"name\"] + \" will be \" + str(int(record[\"age\"]) + 1))"]}]}
+];
+var qp=new URLSearchParams(location.search);
+var weekDay=parseInt(qp.get("dbaDay")||String(new Date().getDay()),10);
+var dbaDate=qp.get("dbaDate")||"";
+var CODE_N=Math.min(7,Math.max(3,parseInt(qp.get("dbaCodeCount")||"5",10)));
+(function(){var b=document.getElementById("codeBlurb");if(b)b.textContent=CODE_N+" coding challenges today. Failed tests show step-by-step debugging — hints cost stars.";})();
+function notifyDayTask(task){if(!dbaDate||!window.parent)return;try{window.parent.postMessage({type:"pp-day-task",task:task,date:dbaDate},"*");}catch(e){}}
+var $=function(i){return document.getElementById(i)};
+var S={};try{S=JSON.parse(localStorage.getItem("pq-code")||"{}")}catch(e){}
+S.streak=S.streak||0;S.xp=S.xp||0;S.hist=S.hist||{};
+function save(){try{localStorage.setItem("pq-code",JSON.stringify(S))}catch(e){}}
+function dk(d){d=d||new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
+function dayNum(){var d=new Date();return Math.floor(new Date(d.getFullYear(),d.getMonth(),d.getDate())/864e5)}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+var lv,set=[],i=0,res=[],hints=0,done=false,busy=false;
+function head(){$("streak").textContent="🔥 "+S.streak;$("xp").textContent="⭐ "+S.xp;var h="";
+ if(set.length)for(var k=0;k<CODE_N;k++)h+=(k?'<div class="bar '+(k<=res.length?'done':'')+'"></div>':'')+'<div class="node '+(k<res.length?'done':k==i?'cur':'')+'">'+(k<res.length?'✓':k+1)+'</div>';$("path").innerHTML=h}
+function home(){
+ var forced=qp.get("dbaCodeLevel");
+ if(forced!==null){go(parseInt(forced,10));return;}
+ set=[];head();var h='<div class="card"><b>Choose your level</b><div class="mut">You can switch any day. Each level has a new set of 3 every day.</div>';
+ LV.forEach(function(L,k){h+='<button class="lv" onclick="go('+k+')"><big>'+L.e+'</big><span><b>'+L.n+'</b>'+(S.hist[dk()+"|"+L.n]?' ✅':'')+'<small>'+L.d+'</small></span></button>'});
+ $("main").innerHTML=h+'</div>'}
+function go(k){lv=LV[k];var n=lv.c.length,st=(dayNum()*CODE_N+weekDay*2)%n;set=[];for(var j=0;j<CODE_N;j++)set.push(lv.c[(st+j+weekDay)%n]);i=0;res=[];show()}
+function show(){var c=set[i];done=false;hints=0;head();
+ $("main").innerHTML='<div class="card"><span class="tag">'+lv.e+' '+lv.n+' · '+esc(c.t)+'</span><div><b>'+esc(c.q)+'</b></div><div class="mut" style="margin:6px 0">Write your code, then press Run. Your code is tested with different inputs.</div><textarea id="ed" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off">'+esc(c.s)+'</textarea>'+
+ '<div class="row"><button class="btn" id="rb" onclick="run()">▶ Run &amp; test</button><button class="btn ghost" id="hb" onclick="hint()">💡 Hint</button><div class="bulb" id="bulb"><span>💡</span><span>💡</span><span>💡</span></div><div style="flex:1"></div><button class="btn ghost" onclick="reset()">Reset</button></div><div id="hn"></div><div id="out"></div>'+
+ '<div class="row"><button class="btn ghost" onclick="home()">← Levels</button><div style="flex:1"></div><button class="btn" id="nx" style="display:none" onclick="next()">'+(i==CODE_N-1?'Finish 🎉':'Next →')+'</button></div></div>';
+ $("ed").addEventListener("keydown",function(e){if(e.key=="Tab"){e.preventDefault();var s=this.selectionStart;this.value=this.value.slice(0,s)+"    "+this.value.slice(this.selectionEnd);this.selectionStart=this.selectionEnd=s+4}})}
+function reset(){if(!done)$("ed").value=set[i].s}
+function hint(){if(hints>=3||done)return;$("hn").insertAdjacentHTML("beforeend",'<div class="hint">💡 Hint '+(hints+1)+': '+esc(set[i].h[hints])+'</div>');hints++;var b=$("bulb").children;for(var k=0;k<hints;k++)b[k].className="on";if(hints>=3)$("hb").style.display="none"}
+function rd(x){if(Sk.builtinFiles===undefined||Sk.builtinFiles.files[x]===undefined)throw"File not found: "+x;return Sk.builtinFiles.files[x]}
+function runPy(code,inp){return new Promise(function(ok){var out="",q=inp.slice();
+ Sk.configure({output:function(t){out+=t},read:rd,inputfun:function(){return q.length?q.shift():""},inputfunTakesPrompt:true,__future__:Sk.python3});
+ Sk.misceval.asyncToPromise(function(){return Sk.importMainWithBody("<stdin>",false,code,true)}).then(function(m){ok({out:out,mod:m})},function(e){ok({out:out,err:e.toString()})})})}
+function norm(s){return s.split("\n").map(function(l){return l.replace(/\s+$/,"")}).join("\n").replace(/\s+$/,"")}
+function vars(m){var h="",k,n=0;if(!m||!m.$d)return"";for(k in m.$d){if(k.indexOf("__")==0||n>=8)continue;var v=m.$d[k],t=v&&v.tp$name;if(t=="function"||t=="module")continue;try{h+='<div class="box"><b>'+esc(k)+'</b><i>'+esc(Sk.misceval.objectRepr(v).v)+'</i></div>';n++}catch(e){}}
+ return h?'<div class="mut" style="margin-top:10px">What your variables hold at the end:</div><div class="mem">'+h+'</div>':""}
+async function run(){if(busy||done)return;if(typeof Sk==="undefined"){$("out").innerHTML='<div class="tr no">The Python engine did not load. Check your internet and reload the page.</div>';return}
+ busy=true;$("rb").disabled=true;var c=set[i],code=$("ed").value,rows="",pass=0,first=null,err=null;
+ $("out").innerHTML='<div class="mut" style="margin-top:10px">Running...</div>';
+ for(var k=0;k<c.T.length;k++){var t=c.T[k],r=await runPy(code,t[0]);if(!first)first=r.mod;
+  var got=norm(r.out),okk=!r.err&&got==norm(t[1]);if(okk)pass++;if(r.err&&!err)err=r.err;
+  rows+='<div class="tr '+(okk?'ok':'no')+'">'+(okk?'✓':'✗')+' Test '+(k+1)+' · input: '+esc(t[0].join(" | "))+(okk?'':'\nexpected: '+esc(t[1])+'\ngot:      '+esc(r.err?(got?got+'\n':'')+r.err:got||'(nothing printed)'))+'</div>'}
+ var h='<div class="fb" style="color:'+(pass==c.T.length?'var(--ok)':'var(--bad)')+'">'+(pass==c.T.length?'All tests passed!':pass+' of '+c.T.length+' tests passed. Use the coach below, then fix one thing and run again.')+'</div>'+rows;
+ if(pass<c.T.length&&window.ThinkingCoach){
+  h+=ThinkingCoach.codeFailHtml({
+   error:err||"",
+   emptyOutput:!err&&pass===0,
+   outputMismatch:!err&&pass>0
+  });
+  h+=ThinkingCoach.recordStruggle();
+ }
+ if(pass==c.T.length&&window.ThinkingCoach)ThinkingCoach.resetStruggle();
+ if(err)h+='<div class="mut" style="margin-top:6px">Tip: read the error from the end. This editor runs a simplified Python, so if an f-string gives an error, join text with + and str() instead.</div>';
+ if(pass==c.T.length&&c.h&&c.h.length)h+='<div class="hint"><b>What you practiced:</b> '+esc(c.h[c.h.length-1])+'</div>';
+ if(pass==c.T.length){done=true;var st=Math.max(1,3-hints);res.push(st);h+='<div class="fb" style="color:var(--ok)">'+"⭐".repeat(st)+'</div>'+vars(first);$("nx").style.display="";$("hb").style.display="none";head()}
+ $("out").innerHTML=h;busy=false;$("rb").disabled=false}
+function next(){if(i<CODE_N-1){i++;show()}else finish()}
+function finish(){notifyDayTask("code");var tot=res.reduce(function(a,b){return a+b},0),t=dk(),y=dk(new Date(Date.now()-864e5)),key=t+"|"+lv.n,first=!S.hist[key];
+ if(first){if(!S.hist[t]){S.streak=(S.last==y)?S.streak+1:1;S.last=t;S.hist[t]=1}S.hist[key]=tot;S.xp+=tot*10;save()}
+ var maxStars=CODE_N*3;
+ head();var msg=tot>=maxStars*0.85?"Brilliant. You barely needed hints.":tot>=maxStars*0.55?"Strong work. You are writing real code.":"You wrote and passed all "+CODE_N+". That is what counts, and tomorrow is a new set.";
+ var w="",k;for(k=6;k>=0;k--){var d=new Date(Date.now()-k*864e5),on=S.hist[dk(d)];w+='<div class="day">'+"SMTWTFS"[d.getDay()]+'<div class="'+(on?'on':'')+'">'+(on?'✓':'')+'</div></div>'}
+ $("main").innerHTML='<div class="card center"><div class="big">'+(tot>=maxStars*0.85?"🏆":tot>=maxStars*0.55?"🌟":"💪")+'</div><h2 style="margin:4px 0">'+lv.n+' set complete</h2><div>'+tot+' / '+maxStars+' ⭐</div><p>'+msg+'</p>'+(first?'<p><b>+'+tot*10+' XP</b> · Streak: 🔥 '+S.streak+'</p>':'<p class="mut">Practice round. Your result was already counted today.</p>')+
+ '<div class="week">'+w+'</div><div class="row" style="justify-content:center"><button class="btn" onclick="home()">Pick a level</button></div></div>'}
+home();
+</script></body></html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sudoku Logic Lab</title>
+  <link rel="stylesheet" href="thinking-coach.css">
+  <style>
+    :root { --bg:#0e1a33; --card:#16264a; --ink:#f3efe0; --mut:#a9b3c7; --gold:#c9a227; --ok:#1f9d57; --bad:#d64545; --line:#2b3d68; }
+    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,sans-serif;padding:12px}
+    .wrap{max-width:720px;margin:0 auto}.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:10px}
+    textarea{width:100%;min-height:220px;background:#0b1530;color:var(--ink);border:2px solid var(--line);border-left:4px solid var(--gold);border-radius:8px;padding:10px;font:13px/1.45 ui-monospace,Menlo,monospace}
+    button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:8px 14px;font-weight:700;background:var(--ink);color:var(--bg);margin-top:8px}
+    .grid{display:grid;grid-template-columns:repeat(4,48px);gap:4px;justify-content:center;margin:12px 0}
+    .cell{width:48px;height:48px;display:grid;place-items:center;background:#0b1530;border:1px solid var(--line);font-weight:700}
+    .status{font-size:13px;margin-top:8px}.ok{color:var(--ok)}.bad{color:var(--bad)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Sudoku Logic Lab · Level 3</h1>
+    <p>Write <code>is_safe(grid, row, col, value)</code> for a 4×4 grid. Run tests — when all pass, you finish the visual track.</p>
+    <div class="grid" id="gridView"></div>
+    <div class="panel">
+      <textarea id="code" spellcheck="false">def is_safe(grid, row, col, value):
+    """
+    grid: list of 4 lists, each with 4 ints (0 = empty).
+    Return True if putting value at (row, col) breaks no Sudoku rules.
+    Ignore the cell (row,col) when checking its row/col/box.
+    """
+    for c in range(4):
+        if c != col and grid[row][c] == value:
+            return False
+    for r in range(4):
+        if r != row and grid[r][col] == value:
+            return False
+    br, bc = (row // 2) * 2, (col // 2) * 2
+    for r in range(br, br + 2):
+        for c in range(bc, bc + 2):
+            if (r != row or c != col) and grid[r][c] == value:
+                return False
+    return True
+</textarea>
+      <button type="button" id="runBtn">Run all tests</button>
+      <div class="status" id="out"></div>
+      <div id="coachSlot"></div>
+    </div>
+  </div>
+  <script src="thinking-coach.js"></script>
+  <script src="weekly-visual-progress.js"></script>
+  <script src="visual-progress.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+  <script>
+(function(){
+  var qp=new URLSearchParams(location.search);
+  var weeklyMode=qp.get("weekly")==="1";
+  var dbaDate=qp.get("dbaDate")||"";
+  var visualOrder=window.WeeklyVisualProgress?WeeklyVisualProgress.parseOrder(qp):["snake","maze","sudoku"];
+  var variant=parseInt(qp.get("dbaVariant")||"0",10);
+  function onVisualWin(){
+    if(weeklyMode&&dbaDate&&window.WeeklyVisualProgress){WeeklyVisualProgress.markGame(dbaDate,"sudoku",visualOrder);return;}
+    if(window.VisualProgress)VisualProgress.markDone("sudoku");
+  }
+  if(weeklyMode&&dbaDate&&window.WeeklyVisualProgress&&!WeeklyVisualProgress.isUnlocked(dbaDate,"sudoku",visualOrder)){
+    document.body.innerHTML='<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish the previous visual game for this day first.</p></div>';
+    return;
+  }
+  if(!weeklyMode&&window.VisualProgress&&!VisualProgress.isUnlocked("sudoku")){
+    document.body.innerHTML='<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish <strong>Maze Coder Lab</strong> to unlock Sudoku.</p></div>';
+    return;
+  }
+  var puzzle=[[1,0,0,4],[0,0,3,0],[0,3,0,0],[4,0,0,1]];
+  var g=document.getElementById("gridView");puzzle.forEach(function(row){row.forEach(function(v){var d=document.createElement("div");d.className="cell";d.textContent=v||"·";g.appendChild(d);});});
+  var TESTS=[
+    {grid:[[1,2,0,4],[0,0,3,0],[0,3,0,0],[4,0,0,1]],row:0,col:2,val:3,expect:false},
+    {grid:[[1,2,0,4],[0,0,3,0],[0,3,0,0],[4,0,0,1]],row:0,col:2,val:0,expect:true},
+    {grid:[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],row:1,col:1,val:2,expect:true}
+  ];
+  if(variant%2===1)TESTS.push({grid:[[2,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,2]],row:0,col:1,val:2,expect:false});
+  if(variant>=2)TESTS.push({grid:[[0,0,0,0],[0,1,0,0],[0,0,0,0],[0,0,0,0]],row:0,col:0,val:1,expect:false});
+  function rd(x){return Sk.builtinFiles.files[x];}
+  function runPy(code,grid,row,col,val){
+    var setup="grid = "+JSON.stringify(grid)+"\nrow = "+row+"\ncol = "+col+"\nvalue = "+val+"\n";
+    return Sk.misceval.asyncToPromise(function(){
+      Sk.configure({read:rd,__future__:Sk.python3});
+      return Sk.importMainWithBody("<user>",false,setup+code+"\nresult = is_safe(grid, row, col, value)",true);
+    }).then(function(m){return Sk.misceval.callsim(m.$d.is_safe,Sk.ffi.remapToPy(grid),Sk.ffi.remapToPy(row),Sk.ffi.remapToPy(col),Sk.ffi.remapToPy(val));});
+  }
+  document.getElementById("runBtn").onclick=async function(){
+    var code=document.getElementById("code").value,out=document.getElementById("out"),coach=document.getElementById("coachSlot"),pass=0,html="";
+    for(var i=0;i<TESTS.length;i++){
+      var t=TESTS[i];
+      try{
+        var r=await runPy(code,t.grid,t.row,t.col,t.val);
+        var got=Boolean(r.v!==undefined?r.v:r);
+        var ok=got===t.expect; if(ok)pass++;
+        html+="<div class=\""+(ok?"ok":"bad")+"\">Test "+(i+1)+": "+(ok?"pass":"fail")+" (expected "+t.expect+", got "+got+")</div>";
+      }catch(e){html+="<div class=\"bad\">Test "+(i+1)+": error "+e+"</div>";}
+    }
+    out.innerHTML=pass+"/"+TESTS.length+" tests passed.";
+    out.className="status "+(pass===TESTS.length?"ok":"bad");
+    if(pass<TESTS.length&&window.ThinkingCoach){
+      coach.innerHTML=ThinkingCoach.codeFailHtml({outputMismatch:true})+ThinkingCoach.recordStruggle();
+    }else if(pass===TESTS.length){
+      onVisualWin();
+      if(window.ThinkingCoach){ThinkingCoach.resetStruggle();coach.innerHTML='<div class="coach-affirm"><strong>All visual levels complete</strong><p>You finished Snake, Maze, and Sudoku logic. That is sustained critical thinking.</p></div>';}
+    }
+  };
+})();
+  </script>
+</body>
+</html>

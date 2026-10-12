@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Visual Play Track</title>
+  <style>
+    :root { --bg:#0e1a33; --card:#16264a; --ink:#f3efe0; --mut:#a9b3c7; --gold:#c9a227; --ok:#1f9d57; --line:#2b3d68; }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,sans-serif;padding:10px}
+    h1{font-size:18px;margin:0 0 6px}
+    .lead{color:var(--mut);font-size:13px;margin:0 0 10px}
+    .track{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+    .tab{flex:1;min-width:100px;padding:10px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer;text-align:left;font:inherit}
+    .tab.done{border-color:var(--ok)} .tab.active{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.25)}
+    .tab.locked{opacity:.55;cursor:not-allowed}
+    .tab small{display:block;color:var(--mut);font-size:11px;margin-top:4px}
+    iframe{width:100%;min-height:920px;border:1px solid var(--line);border-radius:12px;background:#0b1530}
+    .note{font-size:12px;color:var(--mut);margin-top:8px}
+    .weekly-badge{display:inline-block;background:var(--gold);color:#14284b;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;margin-left:6px}
+  </style>
+  <link rel="stylesheet" href="thinking-coach.css">
+</head>
+<body>
+  <h1 id="title">Visual Play Track</h1>
+  <p class="lead" id="lead">Finish each game in order. You cannot skip ahead.</p>
+  <div class="track" id="tabs"></div>
+  <iframe id="frame" title="Visual game lab"></iframe>
+  <p class="note" id="trackNote"></p>
+  <div id="affirmSlot"></div>
+  <script src="weekly-content.js"></script>
+  <script src="weekly-visual-progress.js"></script>
+  <script src="visual-progress.js"></script>
+  <script src="thinking-coach.js"></script>
+  <script>
+(function(){
+  var qp=new URLSearchParams(location.search);
+  var weekDay=qp.get("dbaDay");
+  var dbaDate=qp.get("dbaDate")||"";
+  var frame=document.getElementById("frame");
+  var tabs=document.getElementById("tabs"),note=document.getElementById("trackNote");
+
+  if(weekDay!==null&&dbaDate){
+    var wd=parseInt(weekDay,10);
+    var plan=WeeklyContent.DAYS[wd]||WeeklyContent.DAYS[0];
+    var GAMES=plan.visualGames||[];
+    var order=GAMES.map(function(g){return g.id;});
+    var orderParam=encodeURIComponent(order.join(","));
+
+    document.getElementById("title").innerHTML="Today's visual set (3 games) <span class=\"weekly-badge\">"+plan.short+"</span>";
+    document.getElementById("lead").textContent=plan.logic+" — order today: "+WeeklyContent.visualSummary(plan)+".";
+    document.getElementById("tabs").style.display="flex";
+
+    function gameSrc(g){
+      var qs="weekly=1&dbaDate="+encodeURIComponent(dbaDate)+"&dbaDay="+wd+
+        "&dbaVisualOrder="+orderParam+
+        "&dbaVariant="+(g.variant||0);
+      if(g.winScore) qs+="&dbaWinScore="+g.winScore;
+      return g.id+"-coder-lab.html?"+qs;
+    }
+
+    function renderTabs(activeId){
+      tabs.innerHTML="";
+      GAMES.forEach(function(g){
+        var done=WeeklyVisualProgress.isDone(dbaDate,g.id);
+        var unlocked=WeeklyVisualProgress.isUnlocked(dbaDate,g.id,order);
+        var b=document.createElement("button");
+        b.type="button";
+        b.className="tab"+(g.id===activeId?" active":"")+(done?" done":"")+(!unlocked?" locked":"");
+        b.innerHTML="<strong>"+g.label+"</strong><small>"+(done?"Complete":unlocked?g.hint:"Finish the previous game first")+"</small>";
+        b.onclick=function(){
+          if(!unlocked){
+            note.textContent="Finish game "+(order.indexOf(g.id))+" first — no skipping on daily practice.";
+            if(window.ThinkingCoach)document.getElementById("affirmSlot").innerHTML=ThinkingCoach.encouragementHtml();
+            return;
+          }
+          load(g.id);
+        };
+        tabs.appendChild(b);
+      });
+    }
+
+    function load(id){
+      var g=GAMES.find(function(x){return x.id===id;})||GAMES[0];
+      if(!WeeklyVisualProgress.isUnlocked(dbaDate,g.id,order)) id=order[0];
+      g=GAMES.find(function(x){return x.id===id;})||GAMES[0];
+      frame.src=gameSrc(g);
+      note.textContent=g.hint;
+      renderTabs(g.id);
+    }
+
+    window.addEventListener("message",function(e){
+      if(!e.data||e.data.type!=="pp-weekly-visual-game"||e.data.date!==dbaDate)return;
+      renderTabs(e.data.game);
+      if(e.data.allDone){
+        note.textContent="All three games done for "+plan.name+". Visual practice is checked off for this day.";
+      }else{
+        var idx=order.indexOf(e.data.game);
+        if(idx>=0&&idx<order.length-1){
+          note.textContent=GAMES[idx+1].label+" unlocked — click the next tab.";
+        }
+      }
+    });
+
+    var start=order[0];
+    order.forEach(function(id){
+      if(!WeeklyVisualProgress.isDone(dbaDate,id)&&WeeklyVisualProgress.isUnlocked(dbaDate,id,order))start=id;
+    });
+    load(start);
+    return;
+  }
+
+  var GAMES=[
+    {id:"snake",label:"1 · Snake",file:"snake-coder-lab.html",hint:"Score 5 apples to unlock maze."},
+    {id:"maze",label:"2 · Maze",file:"maze-coder-lab.html",hint:"Reach the star to unlock Sudoku."},
+    {id:"sudoku",label:"3 · Sudoku logic",file:"sudoku-coder-lab.html",hint:"Pass all tests to complete the track."}
+  ];
+  function renderTabs(active){
+    tabs.innerHTML="";
+    GAMES.forEach(function(g){
+      var b=document.createElement("button");
+      b.type="button";
+      b.className="tab"+(g.id===active?" active":"")+(VisualProgress.isDone(g.id)?" done":"")+(!VisualProgress.isUnlocked(g.id)?" locked":"");
+      b.innerHTML="<strong>"+g.label+"</strong><small>"+(VisualProgress.isDone(g.id)?"Complete":VisualProgress.isUnlocked(g.id)?g.hint:"Locked")+"</small>";
+      b.onclick=function(){
+        if(!VisualProgress.isUnlocked(g.id)){
+          note.textContent="Finish the previous level first — no skipping. You are building real skill.";
+          if(window.ThinkingCoach)document.getElementById("affirmSlot").innerHTML=ThinkingCoach.encouragementHtml();
+          return;
+        }
+        load(g.id);
+      };
+      tabs.appendChild(b);
+    });
+  }
+  function load(id){
+    var g=GAMES.find(function(x){return x.id===id;})||GAMES[0];
+    if(!VisualProgress.isUnlocked(g.id)) id="snake";
+    g=GAMES.find(function(x){return x.id===id;});
+    frame.src=g.file;
+    note.textContent=g.hint;
+    renderTabs(g.id);
+  }
+  window.addEventListener("message",function(e){
+    if(!e.data||e.data.type!=="pp-visual-done")return;
+    renderTabs(e.data.game);
+    if(e.data.game==="snake")note.textContent="Maze unlocked! Click level 2.";
+    if(e.data.game==="maze")note.textContent="Sudoku unlocked! Click level 3.";
+    if(VisualProgress.allDone())note.textContent="All three visual levels complete. Mark Visual Play complete on the lesson page.";
+  });
+  var start="snake";
+  GAMES.forEach(function(g){if(!VisualProgress.isDone(g.id)&&VisualProgress.isUnlocked(g.id))start=g.id;});
+  load(start);
+})();
+  </script>
+</body>
+</html>

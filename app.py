@@ -70,6 +70,7 @@ LESSON_PAGE_PATHS = {
     "data-storage-lesson-3": "lesson3.html",
     "web-applications-lesson-4": "lesson4.html",
     "python-beginner-lesson-1": "python-lesson1.html",
+    "python-daily-practice": "python-daily-practice.html",
 }
 COURSE_NAV_LABELS = {
     "intermediate-readiness-week": "Week 0",
@@ -78,6 +79,7 @@ COURSE_NAV_LABELS = {
     "data-storage-lesson-3": "Week 3 · L3",
     "web-applications-lesson-4": "Week 4 · L4",
     "python-beginner-lesson-1": "Week 1",
+    "python-daily-practice": "Daily track",
 }
 MAX_VIDEO_UPLOAD_BYTES = int(os.environ.get("MAX_VIDEO_UPLOAD_MB", "250")) * 1024 * 1024
 LESSONS = {
@@ -311,11 +313,20 @@ LESSONS = {
             },
             {
                 "part": 3,
-                "title": "Class Recording (24 Sep)",
+                "title": "Class Recording",
                 "duration": "Recording 3",
-                "slug": "class-recording-sep-24",
+                "slug": "class-recording",
             },
         ],
+    },
+    "python-daily-practice": {
+        "title": "Python Practical · Daily Track",
+        "section_ids": ["welcome", "predict", "code", "visual", "projects", "wrapup"],
+        "prerequisite": None,
+        "video_dir": os.environ.get(
+            "PYTHON_PRACTICE_VIDEO_DIR", "assets/videos/python-practice"
+        ),
+        "recording_segments": [],
     },
 }
 
@@ -366,6 +377,27 @@ COURSES = {
         "lesson_slugs": [
             "intermediate-readiness-week",
             "python-beginner-lesson-1",
+        ],
+    },
+    "python-practical": {
+        "title": "Python Practical",
+        "category": "Programming",
+        "status": "open",
+        "image": "assets/school/icon-coding.png",
+        "entry_path": "python-daily-practice.html",
+        "price_label": "Manual checkout",
+        "description": (
+            "A separate daily track for critical thinking and problem solving: "
+            "30–40 minutes of predict-and-reason quests, in-browser coding, "
+            "and optional project PDFs."
+        ),
+        "highlights": [
+            "Daily Python Quest: 5 reasoning challenges",
+            "Daily coding challenges at three levels",
+            "Mini-Projects and Project Track PDF downloads",
+        ],
+        "lesson_slugs": [
+            "python-daily-practice",
         ],
     },
     "web-development-coding": {
@@ -527,6 +559,7 @@ def is_direct_access_student(conn, student_id):
 DIRECT_ACCESS_COURSE_SLUGS = (
     "computer-fundamentals",
     "python-fundamentals",
+    "python-practical",
 )
 
 
@@ -1105,7 +1138,7 @@ def grant_direct_access_students(conn):
     if rows:
         granted = ", ".join(row["username"] for row in rows)
         print(
-            "Granted direct course access (Computer Fundamentals + Python Fundamentals) to: "
+            "Granted direct course access (Computer Fundamentals, Python Fundamentals, Python Practical) to: "
             f"{granted}"
         )
 

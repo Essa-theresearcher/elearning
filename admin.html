@@ -1149,6 +1149,7 @@
 
           const computerFundamentalsEnrollment = enrollmentFor("computer-fundamentals");
           const pythonFundamentalsEnrollment = enrollmentFor("python-fundamentals");
+          const pythonPracticalEnrollment = enrollmentFor("python-practical");
 
           const accessComputer = document.createElement("span");
           accessComputer.textContent = "Computer Fundamentals: "
@@ -1157,6 +1158,10 @@
           const accessPython = document.createElement("span");
           accessPython.textContent = "Python Fundamentals: "
             + (pythonFundamentalsEnrollment ? enrollmentStatusLabel(pythonFundamentalsEnrollment.status) : "No access yet");
+
+          const accessPythonPractical = document.createElement("span");
+          accessPythonPractical.textContent = "Python Practical: "
+            + (pythonPracticalEnrollment ? enrollmentStatusLabel(pythonPracticalEnrollment.status) : "No access yet");
 
           function createGrantButton(courseSlug, label, enrollment) {
             const grantButton = document.createElement("button");
@@ -1181,6 +1186,11 @@
             "Python Fundamentals",
             pythonFundamentalsEnrollment
           );
+          const grantPythonPracticalButton = createGrantButton(
+            "python-practical",
+            "Python Practical",
+            pythonPracticalEnrollment
+          );
 
           const resetForm = createPasswordResetForm(student.id, "student");
 
@@ -1189,8 +1199,10 @@
           item.appendChild(created);
           item.appendChild(accessComputer);
           item.appendChild(accessPython);
+          item.appendChild(accessPythonPractical);
           item.appendChild(grantComputerButton);
           item.appendChild(grantPythonButton);
+          item.appendChild(grantPythonPracticalButton);
           item.appendChild(resetForm);
           studentList.appendChild(item);
         });

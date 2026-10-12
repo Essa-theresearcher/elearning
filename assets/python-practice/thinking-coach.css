@@ -1,0 +1,46 @@
+.coach-box {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.coach-wrong {
+  background: rgba(214, 69, 69, 0.1);
+  border: 1px solid rgba(214, 69, 69, 0.35);
+}
+.coach-protocol {
+  background: rgba(201, 162, 39, 0.14);
+  border: 1px solid rgba(201, 162, 39, 0.45);
+}
+.coach-box strong {
+  display: block;
+  margin-bottom: 6px;
+}
+.coach-box p {
+  margin: 6px 0;
+}
+.coach-steps {
+  margin: 8px 0 8px 18px;
+  padding: 0;
+}
+.coach-steps li {
+  margin-bottom: 4px;
+}
+.coach-foot {
+  font-size: 13px;
+  opacity: 0.85;
+}
+.coach-affirm {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(31, 157, 87, 0.18), rgba(201, 162, 39, 0.2));
+  border: 1px solid rgba(201, 162, 39, 0.55);
+  font-size: 14px;
+}
+.coach-affirm strong {
+  display: block;
+  margin-bottom: 6px;
+  color: inherit;
+}

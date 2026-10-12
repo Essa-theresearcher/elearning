@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Practical · Daily Critical Thinking Track</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --navy: #132a4c;
+      --navy-dark: #0b1b33;
+      --gold: #c9a227;
+      --paper: #ffffff;
+      --canvas: #f4f5f0;
+      --ivory: #faf6ec;
+      --line: #ded9c9;
+      --line-strong: #c8bea3;
+      --ink: #202633;
+      --muted: #66707d;
+      --teal: #206d6f;
+      --teal-soft: #e2f0ec;
+      --blue: #436a9f;
+      --rose: #9b594c;
+      --shadow: 0 16px 34px rgba(19, 42, 76, 0.08);
+      --radius: 8px;
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+      min-width: 0;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    code {
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      background: #eef1f3;
+      color: var(--navy-dark);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.92em;
+      white-space: nowrap;
+    }
+
+    pre {
+      overflow: auto;
+      margin: 16px 0 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      background: #f8faf9;
+      color: var(--navy-dark);
+    }
+
+    pre code {
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      color: inherit;
+      font-size: 13px;
+      white-space: pre;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(19, 42, 76, 0.04);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 14px 24px;
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--navy);
+      color: var(--gold);
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-text strong {
+      display: block;
+      color: var(--navy-dark);
+      font-size: 14px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-text span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 230px;
+    }
+
+    .progress-copy {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      position: relative;
+      flex: 1;
+      height: 8px;
+      min-width: 120px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #e9e3d2;
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--teal);
+      transition: width 180ms ease;
+    }
+
+    .topbar-actions,
+    .account-menu {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .account-name {
+      max-width: 180px;
+      overflow: hidden;
+      color: var(--navy-dark);
+      font-size: 13px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .logout-btn {
+      border: 0;
+      padding: 6px 0;
+      background: transparent;
+      color: var(--teal);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      white-space: nowrap;
+    }
+
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(11, 27, 51, 0.72);
+    }
+
+    .auth-panel {
+      width: min(440px, 100%);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.24);
+      overflow: hidden;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 16px;
+      padding: 28px;
+    }
+
+    .auth-form h2 {
+      margin: 0;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .auth-copy {
+      margin: -6px 0 4px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .auth-field {
+      display: grid;
+      gap: 7px;
+      color: var(--navy-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .auth-field input,
+    .auth-field select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .auth-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 16px;
+      background: var(--navy);
+      color: var(--paper);
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .auth-error {
+      min-height: 20px;
+      margin: 0;
+      color: #a33b31;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    body.auth-locked .topbar,
+    body.auth-locked .layout {
+      pointer-events: none;
+      user-select: none;
+    }
+
+    body.lesson-locked .layout {
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .lesson-lock-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding-left: 20px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .lesson-lock-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+      gap: 28px;
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 28px 24px 56px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 82px;
+      align-self: start;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 24px rgba(19, 42, 76, 0.05);
+      overflow: hidden;
+    }
+
+    .sidebar-head {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--ivory);
+    }
+
+    .eyebrow {
+      display: block;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .sidebar h1 {
+      margin: 6px 0 8px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .sidebar-meta {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .course-links {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .course-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 7px 9px;
+      background: var(--paper);
+      color: var(--navy);
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .course-link:hover,
+    .course-link.is-current {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+      color: var(--navy-dark);
+    }
+
+    .lesson-nav {
+      display: grid;
+      padding: 8px;
+    }
+
+    .lesson-nav a {
+      display: grid;
+      grid-template-columns: 22px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 10px;
+      border-radius: 7px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .lesson-nav a:hover,
+    .lesson-nav a.active {
+      background: var(--teal-soft);
+      color: var(--navy-dark);
+    }
+
+    .nav-dot {
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--line-strong);
+      border-radius: 50%;
+      background: var(--paper);
+    }
+
+    .lesson-nav a.done .nav-dot {
+      border-color: var(--teal);
+      background: var(--teal);
+      box-shadow: inset 0 0 0 3px var(--paper);
+    }
+
+    .duration {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .main {
+      min-width: 0;
+    }
+
+    .lesson-section {
+      margin-bottom: 26px;
+      scroll-margin-top: 94px;
+    }
+
+    .section-surface {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 28px 30px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-title {
+      max-width: 780px;
+    }
+
+    .section-title h2 {
+      margin: 4px 0 8px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .section-body {
+      padding: 26px 30px 30px;
+    }
+
+    .complete-btn,
+    .primary-link,
+    .secondary-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .complete-btn,
+    .primary-link {
+      background: var(--navy);
+      color: var(--paper);
+    }
+
+    .complete-btn.is-done {
+      background: var(--teal);
+    }
+
+    .secondary-link {
+      border-color: var(--line-strong);
+      background: var(--paper);
+      color: var(--navy);
+    }
+
+    .intro-band {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(240px, 0.9fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .intro-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      background: var(--ivory);
+    }
+
+    .intro-panel h3,
+    .reading-block h3,
+    .project-rubric h3 {
+      margin: 0 0 10px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .week-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .day-tile {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: #fbfcfb;
+    }
+
+    .day-tile strong {
+      display: block;
+      color: var(--teal);
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .day-tile span {
+      display: block;
+      margin-top: 6px;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .reading-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .reading-block {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+    }
+
+    .reading-block:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .reading-block p,
+    .reading-block li,
+    .project-rubric li {
+      color: var(--ink);
+      font-size: 15px;
+    }
+
+    .callout {
+      margin: 18px 0;
+      border-left: 4px solid var(--teal);
+      padding: 14px 16px;
+      background: var(--teal-soft);
+      color: var(--navy-dark);
+    }
+
+    .teacher-resources {
+      margin-top: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: #fffdf7;
+    }
+
+    .teacher-resources h3 {
+      margin: 0 0 6px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .teacher-resources p {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .teacher-resource-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .teacher-resource-link {
+      display: grid;
+      gap: 4px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px 14px;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .teacher-resource-link:hover {
+      border-color: var(--teal);
+    }
+
+    .teacher-resource-type {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .teacher-resource-link strong {
+      color: var(--navy-dark);
+      font-size: 15px;
+    }
+
+    .teacher-resource-link span:last-child {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .embedded-frame {
+      width: 100%;
+      min-height: 760px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+    }
+
+    .project-frame {
+      min-height: 900px;
+    }
+
+    .quest-frame {
+      min-height: 720px;
+    }
+
+    .code-quest-frame {
+      min-height: 920px;
+    }
+
+    .download-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .download-card {
+      display: grid;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      background: var(--paper);
+    }
+
+    .download-card strong {
+      color: var(--navy-dark);
+      font-size: 16px;
+    }
+
+    .download-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .secondary-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 8px 14px;
+      background: var(--paper);
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .secondary-link:hover {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+    }
+
+    .course-links {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .thinking-panel {
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      background: #fffdf7;
+    }
+
+    .thinking-panel h3 {
+      margin: 0 0 8px;
+      color: var(--navy-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+    }
+
+    .thinking-panel ol {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .thinking-panel li {
+      margin-bottom: 6px;
+    }
+
+    .lesson-nav a.locked {
+      opacity: 0.45;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+
+    .section-locked-banner {
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line-strong);
+      background: #fff8e6;
+      color: var(--navy-dark);
+      font-size: 14px;
+    }
+
+    .week-calendar {
+      margin: 16px 0 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      background: var(--paper);
+    }
+
+    .week-calendar h3 {
+      margin: 0 0 4px;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--navy-dark);
+      font-size: 20px;
+    }
+
+    .week-calendar .week-range {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .week-days {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .week-day {
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 6px;
+      background: var(--ivory);
+      text-align: center;
+      font-size: 12px;
+      cursor: pointer;
+      min-height: 72px;
+    }
+
+    .week-day strong {
+      display: block;
+      font-size: 13px;
+      color: var(--navy-dark);
+    }
+
+    .week-day span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    .week-day.is-today {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 2px rgba(32, 109, 111, 0.2);
+    }
+
+    .week-day.is-selected {
+      border-color: var(--gold);
+      background: #fffdf5;
+    }
+
+    .week-day.is-done {
+      border-color: var(--ok);
+      background: #eef8f0;
+    }
+
+    .week-day.is-missed,
+    .week-day.is-future {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .day-work-banner {
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      border-left: 4px solid var(--teal);
+      background: var(--teal-soft);
+      font-size: 14px;
+    }
+
+    .day-task-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .day-task-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 99px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+    }
+
+    .day-task-pill.done {
+      border-color: var(--ok);
+      color: var(--ok);
+    }
+
+    @media (max-width: 720px) {
+      .week-days {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .thinking-panel p {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .next-lesson {
+      margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      background: var(--ivory);
+    }
+
+    @media (max-width: 980px) {
+      .layout,
+      .intro-band {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .week-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar-inner,
+      .topbar-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .topbar-inner {
+        padding: 14px 16px;
+      }
+
+      .brand-lockup {
+        width: 100%;
+      }
+
+      .brand-text strong,
+      .brand-text span {
+        white-space: normal;
+      }
+
+      .progress-wrap {
+        width: 100%;
+      }
+
+      .account-menu {
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .layout {
+        padding: 18px 14px 44px;
+      }
+
+      .sidebar,
+      .content-card,
+      .next-lesson {
+        border-radius: 6px;
+      }
+
+      .section-header {
+        flex-direction: column;
+        padding: 22px 20px 16px;
+      }
+
+      .section-body {
+        padding: 20px;
+      }
+
+      .course-links,
+      .week-grid {
+        grid-template-columns: 1fr;
+      }
+
+      code {
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .account-menu,
+      .progress-wrap {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .account-name {
+        max-width: 100%;
+      }
+
+      .progress-wrap {
+        gap: 6px;
+      }
+
+      .auth-overlay {
+        align-items: start;
+        overflow: auto;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body class="auth-locked">
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <form class="auth-form" id="loginForm">
+        <span class="eyebrow">Course access</span>
+        <h2 id="authTitle">Sign in</h2>
+        <p class="auth-copy">Use the student account you were given.</p>
+        <input type="hidden" id="loginRole" name="loginRole" value="student">
+        <label class="auth-field">
+          Username
+          <input id="loginUsername" name="username" autocomplete="username" required>
+        </label>
+        <label class="auth-field">
+          Password
+          <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <button class="auth-submit" type="submit">Sign in</button>
+        <p class="auth-error" id="loginMessage" role="alert"></p>
+      </form>
+    </div>
+  </div>
+
+  <div class="auth-overlay" id="lessonLockOverlay" hidden>
+    <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="lessonLockTitle">
+      <div class="auth-form">
+        <span class="eyebrow">Lesson locked</span>
+        <h2 id="lessonLockTitle">Checkout approval required</h2>
+        <p class="auth-copy" id="lessonLockMessage">Python Practical opens after checkout and admin approval.</p>
+        <ul class="lesson-lock-list" id="lessonLockList"></ul>
+        <div class="lesson-lock-actions">
+          <a class="primary-link" id="lessonLockPrimaryLink" href="courses.html">Open marketplace</a>
+          <button class="secondary-link" id="refreshAccessButton" type="button">Check again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand-lockup" href="home.html" aria-label="Digital Bridge School home">
+        <span class="brand-mark">DB</span>
+        <span class="brand-text">
+          <strong>Digital Bridge Academy</strong>
+          <span>Python Practical</span>
+        </span>
+      </a>
+      <div class="topbar-actions">
+        <div class="progress-wrap" aria-label="Daily practice progress">
+          <span class="progress-copy" id="progressCopy">0 of 6 complete</span>
+          <span class="progress-track" aria-hidden="true">
+            <span class="progress-fill" id="progressFill"></span>
+          </span>
+        </div>
+        <div class="account-menu" id="accountMenu" hidden>
+          <span class="account-name" id="accountName"></span>
+          <button class="logout-btn" id="logoutButton" type="button">Log out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Daily practice contents">
+      <div class="sidebar-head">
+        <span class="eyebrow">Python Practical</span>
+        <h1>Daily Critical Thinking Lab</h1>
+        <div class="sidebar-meta">60–75 min daily: heavy predict, code, visual, and project practice</div>
+        <div class="course-links" aria-label="Python Practical">
+          <a class="course-link" href="courses.html">Courses</a>
+          <a class="course-link is-current" href="python-daily-practice.html">Daily track</a>
+        </div>
+      </div>
+      <nav class="lesson-nav" id="lessonNav">
+        <a href="#welcome" data-section="welcome">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Welcome</span>
+          <span class="duration">5 min</span>
+        </a>
+        <a href="#predict" data-section="predict">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Predict &amp; Reason</span>
+          <span class="duration">25 min</span>
+        </a>
+        <a href="#code" data-section="code">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Write Code</span>
+          <span class="duration">25 min</span>
+        </a>
+        <a href="#visual" data-section="visual">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Visual Play</span>
+          <span class="duration">20 min</span>
+        </a>
+        <a href="#projects" data-section="projects">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Project PDFs</span>
+          <span class="duration">extra</span>
+        </a>
+        <a href="#wrapup" data-section="wrapup">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Today&apos;s log</span>
+          <span class="duration">5 min</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <section class="lesson-section" id="welcome" data-track-section="welcome">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Start here</span>
+              <h2>Python Practical — daily problem-solving practice</h2>
+              <p>This course is separate from Python Fundamentals. The goal is to <strong>perfect Python thinking</strong>: predict output, write code under test, debug with a coach, and repeat until patterns stick. Plan for <strong>60–75 minutes</strong> of focused practice most days.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="welcome">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="intro-band">
+              <div>
+                <p>
+                  Each day you get a full workout: <strong>8 predict</strong> challenges, <strong>5 coding</strong> tasks at your level, and <strong>3 visual</strong> games (order changes by weekday). Miss a day in the week and that day locks — stay consistent.
+                </p>
+                <div class="callout">
+                  <strong>Daily rhythm (~60–75 min):</strong> Predict &amp; Reason (~25) → Write Code (~25) → Visual Play (~20) → Today&apos;s log (~5). Replay quests for extra reps after you finish once.
+                </div>
+              </div>
+              <div class="intro-panel">
+                <h3>Critical thinking steps (every activity)</h3>
+                <ol>
+                  <li><strong>Understand:</strong> Say the goal in your own words before you touch the keyboard.</li>
+                  <li><strong>Plan:</strong> Write or sketch the steps — not the full answer yet.</li>
+                  <li><strong>Try:</strong> Make one small attempt and observe what happens.</li>
+                  <li><strong>Compare:</strong> What did you expect vs what actually happened? That gap is the lesson.</li>
+                  <li><strong>Adjust:</strong> Change one thing, test again; use hints only after step 4.</li>
+                </ol>
+              </div>
+            </div>
+
+            <div class="thinking-panel" aria-label="When you get something wrong">
+              <h3>When an answer is wrong</h3>
+              <p>Every quest and lab shows a <strong>step-by-step coach</strong> — not just “incorrect.” Use it to train problem solving, not to rush to the right letter.</p>
+              <ol>
+                <li>Name what you thought would happen.</li>
+                <li>Name what the program actually does on the failing line.</li>
+                <li>Fix or rule out one option with a reason.</li>
+                <li>Try again, then open a hint if you are still stuck.</li>
+              </ol>
+            </div>
+
+            <div class="week-calendar" id="weekCalendar" aria-label="Weekly schedule Sunday to Saturday">
+              <h3>This week (Sunday → Saturday)</h3>
+              <p class="week-range" id="weekRangeLabel"></p>
+              <p class="week-range">Work in order from Sunday through Saturday. If you skip a day, that day <strong>locks</strong> and you cannot open it again. Each day has different predict logic, code level, and <strong>three visual games</strong> (order and goals change by day).</p>
+              <div class="week-days" id="weekDays"></div>
+              <div class="day-work-banner" id="dayWorkBanner" hidden>
+                <strong id="dayWorkTitle"></strong>
+                <p id="daySessionIntro" style="margin:8px 0 0;font-size:13px"></p>
+                <ul id="daySessionGoals" style="margin:8px 0 0;padding-left:18px;font-size:13px"></ul>
+                <p id="dayWorkDesc" style="margin:6px 0 0"></p>
+                <div class="day-task-pills">
+                  <span class="day-task-pill" id="pillPredict">Predict</span>
+                  <span class="day-task-pill" id="pillCode">Code</span>
+                  <span class="day-task-pill" id="pillVisual">Visual</span>
+                </div>
+                <button class="complete-btn" type="button" id="markDayDoneBtn" style="margin-top:10px">Mark day complete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="predict" data-track-section="predict">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Step 1 · ~25 minutes</span>
+              <h2>Daily Python Quest — predict and reason</h2>
+              <p>Eight challenges each day: predict output, fix bugs, fill blanks, and put lines in order. Say your answer out loud before you tap.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="predict">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="section-locked-banner" hidden>Finish the Welcome section first (mark complete), then return here.</div>
+            <div class="thinking-panel">
+              <h3>How to tackle predict questions</h3>
+              <ol>
+                <li>Run the code in your head one line at a time.</li>
+                <li>Track variables on paper after each assignment.</li>
+                <li>Say the output aloud, then pick the matching option.</li>
+                <li>If wrong, read the coach box — it shows where people usually slip.</li>
+              </ol>
+            </div>
+            <iframe class="embedded-frame quest-frame" id="predictFrame" src="assets/python-practice/daily-python-quest.html" title="Daily Python Quest — predict and reason"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="code" data-track-section="code">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Step 2 · ~25 minutes</span>
+              <h2>Daily Python Quest — write and test code</h2>
+              <p>Five coding tasks per day at your assigned level (weekday sets the level). Runs in the browser — internet needed for the Python engine.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="code">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="section-locked-banner" hidden>Finish Predict &amp; Reason first, then come back to Write Code.</div>
+            <div class="thinking-panel">
+              <h3>How to tackle coding challenges</h3>
+              <ol>
+                <li>Restate the task in one sentence.</li>
+                <li>Make one small print work before the full solution.</li>
+                <li>Run &amp; test — read red tests from bottom to top.</li>
+                <li>Use the debugging coach; change one line at a time.</li>
+              </ol>
+            </div>
+            <iframe class="embedded-frame code-quest-frame" id="codeFrame" src="assets/python-practice/daily-python-quest-code.html" title="Daily Python Quest — write code"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="visual" data-track-section="visual">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">See your code move</span>
+              <h2>Visual Play — today’s game</h2>
+              <p>Three visual labs per day — Snake, Maze, and Sudoku in a <strong>different order and challenge</strong> each weekday. Finish all three in the tabs to check off visual practice.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="visual">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="section-locked-banner" hidden>Finish Write Code first, then complete all three visual games below.</div>
+            <div class="thinking-panel">
+              <h3>How to tackle visual labs</h3>
+              <ol>
+                <li>Draw the grid: head, food, and body cells.</li>
+                <li>Decide: move toward food or avoid a crash?</li>
+                <li>Change one rule in <code>choose_direction</code>, test, then run the game.</li>
+                <li>If the snake crashes, read the coach — it explains the likely logic mistake.</li>
+              </ol>
+            </div>
+            <iframe class="embedded-frame code-quest-frame" id="visualHubFrame" src="assets/python-practice/visual-play-hub.html" title="Visual Play Track"></iframe>
+            <p class="thinking-panel" id="visualTrackNote" style="margin-top:12px;font-size:14px;color:var(--muted);">Finish all three games in order for your selected day, then mark Visual Play complete.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="projects" data-track-section="projects">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Build deeper · optional</span>
+              <h2>Project packs (PDF)</h2>
+              <p>Use these when you have 30–45 extra minutes—or on weekends. Start guided, then try unguided briefs without hints.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="projects">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="section-locked-banner" hidden>Finish Visual Play (all 3 games) before opening the PDF project packs.</div>
+            <div class="download-grid">
+              <div class="download-card">
+                <strong>Python Mini-Projects</strong>
+                <p>Topics 1–4 with guided and unguided mini builds, plus a major School Records Manager project. Good for steady skill stacking.</p>
+                <a class="secondary-link" href="assets/python-practice/Python_Mini_Projects.pdf" target="_blank" rel="noopener">Download Mini-Projects PDF</a>
+              </div>
+              <div class="download-card">
+                <strong>Python Project Track</strong>
+                <p>Five stages from interactive programs to APIs and a capstone. Build first; learn the idea while you build.</p>
+                <a class="secondary-link" href="assets/python-practice/Python_Project_Track.pdf" target="_blank" rel="noopener">Download Project Track PDF</a>
+              </div>
+            </div>
+            <div class="callout" style="margin-top: 18px;">
+              <strong>10-minute rule when stuck:</strong> read the last line of the error, shrink the task to one print statement, try 10 more minutes, then use a hint or ask for help.
+            </div>
+            <div class="teacher-resources" id="teacherResources" hidden>
+              <h3>Teacher resources</h3>
+              <p>Extra links for this practice track.</p>
+              <div class="teacher-resource-list" id="teacherResourceList"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="wrapup" data-track-section="wrapup">
+        <div class="section-surface">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="eyebrow">Step 3 · ~5 minutes</span>
+              <h2>Today&apos;s log</h2>
+              <p>Close the loop: one sentence on what clicked, one thing to retry tomorrow.</p>
+            </div>
+            <button class="complete-btn" type="button" data-complete="wrapup">Mark complete</button>
+          </div>
+          <div class="section-body">
+            <div class="section-locked-banner" hidden>Finish the Project PDFs section (or skip if you only did daily quests) before Today&apos;s log.</div>
+            <div class="project-rubric">
+              <h3>Quick reflection (write in your notebook)</h3>
+              <ul>
+                <li><strong>Today I got right:</strong> one challenge type (predict, code, visual, or project).</li>
+                <li><strong>I got stuck on:</strong> be specific (e.g. “converting input to int”).</li>
+                <li><strong>What I thought vs what happened:</strong> one sentence — this builds critical thinking.</li>
+                <li><strong>Tomorrow I will:</strong> same level or step up one level in the coding quest.</li>
+              </ul>
+            </div>
+            <div class="next-lesson">
+              <h3>Come back tomorrow</h3>
+              <p>The daily quests rotate automatically. Your streak and XP stay in this browser.</p>
+              <p><a class="secondary-link" href="courses.html">Browse courses</a> · <a class="secondary-link" href="python-lesson1.html">Python Fundamentals Week 1</a> (optional)</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/python-practice/weekly-schedule.js"></script>
+  <script src="assets/python-practice/weekly-content.js"></script>
+  <script>
+    (function () {
+      const sections = Array.from(document.querySelectorAll("[data-track-section]"));
+      const navLinks = Array.from(document.querySelectorAll("[data-section]"));
+      const completeButtons = Array.from(document.querySelectorAll("[data-complete]"));
+      const progressCopy = document.getElementById("progressCopy");
+      const progressFill = document.getElementById("progressFill");
+      const authOverlay = document.getElementById("authOverlay");
+      const accountMenu = document.getElementById("accountMenu");
+      const accountName = document.getElementById("accountName");
+      const logoutButton = document.getElementById("logoutButton");
+      const loginForm = document.getElementById("loginForm");
+      const loginMessage = document.getElementById("loginMessage");
+      const lessonLockOverlay = document.getElementById("lessonLockOverlay");
+      const lessonLockTitle = document.getElementById("lessonLockTitle");
+      const lessonLockList = document.getElementById("lessonLockList");
+      const lessonLockMessage = document.getElementById("lessonLockMessage");
+      const lessonLockPrimaryLink = document.getElementById("lessonLockPrimaryLink");
+      const refreshAccessButton = document.getElementById("refreshAccessButton");
+      const teacherResources = document.getElementById("teacherResources");
+      const teacherResourceList = document.getElementById("teacherResourceList");
+      const lessonSlug = "python-daily-practice";
+      const baseStorageKey = "dba-python-practical-complete";
+      const canUseBackend = window.location.protocol === "http:" || window.location.protocol === "https:";
+      const total = sections.length;
+      const SECTION_ORDER = ["welcome", "predict", "code", "visual", "projects", "wrapup"];
+      const predictFrame = document.getElementById("predictFrame");
+      const codeFrame = document.getElementById("codeFrame");
+      const visualHubFrame = document.getElementById("visualHubFrame");
+      const weekDaysEl = document.getElementById("weekDays");
+      const weekRangeLabel = document.getElementById("weekRangeLabel");
+      const dayWorkBanner = document.getElementById("dayWorkBanner");
+      const dayWorkTitle = document.getElementById("dayWorkTitle");
+      const dayWorkDesc = document.getElementById("dayWorkDesc");
+      const daySessionIntro = document.getElementById("daySessionIntro");
+      const daySessionGoals = document.getElementById("daySessionGoals");
+      const pillPredict = document.getElementById("pillPredict");
+      const pillCode = document.getElementById("pillCode");
+      const pillVisual = document.getElementById("pillVisual");
+      const markDayDoneBtn = document.getElementById("markDayDoneBtn");
+
+      let activePracticeDate = null;
+
+      let currentUser = null;
+      let storageKey = baseStorageKey + "-guest";
+      let completed = readLocalProgress();
+
+      function readLocalProgress() {
+        try {
+          return new Set(JSON.parse(localStorage.getItem(storageKey) || "[]"));
+        } catch (_) {
+          return new Set();
+        }
+      }
+
+      const sectionLabels = {
+        welcome: "Welcome",
+        predict: "Predict & Reason",
+        code: "Write Code",
+        visual: "Visual Play",
+        projects: "Project PDFs",
+        wrapup: "Today's log"
+      };
+
+      function switchLocalProgress(user) {
+        storageKey = baseStorageKey + "-" + (user ? user.id : "guest");
+        completed = readLocalProgress();
+      }
+
+      function setAuthMessage(message) {
+        loginMessage.textContent = message || "";
+      }
+
+      function parseJsonResponse(response) {
+        return response.json().catch(function () {
+          return {};
+        }).then(function (data) {
+          if (!response.ok) {
+            throw new Error(data.error || "Request failed.");
+          }
+          return data;
+        });
+      }
+
+      function postJson(url, payload) {
+        return fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload || {})
+        }).then(parseJsonResponse);
+      }
+
+      function shouldRedirectStaff(user) {
+        const params = new URLSearchParams(window.location.search);
+        return canUseBackend
+          && user
+          && (user.role === "admin" || user.role === "teacher")
+          && params.get("preview") !== "1";
+      }
+
+      function resourceTypeLabel(type) {
+        const labels = {
+          class: "Class link",
+          reading: "Reading",
+          video: "Video",
+          link: "Link",
+          assignment: "Assignment",
+          download: "Download",
+          other: "Resource"
+        };
+        return labels[type] || "Resource";
+      }
+
+      function renderTeacherResources(resources) {
+        teacherResourceList.innerHTML = "";
+        teacherResources.hidden = !resources.length;
+
+        resources.forEach(function (resource) {
+          const link = document.createElement("a");
+          link.className = "teacher-resource-link";
+          link.href = resource.url;
+          link.target = "_blank";
+          link.rel = "noopener";
+
+          const type = document.createElement("span");
+          type.className = "teacher-resource-type";
+          type.textContent = resourceTypeLabel(resource.resourceType);
+
+          const title = document.createElement("strong");
+          title.textContent = resource.title;
+
+          const description = document.createElement("span");
+          description.textContent = resource.description || resource.url;
+
+          link.appendChild(type);
+          link.appendChild(title);
+          link.appendChild(description);
+          teacherResourceList.appendChild(link);
+        });
+      }
+
+      function loadTeacherResources() {
+        if (!canUseBackend || !currentUser) {
+          renderTeacherResources([]);
+          return;
+        }
+
+        fetch("/api/resources?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(function (response) {
+            if (response.status === 401) {
+              renderAuth(null);
+              throw new Error("Login required");
+            }
+            if (response.status === 423) {
+              response.json().then(lockLesson).catch(function () {
+                checkLessonAccess();
+              });
+              throw new Error("Course locked");
+            }
+            if (!response.ok) throw new Error("Could not load resources");
+            return response.json();
+          })
+          .then(function (data) {
+            renderTeacherResources(Array.isArray(data.resources) ? data.resources : []);
+          })
+          .catch(function () {
+            renderTeacherResources([]);
+          });
+      }
+
+      function renderAuth(user) {
+        if (shouldRedirectStaff(user)) {
+          window.location.href = user.role === "teacher" ? "teacher.html" : "admin.html";
+          return;
+        }
+        currentUser = user || null;
+        switchLocalProgress(currentUser);
+        document.body.classList.toggle("auth-locked", !currentUser && canUseBackend);
+        authOverlay.hidden = Boolean(currentUser) || !canUseBackend;
+        accountMenu.hidden = !currentUser;
+        accountName.textContent = currentUser ? currentUser.displayName || currentUser.username : "";
+        renderProgress();
+      }
+
+      function unlockLesson() {
+        document.body.classList.remove("lesson-locked");
+        lessonLockOverlay.hidden = true;
+      }
+
+      function lockLesson(data) {
+        if (data.course && !data.course.approved) {
+          const course = data.course.course || {};
+          const enrollment = data.course.enrollment;
+          const items = [];
+
+          document.body.classList.add("lesson-locked");
+          lessonLockOverlay.hidden = false;
+          lessonLockTitle.textContent = "Checkout approval required";
+          lessonLockMessage.textContent = (course.title || "This course") + " opens after checkout and admin approval.";
+          lessonLockPrimaryLink.href = "courses.html";
+          lessonLockPrimaryLink.textContent = "Open marketplace";
+
+          if (!enrollment) {
+            items.push("Add the course to your cart and submit checkout.");
+          } else if (enrollment.status === "pending") {
+            items.push("Your checkout is waiting for admin approval.");
+          } else if (enrollment.status === "rejected") {
+            items.push("Your checkout was rejected. Contact the school or submit checkout again.");
+          }
+          items.push("After admin approval, click Check again.");
+
+          lessonLockList.innerHTML = "";
+          items.forEach(function (item) {
+            const listItem = document.createElement("li");
+            listItem.textContent = item;
+            lessonLockList.appendChild(listItem);
+          });
+          return;
+        }
+
+        const prerequisite = data.prerequisite || {};
+        const title = prerequisite.title || "Week 0";
+        const missingSections = prerequisite.missingSections || [];
+        const items = [];
+
+        document.body.classList.add("lesson-locked");
+        lessonLockOverlay.hidden = false;
+        lessonLockTitle.textContent = "Lesson locked";
+        lessonLockMessage.textContent = "Complete the requirements for " + title + " before continuing.";
+        lessonLockPrimaryLink.href = "courses.html";
+        lessonLockPrimaryLink.textContent = "Open marketplace";
+
+        missingSections.forEach(function (section) {
+          items.push("Complete section: " + (sectionLabels[section] || section) + ".");
+        });
+        if (!items.length) {
+          items.push("Click Check again after requirements are met.");
+        }
+
+        lessonLockList.innerHTML = "";
+        items.forEach(function (item) {
+          const listItem = document.createElement("li");
+          listItem.textContent = item;
+          lessonLockList.appendChild(listItem);
+        });
+      }
+
+      function checkLessonAccess() {
+        if (!canUseBackend || !currentUser) {
+          unlockLesson();
+          return Promise.resolve(true);
+        }
+
+        return fetch("/api/lesson-access?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(function (response) {
+            if (response.status === 401) {
+              renderAuth(null);
+              throw new Error("Login required");
+            }
+            if (!response.ok) throw response;
+            return response.json();
+          })
+          .then(function (data) {
+            if (data.unlocked) {
+              unlockLesson();
+              return true;
+            }
+            lockLesson(data);
+            return false;
+          })
+          .catch(function (error) {
+            if (error && typeof error.json === "function") {
+              return error.json().then(function (data) {
+                lockLesson(data);
+                return false;
+              }).catch(function () {
+                return false;
+              });
+            }
+            return false;
+          });
+      }
+
+      function loadUnlockedLessonData() {
+        return checkLessonAccess().then(function (unlocked) {
+          if (unlocked) {
+            loadProgressFromBackend();
+            loadTeacherResources();
+          }
+          return unlocked;
+        });
+      }
+
+      function isLocalDemoLogin() {
+        const host = window.location.hostname;
+        return (host === "127.0.0.1" || host === "localhost")
+          && new URLSearchParams(window.location.search).get("demo") === "1";
+      }
+
+      function loadAuth() {
+        if (!canUseBackend) {
+          renderAuth(null);
+          return;
+        }
+
+        if (isLocalDemoLogin()) {
+          postJson("/api/auth/login", {
+            loginRole: "student",
+            username: "student",
+            password: "changeme123"
+          }).then(function (data) {
+            renderAuth(data.user);
+            loadUnlockedLessonData();
+          }).catch(function () {
+            renderAuth(null);
+          });
+          return;
+        }
+
+        fetch("/api/auth/me")
+          .then(parseJsonResponse)
+          .then(function (data) {
+            renderAuth(data.user);
+            if (data.authenticated) {
+              loadUnlockedLessonData();
+            }
+          })
+          .catch(function () {
+            renderAuth(null);
+          });
+      }
+
+      function saveProgress() {
+        localStorage.setItem(storageKey, JSON.stringify(Array.from(completed)));
+        saveProgressToBackend();
+      }
+
+      function saveProgressToBackend() {
+        if (!canUseBackend || document.body.classList.contains("lesson-locked")) return;
+
+        fetch("/api/progress/lesson", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lessonSlug: lessonSlug,
+            completedSections: Array.from(completed)
+          })
+        }).then(function (response) {
+          if (response.status === 401) {
+            renderAuth(null);
+            return;
+          }
+          if (response.status === 423) {
+            response.json().then(lockLesson).catch(function () {
+              checkLessonAccess();
+            });
+          }
+        }).catch(function () {
+          // Keep local progress if the backend is temporarily unavailable.
+        });
+      }
+
+      function loadProgressFromBackend() {
+        if (!canUseBackend) {
+          renderProgress();
+          return;
+        }
+
+        fetch("/api/progress/lesson?lessonSlug=" + encodeURIComponent(lessonSlug))
+          .then(function (response) {
+            if (response.status === 401) {
+              renderAuth(null);
+              throw new Error("Login required");
+            }
+            if (response.status === 423) {
+              response.json().then(lockLesson).catch(function () {
+                checkLessonAccess();
+              });
+              throw new Error("Course locked");
+            }
+            if (!response.ok) throw new Error("Could not load progress");
+            return response.json();
+          })
+          .then(function (data) {
+            if (Array.isArray(data.completedSections)) {
+              completed = new Set(data.completedSections);
+              localStorage.setItem(storageKey, JSON.stringify(Array.from(completed)));
+              renderProgress();
+            }
+          })
+          .catch(function () {
+            renderProgress();
+          });
+      }
+
+      function prerequisiteSection(sectionId) {
+        const index = SECTION_ORDER.indexOf(sectionId);
+        if (index <= 0) return null;
+        return SECTION_ORDER[index - 1];
+      }
+
+      function isSectionUnlocked(sectionId) {
+        const prereq = prerequisiteSection(sectionId);
+        if (!prereq) return true;
+        if (prereq === "welcome") return true;
+        return completed.has(prereq);
+      }
+
+      function queryForDate(date) {
+        const key = WeeklySchedule.dateKey(date);
+        const dow = date.getDay();
+        const plan = WeeklyContent.planForDate(date);
+        return (
+          "dbaDay=" +
+          dow +
+          "&dbaDate=" +
+          encodeURIComponent(key) +
+          "&dbaCodeLevel=" +
+          plan.codeLevel +
+          "&dbaPredictShift=" +
+          plan.predictShift +
+          "&dbaPredictCount=" +
+          (plan.predictCount || 8) +
+          "&dbaCodeCount=" +
+          (plan.codeCount || 5)
+        );
+      }
+
+      function refreshDayIframes(date) {
+        if (!date || !WeeklySchedule.isAccessible(date)) return;
+        const q = queryForDate(date);
+        predictFrame.src = "assets/python-practice/daily-python-quest.html?" + q;
+        codeFrame.src = "assets/python-practice/daily-python-quest-code.html?" + q;
+        visualHubFrame.src = "assets/python-practice/visual-play-hub.html?" + q;
+      }
+
+      function updateDayBanner(date) {
+        if (!date) {
+          dayWorkBanner.hidden = true;
+          return;
+        }
+        const plan = WeeklyContent.planForDate(date);
+        const rec = WeeklySchedule.getRecord(date);
+        dayWorkBanner.hidden = false;
+        dayWorkTitle.textContent = plan.name + " · " + plan.title + " (" + (plan.sessionMinutes || "60–75") + " min)";
+        if (daySessionIntro) daySessionIntro.textContent = plan.sessionIntro || plan.logic;
+        if (daySessionGoals) {
+          daySessionGoals.innerHTML = "";
+          (plan.sessionGoals || []).forEach(function (g) {
+            var li = document.createElement("li");
+            li.textContent = g;
+            daySessionGoals.appendChild(li);
+          });
+        }
+        dayWorkDesc.textContent =
+          WeeklyContent.practiceSummary(plan) + ". Theme: " + plan.logic + ". Visual: " + WeeklyContent.visualSummary(plan) + ".";
+        pillPredict.classList.toggle("done", Boolean(rec.predict));
+        pillCode.classList.toggle("done", Boolean(rec.code));
+        pillVisual.classList.toggle("done", Boolean(rec.visual));
+        markDayDoneBtn.disabled = WeeklySchedule.isDone(date);
+        markDayDoneBtn.textContent = WeeklySchedule.isDone(date) ? "Day completed ✓" : "Mark day complete";
+      }
+
+      function selectPracticeDay(date) {
+        WeeklySchedule.syncLocks();
+        if (!WeeklySchedule.isAccessible(date)) {
+          alert("This day is locked. Missed days cannot be reopened. Complete today if it is still open.");
+          return;
+        }
+        activePracticeDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        refreshDayIframes(activePracticeDate);
+        updateDayBanner(activePracticeDate);
+        renderWeekCalendar();
+      }
+
+      function renderWeekCalendar() {
+        if (!weekDaysEl || typeof WeeklySchedule === "undefined") return;
+        WeeklySchedule.syncLocks();
+        const today = new Date();
+        const dates = WeeklySchedule.weekDates(today);
+        weekRangeLabel.textContent = WeeklySchedule.weekLabel(today);
+        weekDaysEl.innerHTML = "";
+        dates.forEach(function (date) {
+          const plan = WeeklyContent.planForDate(date);
+          const st = WeeklySchedule.status(date);
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "week-day";
+          if (st === "today") btn.classList.add("is-today");
+          if (st === "open") btn.classList.add("is-open");
+          if (activePracticeDate && WeeklySchedule.dateKey(date) === WeeklySchedule.dateKey(activePracticeDate)) {
+            btn.classList.add("is-selected");
+          }
+          if (st === "done") btn.classList.add("is-done");
+          if (st === "missed") btn.classList.add("is-missed");
+          if (st === "future") btn.classList.add("is-future");
+          btn.innerHTML = "<strong>" + plan.short + "</strong><span>" + plan.title + "</span><span>" +
+            (st === "done" ? "Done" : st === "missed" ? "Locked (missed)" : st === "future" ? "Not yet" : st === "today" ? "Today" : "Open") +
+            "</span>";
+          if (st !== "missed" && st !== "future") {
+            btn.addEventListener("click", function () {
+              selectPracticeDay(date);
+            });
+          }
+          weekDaysEl.appendChild(btn);
+        });
+      }
+
+      function visualTrackComplete() {
+        try {
+          var raw = localStorage.getItem("pp-visual-progress") || "{}";
+          var data = JSON.parse(raw);
+          return data.snake && data.maze && data.sudoku;
+        } catch (_) {
+          return false;
+        }
+      }
+
+      function visualSectionCanComplete() {
+        if (activePracticeDate) {
+          return Boolean(WeeklySchedule.getRecord(activePracticeDate).visual);
+        }
+        return visualTrackComplete();
+      }
+
+      function renderProgress() {
+        const count = completed.size;
+        progressCopy.textContent = count + " of " + total + " complete";
+        progressFill.style.width = Math.round((count / total) * 100) + "%";
+
+        navLinks.forEach(function (link) {
+          const id = link.dataset.section;
+          link.classList.toggle("done", completed.has(id));
+          link.classList.toggle("locked", !isSectionUnlocked(id));
+        });
+
+        completeButtons.forEach(function (button) {
+          const id = button.dataset.complete;
+          const isDone = completed.has(id);
+          button.classList.toggle("is-done", isDone);
+          if (id === "visual" && !visualSectionCanComplete() && !isDone) {
+            button.disabled = true;
+            button.title = activePracticeDate
+              ? "Finish all three visual games in the frame above first."
+              : "Finish Snake, then Maze, then Sudoku in the Visual Play track first.";
+            button.textContent = activePracticeDate ? "Finish 3 daily games" : "Finish 3 games first";
+          } else {
+            button.disabled = false;
+            button.title = "";
+            button.textContent = isDone ? "Completed" : "Mark complete";
+          }
+        });
+
+        sections.forEach(function (section) {
+          const id = section.id;
+          const banner = section.querySelector(".section-locked-banner");
+          if (!banner) return;
+          banner.hidden = isSectionUnlocked(id);
+        });
+      }
+
+      completeButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          if (document.body.classList.contains("lesson-locked")) return;
+          const id = button.dataset.complete;
+          if (id === "visual" && !visualSectionCanComplete() && !completed.has(id)) {
+            alert(activePracticeDate
+              ? "Finish all three visual games for this day first, then mark this section complete."
+              : "Finish all three visual games in order (Snake, then Maze, then Sudoku) before marking this section complete.");
+            return;
+          }
+          if (!isSectionUnlocked(id) && !completed.has(id)) {
+            const prereq = prerequisiteSection(id);
+            alert("Finish the previous section first: " + (sectionLabels[prereq] || prereq) + ".");
+            return;
+          }
+          if (completed.has(id)) {
+            completed.delete(id);
+          } else {
+            completed.add(id);
+          }
+          saveProgress();
+          renderProgress();
+        });
+      });
+
+      window.addEventListener("message", function (event) {
+        if (!event.data) return;
+        if (event.data.type === "pp-day-task" && event.data.date) {
+          var parts = event.data.date.split("-");
+          var d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+          WeeklySchedule.markTask(d, event.data.task);
+          if (activePracticeDate && WeeklySchedule.dateKey(activePracticeDate) === event.data.date) {
+            updateDayBanner(activePracticeDate);
+          }
+          renderWeekCalendar();
+        }
+        if (event.data.type === "pp-weekly-visual-game" || event.data.type === "pp-visual-done") {
+          renderProgress();
+          var note = document.getElementById("visualTrackNote");
+          if (note && visualSectionCanComplete()) {
+            note.textContent = "All three visual games complete for this day. You can mark Visual Play complete.";
+          }
+          if (activePracticeDate && event.data.date === WeeklySchedule.dateKey(activePracticeDate)) {
+            updateDayBanner(activePracticeDate);
+          }
+        }
+      });
+
+      if (markDayDoneBtn) {
+        markDayDoneBtn.addEventListener("click", function () {
+          if (!activePracticeDate) return;
+          if (!WeeklySchedule.tasksComplete(activePracticeDate)) {
+            alert("Finish today's predict quest, coding quest, and all three visual games first. Each area checks off when you complete it.");
+            return;
+          }
+          WeeklySchedule.markDone(activePracticeDate);
+          renderWeekCalendar();
+          updateDayBanner(activePracticeDate);
+        });
+      }
+
+      loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setAuthMessage("");
+
+        postJson("/api/auth/login", {
+          loginRole: loginForm.elements.loginRole.value,
+          username: loginForm.elements.username.value,
+          password: loginForm.elements.password.value
+        }).then(function (data) {
+          loginForm.reset();
+          renderAuth(data.user);
+          loadUnlockedLessonData();
+        }).catch(function (error) {
+          setAuthMessage(error.message);
+        });
+      });
+
+      logoutButton.addEventListener("click", function () {
+        postJson("/api/auth/logout", {}).finally(function () {
+          unlockLesson();
+          renderAuth(null);
+          renderTeacherResources([]);
+          document.getElementById("loginUsername").focus();
+        });
+      });
+
+      refreshAccessButton.addEventListener("click", function () {
+        loadUnlockedLessonData();
+      });
+
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          const id = entry.target.id;
+          navLinks.forEach(function (link) {
+            link.classList.toggle("active", link.dataset.section === id);
+          });
+        });
+      }, {
+        rootMargin: "-30% 0px -58% 0px",
+        threshold: 0.01
+      });
+
+      sections.forEach(function (section) {
+        observer.observe(section);
+      });
+
+      function resizeEmbeddedFrame(frame) {
+        try {
+          const doc = frame.contentDocument;
+          if (!doc || !doc.body) return;
+          const height = Math.max(
+            doc.body.scrollHeight,
+            doc.documentElement ? doc.documentElement.scrollHeight : 0
+          );
+          if (height > 0) {
+            frame.style.height = height + 24 + "px";
+          }
+        } catch (_) {
+          // Keep the CSS fallback height if the browser blocks iframe measurement.
+        }
+      }
+
+      document.querySelectorAll(".embedded-frame").forEach(function (frame) {
+        frame.addEventListener("load", function () {
+          resizeEmbeddedFrame(frame);
+        });
+      });
+
+      renderProgress();
+      renderWeekCalendar();
+      (function pickInitialDay() {
+        var today = new Date();
+        var dates = WeeklySchedule.weekDates(today);
+        for (var i = 0; i < dates.length; i++) {
+          if (WeeklySchedule.status(dates[i]) === "today" && WeeklySchedule.isAccessible(dates[i])) {
+            selectPracticeDay(dates[i]);
+            return;
+          }
+        }
+        for (var j = 0; j < dates.length; j++) {
+          if (WeeklySchedule.isAccessible(dates[j]) && !WeeklySchedule.isDone(dates[j])) {
+            selectPracticeDay(dates[j]);
+            return;
+          }
+        }
+      })();
+      loadAuth();
+    })();
+  </script>
+</body>
+</html>

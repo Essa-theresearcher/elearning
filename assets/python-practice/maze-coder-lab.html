@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maze Coder Lab</title>
+  <link rel="stylesheet" href="thinking-coach.css">
+  <style>
+    :root { --bg:#0e1a33; --card:#16264a; --ink:#f3efe0; --mut:#a9b3c7; --gold:#c9a227; --ok:#1f9d57; --bad:#d64545; --line:#2b3d68; }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,sans-serif;padding:12px}
+    .layout{display:grid;gap:12px;max-width:920px;margin:0 auto} @media(min-width:760px){.layout{grid-template-columns:1fr 280px}}
+    .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+    canvas{display:block;width:100%;max-width:336px;margin:0 auto;border-radius:8px;background:#0b1530}
+    textarea{width:100%;min-height:200px;background:#0b1530;color:var(--ink);border:2px solid var(--line);border-left:4px solid var(--gold);border-radius:8px;padding:10px;font:13px/1.45 ui-monospace,Menlo,monospace}
+    button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:8px 14px;font-weight:700;background:var(--ink);color:var(--bg)}
+    button.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)} .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .status{font-size:13px;margin-top:8px;min-height:1.4em}.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div class="panel">
+      <h1>Maze Coder Lab · Level 2</h1>
+      <p class="lead">Guide the player to the star. Avoid walls. Write <code>choose_direction</code>.</p>
+      <canvas id="board" width="336" height="336"></canvas>
+      <div class="row">
+        <button type="button" id="runBtn">Run to goal</button>
+        <button type="button" class="ghost" id="stepBtn">One step</button>
+        <button type="button" class="ghost" id="resetBtn">Reset</button>
+      </div>
+      <p class="status" id="gameStatus"></p>
+      <div id="coachSlot"></div>
+    </div>
+    <div class="panel">
+      <textarea id="code" spellcheck="false">def choose_direction(row, col, goal_row, goal_col, hit_wall):
+    """
+    Return "up", "down", "left", or "right".
+    hit_wall is True if that direction hits a wall.
+    """
+    if goal_row < row and not hit_wall["up"]:
+        return "up"
+    if goal_row > row and not hit_wall["down"]:
+        return "down"
+    if goal_col < col and not hit_wall["left"]:
+        return "left"
+    if goal_col > col and not hit_wall["right"]:
+        return "right"
+    return "down"
+</textarea>
+      <div class="row"><button type="button" class="ghost" id="testBtn">Test function</button></div>
+      <p class="status" id="codeStatus"></p>
+    </div>
+  </div>
+  <script src="thinking-coach.js"></script>
+  <script src="weekly-visual-progress.js"></script>
+  <script src="visual-progress.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+  <script>
+(function(){
+  var qp=new URLSearchParams(location.search);
+  var weeklyMode=qp.get("weekly")==="1";
+  var dbaDate=qp.get("dbaDate")||"";
+  var visualOrder=window.WeeklyVisualProgress?WeeklyVisualProgress.parseOrder(qp):["snake","maze","sudoku"];
+  var variant=parseInt(qp.get("dbaVariant")||"0",10);
+  var maxStepsByVariant=[80,60,100,80,85,90,70];
+  function onVisualWin(){
+    if(weeklyMode&&dbaDate&&window.WeeklyVisualProgress){WeeklyVisualProgress.markGame(dbaDate,"maze",visualOrder);return;}
+    if(window.VisualProgress)VisualProgress.markDone("maze");
+  }
+  if(weeklyMode&&dbaDate&&window.WeeklyVisualProgress&&!WeeklyVisualProgress.isUnlocked(dbaDate,"maze",visualOrder)){
+    document.body.innerHTML='<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish the previous visual game for this day first.</p></div>';
+    return;
+  }
+  if(!weeklyMode&&window.VisualProgress&&!VisualProgress.isUnlocked("maze")){
+    document.body.innerHTML='<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish <strong>Snake Coder Lab</strong> (score 5) to unlock the maze.</p></div>';
+    return;
+  }
+  var GRID=12,CELL=28,canvas=document.getElementById("board"),ctx=canvas.getContext("2d");
+  var walls=new Set(["0,0","1,0","2,0","3,0","4,0","5,0","6,0","7,0","8,0","9,0","10,0","11,0","0,1","0,2","0,3","11,1","11,2","11,3","5,3","5,4","5,5","5,6","5,7","3,5","4,5","6,5","7,5","8,5","8,6","8,7","8,8","2,8","3,8","4,8","10,8","11,8","11,9","11,10","11,11"]);
+  var player={r:1,c:1},goal={r:10,c:10},timer=null,compiledFn=null,steps=0,maxSteps=maxStepsByVariant[variant]||80;
+  function draw(){
+    ctx.fillStyle="#0b1530";ctx.fillRect(0,0,canvas.width,canvas.height);
+    for(var r=0;r<GRID;r++)for(var c=0;c<GRID;c++){
+      var w=walls.has(c+","+r);
+      ctx.fillStyle=w?"#2b3d68":"#122040";
+      ctx.fillRect(c*CELL+1,r*CELL+1,CELL-2,CELL-2);
+    }
+    ctx.fillStyle="#c9a227";ctx.fillRect(goal.c*CELL+4,goal.r*CELL+4,CELL-8,CELL-8);
+    ctx.fillStyle="#1f9d57";ctx.fillRect(player.c*CELL+4,player.r*CELL+4,CELL-8,CELL-8);
+  }
+  function reset(){player={r:1,c:1};steps=0;draw();document.getElementById("gameStatus").textContent="";}
+  function wallAt(r,c){return r<0||c<0||r>=GRID||c>=GRID||walls.has(c+","+r);}
+  function hitMap(r,c){
+    return{up:wallAt(r-1,c),down:wallAt(r+1,c),left:wallAt(r,c-1),right:wallAt(r,c+1)};
+  }
+  function rd(x){return Sk.builtinFiles.files[x];}
+  function compile(){
+    return Sk.misceval.asyncToPromise(function(){
+      Sk.configure({read:rd,__future__:Sk.python3});
+      return Sk.importMainWithBody("<user>",false,document.getElementById("code").value,true);
+    }).then(function(m){return m.$d.choose_direction;});
+  }
+  function py(n){return Sk.ffi.remapToPy(n);}
+  function callFn(fn){
+    var hm=hitMap(player.r,player.c);
+    var pyMap=Sk.ffi.remapToPy({up:hm.up,down:hm.down,left:hm.left,right:hm.right});
+    var res=Sk.misceval.callsim(fn,py(player.r),py(player.c),py(goal.r),py(goal.c),pyMap);
+    var d=String(res.v||res).toLowerCase();
+    if(d==="up")return{r:-1,c:0};if(d==="down")return{r:1,c:0};if(d==="left")return{r:0,c:-1};if(d==="right")return{r:0,c:1};
+    throw new Error("Return up, down, left, or right");
+  }
+  function coach(html){document.getElementById("coachSlot").innerHTML=html||"";}
+  function step(){
+    if(!compiledFn)return;
+    try{
+      var d=callFn(compiledFn),nr=player.r+d.r,nc=player.c+d.c;
+      if(wallAt(nr,nc))throw new Error("Your direction hit a wall. Check hit_wall before moving.");
+      player.r=nr;player.c=nc;steps++;
+      draw();
+      if(player.r===goal.r&&player.c===goal.c){
+        clearInterval(timer);timer=null;
+        document.getElementById("gameStatus").textContent="Maze complete! Sudoku lab unlocked.";
+        document.getElementById("gameStatus").className="status ok";
+        onVisualWin();
+        if(window.ThinkingCoach){ThinkingCoach.resetStruggle();coach('<div class="coach-affirm"><strong>Level 2 complete</strong><p>You planned moves instead of guessing. That is problem solving.</p></div>');}
+        return;
+      }
+      if(steps>=maxSteps){
+        clearInterval(timer);timer=null;
+        document.getElementById("gameStatus").textContent="Step limit — simplify your path logic and try again.";
+        document.getElementById("gameStatus").className="status bad";
+        if(window.ThinkingCoach)coach(ThinkingCoach.snakeCrashHtml("Too many steps without reaching the star.")+ThinkingCoach.recordStruggle());
+      }
+    }catch(e){
+      clearInterval(timer);timer=null;
+      document.getElementById("gameStatus").textContent=e.message||String(e);
+      document.getElementById("gameStatus").className="status bad";
+      if(window.ThinkingCoach)coach(ThinkingCoach.codeFailHtml({error:e.message})+ThinkingCoach.recordStruggle());
+    }
+  }
+  document.getElementById("testBtn").onclick=function(){
+    compile().then(function(fn){compiledFn=fn;document.getElementById("codeStatus").textContent="Function OK";document.getElementById("codeStatus").className="status ok";})
+    .catch(function(e){document.getElementById("codeStatus").textContent=e.message;document.getElementById("codeStatus").className="status bad";});
+  };
+  document.getElementById("runBtn").onclick=function(){
+    compile().then(function(fn){compiledFn=fn;reset();timer=setInterval(step,350);});
+  };
+  document.getElementById("stepBtn").onclick=step;
+  document.getElementById("resetBtn").onclick=function(){if(timer)clearInterval(timer);timer=null;reset();};
+  reset();
+  if(window.ThinkingCoach)coach(ThinkingCoach.protocolHtml("Maze — think before each move"));
+})();
+  </script>
+</body>
+</html>

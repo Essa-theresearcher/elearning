@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snake Coder Lab</title>
+  <style>
+    :root {
+      --bg: #0e1a33;
+      --card: #16264a;
+      --ink: #f3efe0;
+      --mut: #a9b3c7;
+      --gold: #c9a227;
+      --ok: #1f9d57;
+      --bad: #d64545;
+      --line: #2b3d68;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 15px/1.45 system-ui, sans-serif;
+      padding: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 8px; }
+    .lead { color: var(--mut); margin: 0 0 12px; font-size: 14px; }
+    .layout {
+      display: grid;
+      gap: 12px;
+      max-width: 920px;
+      margin: 0 auto;
+    }
+    @media (min-width: 760px) {
+      .layout { grid-template-columns: 1fr 280px; align-items: start; }
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
+      border-radius: 8px;
+      background: #0b1530;
+    }
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      background: #0b1530;
+      color: var(--ink);
+      border: 2px solid var(--line);
+      border-left: 4px solid var(--gold);
+      border-radius: 8px;
+      padding: 10px;
+      font: 13px/1.45 ui-monospace, Menlo, monospace;
+      tab-size: 4;
+      resize: vertical;
+    }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center; }
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-weight: 700;
+      background: var(--ink);
+      color: var(--bg);
+    }
+    button.ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 2px solid var(--line);
+    }
+    button:disabled { opacity: 0.45; cursor: default; }
+    .status { font-size: 13px; margin-top: 8px; min-height: 1.4em; }
+    .status.ok { color: var(--ok); }
+    .status.bad { color: var(--bad); }
+    .hint { font-size: 13px; color: var(--mut); margin-top: 8px; }
+    ul { margin: 8px 0 0; padding-left: 18px; color: var(--mut); font-size: 13px; }
+  </style>
+  <link rel="stylesheet" href="thinking-coach.css">
+</head>
+<body>
+  <div class="layout">
+    <div class="panel">
+      <h1>Snake Coder Lab</h1>
+      <p class="lead">Write Python for <code>choose_direction</code>. Press <strong>Run game</strong> and watch the snake follow your logic on the grid.</p>
+      <canvas id="board" width="320" height="320" aria-label="Snake game board"></canvas>
+      <div class="row">
+        <button type="button" id="runBtn">Run game</button>
+        <button type="button" class="ghost" id="stepBtn">One step</button>
+        <button type="button" class="ghost" id="resetBtn">Reset board</button>
+      </div>
+      <p class="status" id="gameStatus">Edit your function, then run.</p>
+      <div id="coachSlot"></div>
+    </div>
+    <div class="panel">
+      <textarea id="code" spellcheck="false">def choose_direction(head, food, body):
+    """
+    head and food are (x, y) tuples on a 16x16 grid.
+    body is a list of (x, y) cells (does not include head).
+    Return exactly one of: "up", "down", "left", "right"
+    """
+    hx, hy = head
+    fx, fy = food
+    if fx > hx:
+        return "right"
+    if fx < hx:
+        return "left"
+    if fy > hy:
+        return "down"
+    if fy < hy:
+        return "up"
+    return "right"
+</textarea>
+      <div class="row">
+        <button type="button" class="ghost" id="testBtn">Test function</button>
+      </div>
+      <p class="status" id="codeStatus"></p>
+      <p class="hint"><strong>Next challenges:</strong> avoid hitting the body; wrap or bounce; maze walls (coming soon).</p>
+      <ul>
+        <li>Maze lab — guide a player with your path code</li>
+        <li>Sudoku lab — fill rules and see the grid validate live</li>
+      </ul>
+    </div>
+  </div>
+  <script src="thinking-coach.js"></script>
+  <script src="weekly-visual-progress.js"></script>
+  <script src="visual-progress.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+  <script>
+    (function () {
+      var qp = new URLSearchParams(location.search);
+      var weeklyMode = qp.get("weekly") === "1";
+      var dbaDate = qp.get("dbaDate") || "";
+      var visualOrder = window.WeeklyVisualProgress ? WeeklyVisualProgress.parseOrder(qp) : ["snake", "maze", "sudoku"];
+      var forcedWin = parseInt(qp.get("dbaWinScore") || "", 10);
+      var winScore = weeklyMode ? (forcedWin > 0 ? forcedWin : 3) : 5;
+      if (weeklyMode && dbaDate && window.WeeklyVisualProgress && !WeeklyVisualProgress.isUnlocked(dbaDate, "snake", visualOrder)) {
+        document.body.innerHTML =
+          '<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui;color:#f3efe0;background:#0e1a33;min-height:100vh"><h1>Locked</h1><p>Finish the previous visual game for this day first.</p></div>';
+        return;
+      }
+      function onVisualWin() {
+        if (weeklyMode && dbaDate && window.WeeklyVisualProgress) {
+          WeeklyVisualProgress.markGame(dbaDate, "snake", visualOrder);
+          return;
+        }
+        if (window.VisualProgress) VisualProgress.markDone("snake");
+      }
+      var GRID = 16;
+      var CELL = 20;
+      var canvas = document.getElementById("board");
+      var ctx = canvas.getContext("2d");
+      var codeEl = document.getElementById("code");
+      var gameStatus = document.getElementById("gameStatus");
+      var codeStatus = document.getElementById("codeStatus");
+      var coachSlot = document.getElementById("coachSlot");
+
+      function showCoach(html) {
+        coachSlot.innerHTML = html || "";
+      }
+      var timer = null;
+      var compiledFn = null;
+
+      var state = {
+        snake: [{ x: 4, y: 8 }, { x: 3, y: 8 }, { x: 2, y: 8 }],
+        dir: { x: 1, y: 0 },
+        food: { x: 12, y: 8 },
+        alive: true,
+        score: 0,
+        steps: 0
+      };
+
+      function randFood() {
+        while (true) {
+          var p = { x: Math.floor(Math.random() * GRID), y: Math.floor(Math.random() * GRID) };
+          if (!state.snake.some(function (s) { return s.x === p.x && s.y === p.y; })) {
+            return p;
+          }
+        }
+      }
+
+      function resetState() {
+        state.snake = [{ x: 4, y: 8 }, { x: 3, y: 8 }, { x: 2, y: 8 }];
+        state.dir = { x: 1, y: 0 };
+        state.food = randFood();
+        state.alive = true;
+        state.score = 0;
+        state.steps = 0;
+      }
+
+      function draw() {
+        ctx.fillStyle = "#0b1530";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = "#1a2a4a";
+        for (var i = 0; i <= GRID; i++) {
+          ctx.beginPath();
+          ctx.moveTo(i * CELL, 0);
+          ctx.lineTo(i * CELL, GRID * CELL);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(0, i * CELL);
+          ctx.lineTo(GRID * CELL, i * CELL);
+          ctx.stroke();
+        }
+        ctx.fillStyle = "#d64545";
+        ctx.fillRect(state.food.x * CELL + 2, state.food.y * CELL + 2, CELL - 4, CELL - 4);
+        state.snake.forEach(function (seg, i) {
+          ctx.fillStyle = i === 0 ? "#c9a227" : "#1f9d57";
+          ctx.fillRect(seg.x * CELL + 1, seg.y * CELL + 1, CELL - 2, CELL - 2);
+        });
+      }
+
+      function rd(path) {
+        if (Sk.builtinFiles === undefined || Sk.builtinFiles.files[path] === undefined) {
+          throw "File not found: " + path;
+        }
+        return Sk.builtinFiles.files[path];
+      }
+
+      function compileUserCode() {
+        return new Promise(function (resolve, reject) {
+          Sk.configure({
+            read: rd,
+            __future__: Sk.python3
+          });
+          Sk.misceval.asyncToPromise(function () {
+            return Sk.importMainWithBody("<user>", false, codeEl.value, true);
+          }).then(function (mod) {
+            if (!mod.$d.choose_direction) {
+              reject(new Error("Define a function named choose_direction."));
+              return;
+            }
+            resolve(mod.$d.choose_direction);
+          }, function (e) {
+            reject(new Error(e.toString()));
+          });
+        });
+      }
+
+      function pyTuple(x, y) {
+        return new Sk.builtin.tuple([Sk.ffi.remapToPy(x), Sk.ffi.remapToPy(y)]);
+      }
+
+      function callDirection(fn) {
+        var head = state.snake[0];
+        var body = state.snake.slice(1).map(function (s) { return pyTuple(s.x, s.y); });
+        var result = Sk.misceval.callsim(fn, pyTuple(head.x, head.y), pyTuple(state.food.x, state.food.y), Sk.ffi.remapToPy(body));
+        var dir = (result && result.v) ? result.v : String(result);
+        dir = String(dir).toLowerCase();
+        if (dir === "up") return { x: 0, y: -1 };
+        if (dir === "down") return { x: 0, y: 1 };
+        if (dir === "left") return { x: -1, y: 0 };
+        if (dir === "right") return { x: 1, y: 0 };
+        throw new Error("choose_direction must return up, down, left, or right (got " + dir + ")");
+      }
+
+      function stepOnce() {
+        if (!state.alive || !compiledFn) return;
+        try {
+          var next = callDirection(compiledFn);
+          if (next.x + state.dir.x === 0 && next.y + state.dir.y === 0) {
+            /* ignore instant reverse */
+          } else {
+            state.dir = next;
+          }
+        } catch (e) {
+          state.alive = false;
+          gameStatus.textContent = e.message || String(e);
+          gameStatus.className = "status bad";
+          if (window.ThinkingCoach) {
+            showCoach(ThinkingCoach.snakeCrashHtml(e.message || String(e)) + ThinkingCoach.recordStruggle());
+          }
+          stopLoop();
+          return;
+        }
+        var head = state.snake[0];
+        var nx = (head.x + state.dir.x + GRID) % GRID;
+        var ny = (head.y + state.dir.y + GRID) % GRID;
+        if (state.snake.some(function (s) { return s.x === nx && s.y === ny; })) {
+          state.alive = false;
+          gameStatus.textContent = "Crash! Snake hit itself.";
+          gameStatus.className = "status bad";
+          if (window.ThinkingCoach) {
+            showCoach(ThinkingCoach.snakeCrashHtml(
+              "The head moved onto a body cell. Your choose_direction must avoid cells in body, not only chase food."
+            ) + ThinkingCoach.recordStruggle());
+          }
+          stopLoop();
+          draw();
+          return;
+        }
+        state.snake.unshift({ x: nx, y: ny });
+        if (nx === state.food.x && ny === state.food.y) {
+          state.score += 1;
+          state.food = randFood();
+        } else {
+          state.snake.pop();
+        }
+        state.steps += 1;
+        gameStatus.textContent = "Score: " + state.score + " · Steps: " + state.steps;
+        gameStatus.className = "status ok";
+        draw();
+        if (state.score >= winScore) {
+          state.alive = false;
+          gameStatus.textContent = weeklyMode
+            ? "Today's snake challenge complete!"
+            : "Level complete! Score " + winScore + ". Maze lab is now unlocked.";
+          gameStatus.className = "status ok";
+          onVisualWin();
+          if (window.ThinkingCoach) {
+            ThinkingCoach.resetStruggle();
+            showCoach(
+              '<div class="coach-affirm"><strong>Level 1 complete</strong><p>You stayed with the problem and your code moved on screen. That is real programming.</p></div>'
+            );
+          }
+          stopLoop();
+        }
+      }
+
+      function stopLoop() {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+
+      document.getElementById("testBtn").addEventListener("click", function () {
+        codeStatus.textContent = "Compiling…";
+        codeStatus.className = "status";
+        compileUserCode().then(function (fn) {
+          compiledFn = fn;
+          var d = callDirection(fn);
+          codeStatus.textContent = "OK — sample move: " + (d.x === 1 ? "right" : d.x === -1 ? "left" : d.y === 1 ? "down" : "up");
+          codeStatus.className = "status ok";
+        }).catch(function (e) {
+          compiledFn = null;
+          codeStatus.textContent = e.message || String(e);
+          codeStatus.className = "status bad";
+          if (window.ThinkingCoach) {
+            showCoach(ThinkingCoach.codeFailHtml({ error: e.message || String(e) }));
+          }
+        });
+      });
+
+      document.getElementById("runBtn").addEventListener("click", function () {
+        stopLoop();
+        compileUserCode().then(function (fn) {
+          compiledFn = fn;
+          resetState();
+          draw();
+          gameStatus.textContent = "Running…";
+          gameStatus.className = "status ok";
+          timer = setInterval(stepOnce, 280);
+        }).catch(function (e) {
+          gameStatus.textContent = e.message || String(e);
+          gameStatus.className = "status bad";
+        });
+      });
+
+      document.getElementById("stepBtn").addEventListener("click", function () {
+        if (!compiledFn) {
+          document.getElementById("testBtn").click();
+          setTimeout(stepOnce, 200);
+          return;
+        }
+        stepOnce();
+      });
+
+      document.getElementById("resetBtn").addEventListener("click", function () {
+        stopLoop();
+        resetState();
+        draw();
+        gameStatus.textContent = "Board reset.";
+        gameStatus.className = "status";
+      });
+
+      resetState();
+      draw();
+      if (window.ThinkingCoach) {
+        showCoach(ThinkingCoach.protocolHtml("Before you run — problem-solving steps"));
+      }
+    })();
+  </script>
+</body>
+</html>
