@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Python Week 4 Activity — Loops</title>
+<style>
+  :root{--navy:#132A4C;--gold:#C9A227;--ivory:#FAF6EC;--line:#E3D9BE;--soft:#6E6E6E;--code-bg:#0F1F38;--code-text:#E8E3D3;}
+  *{box-sizing:border-box} body{margin:0;background:var(--ivory);font-family:Helvetica,Arial,sans-serif;color:#2B2B2B;line-height:1.5}
+  .topbar{background:var(--navy);border-bottom:3px solid var(--gold);padding:12px 18px;color:#fff;font-size:13px;font-weight:700}
+  .wrap{max-width:780px;margin:0 auto;padding:24px 16px 60px}
+  h1{font-family:Georgia,serif;color:var(--navy);font-size:26px;margin:8px 0}
+  .lead{color:var(--soft);font-size:14px}
+  .week-plan{width:100%;border-collapse:collapse;margin:20px 0;font-size:13px}
+  .week-plan th,.week-plan td{border:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}
+  .week-plan th{background:#e2f0ec;color:var(--navy)}
+  .phase{font-family:Georgia,serif;color:var(--navy);font-size:19px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin:28px 0 12px}
+  .box{background:#fff;border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:14px}
+  textarea{width:100%;border:1.5px solid var(--line);border-radius:5px;padding:10px;font:inherit;margin:6px 0 12px}
+  pre{background:var(--code-bg);color:var(--code-text);padding:12px;border-radius:4px;font-size:13px}
+  label{font-size:12px;font-weight:700;color:var(--navy)}
+</style>
+</head>
+<body>
+<div class="topbar">DIGITAL BRIDGE ACADEMY · Python Fundamentals · Week 4 Lab</div>
+<div class="wrap">
+  <h1>Week 4 — while &amp; for loops</h1>
+  <p class="lead"><strong>Full week.</strong> Loops need repetition — practice a little each day instead of one long session.</p>
+
+  <table class="week-plan">
+    <thead><tr><th>Day</th><th>Work (45–75 min)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Mon</strong></td><td>Recording 1. while loops — hand-trace counter 0→4.</td></tr>
+      <tr><td><strong>Tue</strong></td><td>Recording 2. for + range(). Print patterns 1..n.</td></tr>
+      <tr><td><strong>Wed</strong></td><td>Phase A accumulators. Sum 1..100 on paper then in code.</td></tr>
+      <tr><td><strong>Thu</strong></td><td>Problems: countdown, times table, count evens in list.</td></tr>
+      <tr><td><strong>Fri</strong></td><td>Phase C project: guessing game OR multiplication table grid.</td></tr>
+      <tr><td><strong>Sat–Sun</strong></td><td>Fix infinite-loop mistakes. Week 4 quiz.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="phase">Phase A — Predict output (Mon–Tue)</h2>
+  <div class="box">
+    <pre>for i in range(3):
+    print(i)</pre>
+    <label>What prints? What is the last value of i?</label>
+    <textarea rows="2"></textarea>
+    <pre>n = 0
+while n < 3:
+    print(n)
+    n += 1</pre>
+    <label>Compare to the for-loop above — same output?</label>
+    <textarea rows="2"></textarea>
+  </div>
+
+  <h2 class="phase">Phase B — Loop programs (Wed–Thu)</h2>
+  <div class="box">
+    <label>1. Print numbers 10 down to 1 (while)</label>
+    <textarea rows="4"></textarea>
+    <label>2. Print 5 times table for 1..12 (for)</label>
+    <textarea rows="4"></textarea>
+    <label>3. Read n, print sum 1+2+...+n</label>
+    <textarea rows="5"></textarea>
+  </div>
+
+  <h2 class="phase">Phase C — Project (Fri)</h2>
+  <div class="box">
+    <p><strong>Guessing game:</strong> secret number, loop until correct, count guesses. OR <strong>pattern:</strong> print a triangle of stars using nested loops.</p>
+    <textarea rows="14"></textarea>
+  </div>
+</div>
+</body>
+</html>

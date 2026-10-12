@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Python Lesson 1 Practice Quiz - Digital Bridge Academy</title>
+<style>
+  :root{--navy:#132A4C;--navy-dark:#0B1B33;--gold:#C9A227;--ivory:#FAF6EC;--charcoal:#2B2B2B;--soft-grey:#6E6E6E;--line:#E3D9BE;--correct:#2F6B52;--correct-bg:#EAF3EE;--incorrect:#A04242;--incorrect-bg:#F8EAEA;}
+  *{box-sizing:border-box} body{margin:0;background:var(--ivory);color:var(--charcoal);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;overflow-x:hidden}
+  .topbar{background:var(--navy);border-bottom:3px solid var(--gold);padding:14px 20px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .brand{color:#fff;font-weight:800}.lesson-tag{color:#D9CDA3;font-size:12.5px}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 18px 70px}.hero{text-align:center;margin-bottom:20px}
+  .kicker{color:var(--gold);font-weight:800;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase}
+  h1{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:28px;margin:6px 0}.hero p{color:var(--soft-grey);font-size:14px;margin:0 auto;max-width:580px}
+  .progress-text{text-align:center;font-size:12.5px;color:var(--soft-grey);margin-bottom:16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:6px;padding:26px;margin-bottom:18px;box-shadow:0 1px 3px rgba(19,42,76,.06)}
+  .category-tag{display:inline-block;background:var(--ivory);border:1px solid var(--line);color:var(--navy);font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:4px 10px;border-radius:3px;margin-bottom:14px}
+  .question{font-family:Georgia,"Times New Roman",serif;font-size:18px;line-height:1.5;color:var(--navy-dark);margin:0 0 16px}
+  .options{display:flex;flex-direction:column;gap:9px}
+  .option{text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:5px;padding:12px 14px;font-size:14px;color:var(--charcoal);cursor:pointer;font-family:inherit}
+  .option:hover:not(:disabled){border-color:var(--gold);background:var(--ivory)}
+  .option.correct-answer{border-color:var(--correct);background:var(--correct-bg);color:var(--correct);font-weight:800}
+  .option.wrong-answer{border-color:var(--incorrect);background:var(--incorrect-bg);color:var(--incorrect);font-weight:800}
+  .option.dimmed{opacity:.55}
+  .feedback{display:none;margin-top:16px;padding:14px 16px;border-radius:5px;font-size:13.5px;line-height:1.55}
+  .feedback.show{display:block}.feedback.is-correct{background:var(--correct-bg);color:var(--correct);border:1px solid var(--correct)}
+  .feedback.is-incorrect{background:var(--incorrect-bg);color:var(--incorrect);border:1px solid var(--incorrect)}
+  .feedback b{display:block;margin-bottom:4px}.next-btn{display:none;margin-top:16px;background:var(--navy);color:#fff;border:none;border-radius:5px;padding:10px 18px;font-weight:800;cursor:pointer}
+  .next-btn.show{display:inline-block}.results{display:none;text-align:center}.results.show{display:block}
+  .score-hero{background:#fff;border:1px solid var(--line);border-radius:6px;padding:28px;margin-bottom:18px}
+  .big{font-family:Georgia,"Times New Roman",serif;font-size:52px;color:var(--navy);font-weight:800}.big span{color:var(--gold)}.msg{color:var(--soft-grey)}
+  .cat-row{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding:10px 0;font-size:14px}
+  .restart{background:none;border:1.5px solid var(--navy);color:var(--navy);border-radius:5px;padding:10px 18px;font-weight:800;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="topbar"><span class="brand">Digital Bridge Academy</span><span class="lesson-tag">Python Fundamentals · Week 2 Quiz</span></div>
+<div class="wrap">
+  <div class="hero"><span class="kicker">Post-lesson check</span><h1>Practice Quiz: Variables &amp; Input</h1><p>12 questions on types, input(), conversion, and common type errors.</p></div>
+  <div id="quizScreen"><p class="progress-text" id="progressText"></p><div class="card"><span class="category-tag" id="categoryTag"></span><p class="question" id="questionText"></p><div class="options" id="optionsWrap"></div><div class="feedback" id="feedback"><b id="feedbackLabel"></b><span id="feedbackExplain"></span></div><button class="next-btn" id="nextBtn" type="button">Next question</button></div></div>
+  <div class="results" id="resultsScreen"><div class="score-hero"><div class="big" id="scoreBig"></div><p class="msg" id="scoreMsg"></p></div><div class="card" id="categoryBreakdown"></div><button class="restart" id="restartBtn" type="button">Retake quiz</button></div>
+</div>
+<script>
+(function(){
+  const QUESTIONS = [
+    {category:'Variables',question:'What does name = "Amina" do?',options:['Compares name to Amina','Binds the name name to the string "Amina"','Prints Amina','Deletes the old name'],correct:1,explanation:'= assigns a value to a variable name.'},
+    {category:'Types',question:'type(3.14) is…',options:['int','str','float','bool'],correct:2,explanation:'3.14 is a floating-point number.'},
+    {category:'Types',question:'Which value is a bool?',options:['"True"','True','1','"False"'],correct:1,explanation:'True and False are boolean literals without quotes.'},
+    {category:'input()',question:'x = input("Number? ") — if the user types 5, type(x) is…',options:['int','str','float','bool'],correct:1,explanation:'input() always returns a string.'},
+    {category:'Conversion',question:'To add 1 to an age read from input, you should…',options:['Use age + 1 directly','Use int(age) + 1','Use str(age) + 1','Use float("age")'],correct:1,explanation:'Convert to int before numeric addition.'},
+    {category:'Conversion',question:'int("12") evaluates to…',options:['"12"','12','12.0','Error always'],correct:1,explanation:'int() parses a whole-number string.'},
+    {category:'Errors',question:'print("Total: " + 50) causes…',options:['Nothing wrong','TypeError (str + int)','SyntaxError only on Mac','Infinite loop'],correct:1,explanation:'Use str(50) or an f-string to mix text and numbers.'},
+    {category:'Variables',question:'After x = 10 then x = x + 2, x is…',options:['10','12','"12"','Error'],correct:1,explanation:'x is updated to 12.'},
+    {category:'f-strings',question:'qty = 2; print(f"{qty * 10}") prints…',options:['"{qty * 10}"','20','qty * 10','2'],correct:1,explanation:'f-strings evaluate expressions inside {}.'},
+    {category:'Types',question:'Which is a valid variable name?',options:['2score','student_name','class-room','if'],correct:1,explanation:'Names use letters, numbers, underscores; cannot start with a digit or be a keyword.'},
+    {category:'input()',question:'float(input("H? ")) is used when…',options:['You need an integer only','You need a decimal number','You need True/False','You need a list'],correct:1,explanation:'float() handles decimal input like height.'},
+    {category:'Mindset',question:'A TypeError often means…',options:['Python is uninstalled','You mixed incompatible types in an operation','Your keyboard is wrong','The file is .py not .txt'],correct:1,explanation:'Fix by converting types or using the right operator.'}
+  ];
+  const TOTAL = QUESTIONS.length;
+  let current = 0, score = 0, answered = false, answerDetails = [];
+  const catStats = {};
+  QUESTIONS.forEach(function(q){ if(!catStats[q.category]) catStats[q.category]={correct:0,total:0}; catStats[q.category].total++; });
+  const quizScreen=document.getElementById('quizScreen'),resultsScreen=document.getElementById('resultsScreen'),progressTextEl=document.getElementById('progressText'),categoryTagEl=document.getElementById('categoryTag'),questionTextEl=document.getElementById('questionText'),optionsWrapEl=document.getElementById('optionsWrap'),feedbackEl=document.getElementById('feedback'),feedbackLabelEl=document.getElementById('feedbackLabel'),feedbackExplainEl=document.getElementById('feedbackExplain'),nextBtn=document.getElementById('nextBtn');
+  function renderQuestion(){ answered=false; const q=QUESTIONS[current]; categoryTagEl.textContent=q.category; questionTextEl.textContent=q.question; optionsWrapEl.innerHTML=''; q.options.forEach(function(opt,idx){ const btn=document.createElement('button'); btn.className='option'; btn.type='button'; btn.textContent=opt; btn.addEventListener('click',function(){ selectOption(idx); }); optionsWrapEl.appendChild(btn); }); feedbackEl.className='feedback'; nextBtn.classList.remove('show'); progressTextEl.textContent='Question '+(current+1)+' of '+TOTAL; }
+  function selectOption(idx){ if(answered) return; answered=true; const q=QUESTIONS[current]; const buttons=optionsWrapEl.querySelectorAll('.option'); const isCorrect=idx===q.correct; answerDetails[current]={questionNumber:current+1,category:q.category,question:q.question,selectedAnswer:q.options[idx],correctAnswer:q.options[q.correct],isCorrect:isCorrect,explanation:q.explanation,section:'full'}; buttons.forEach(function(btn,i){ btn.disabled=true; if(i===q.correct) btn.classList.add('correct-answer'); else if(i===idx) btn.classList.add('wrong-answer'); else btn.classList.add('dimmed'); }); if(isCorrect){ score++; catStats[q.category].correct++; feedbackEl.className='feedback show is-correct'; feedbackLabelEl.textContent='Correct.'; } else { feedbackEl.className='feedback show is-incorrect'; feedbackLabelEl.textContent='Not quite.'; } feedbackExplainEl.textContent=q.explanation; nextBtn.textContent=(current===TOTAL-1)?'See results':'Next question'; nextBtn.classList.add('show'); }
+  nextBtn.addEventListener('click',function(){ current++; if(current>=TOTAL) showResults(); else renderQuestion(); });
+  function saveQuizResult(){ fetch('/api/progress/quiz',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lessonSlug:'python-beginner-lesson-2',section:'full',score:score,totalQuestions:TOTAL,categoryBreakdown:catStats,answerDetails:answerDetails})}).catch(function(){}); }
+  function showResults(){ quizScreen.style.display='none'; resultsScreen.classList.add('show'); saveQuizResult(); const pct=Math.round((score/TOTAL)*100); document.getElementById('scoreBig').innerHTML=score+'<span>/'+TOTAL+'</span>'; let msg=pct>=90?'Excellent — ready for Week 3.':pct>=70?'Solid — review weak categories, then continue.':'Review Week 2 notes and lab, then retake.'; document.getElementById('scoreMsg').textContent=pct+'% — '+msg; const breakdown=document.getElementById('categoryBreakdown'); breakdown.innerHTML=''; Object.keys(catStats).forEach(function(cat){ const s=catStats[cat]; const row=document.createElement('div'); row.className='cat-row'; row.innerHTML='<span>'+cat+'</span><span>'+s.correct+' / '+s.total+'</span>'; breakdown.appendChild(row); }); }
+  document.getElementById('restartBtn').addEventListener('click',function(){ current=0; score=0; answered=false; answerDetails=[]; Object.keys(catStats).forEach(function(c){ catStats[c].correct=0; }); quizScreen.style.display=''; resultsScreen.classList.remove('show'); renderQuestion(); });
+  renderQuestion();
+})();
+</script>
+</body>
+</html>

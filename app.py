@@ -70,6 +70,9 @@ LESSON_PAGE_PATHS = {
     "data-storage-lesson-3": "lesson3.html",
     "web-applications-lesson-4": "lesson4.html",
     "python-beginner-lesson-1": "python-lesson1.html",
+    "python-beginner-lesson-2": "python-lesson2.html",
+    "python-beginner-lesson-3": "python-lesson3.html",
+    "python-beginner-lesson-4": "python-lesson4.html",
     "python-daily-practice": "python-daily-practice.html",
 }
 COURSE_NAV_LABELS = {
@@ -79,6 +82,9 @@ COURSE_NAV_LABELS = {
     "data-storage-lesson-3": "Week 3 · L3",
     "web-applications-lesson-4": "Week 4 · L4",
     "python-beginner-lesson-1": "Week 1",
+    "python-beginner-lesson-2": "Week 2",
+    "python-beginner-lesson-3": "Week 3",
+    "python-beginner-lesson-4": "Week 4",
     "python-daily-practice": "Daily track",
 }
 MAX_VIDEO_UPLOAD_BYTES = int(os.environ.get("MAX_VIDEO_UPLOAD_MB", "250")) * 1024 * 1024
@@ -319,6 +325,90 @@ LESSONS = {
             },
         ],
     },
+    "python-beginner-lesson-2": {
+        "title": "Week 2 · Variables, Input & Types",
+        "section_ids": ["welcome", "video", "reading", "activity", "quiz", "wrapup"],
+        "prerequisite": "python-beginner-lesson-1",
+        "video_dir": os.environ.get(
+            "PYTHON_LESSON2_VIDEO_DIR", "assets/videos/python-lesson2"
+        ),
+        "recording_segments": [
+            {
+                "part": 1,
+                "title": "Variables & Basic Types",
+                "duration": "Recording 1",
+                "slug": "variables-and-types",
+            },
+            {
+                "part": 2,
+                "title": "input() and Type Conversion",
+                "duration": "Recording 2",
+                "slug": "input-and-conversion",
+            },
+            {
+                "part": 3,
+                "title": "Class Recording",
+                "duration": "Recording 3",
+                "slug": "class-recording",
+            },
+        ],
+    },
+    "python-beginner-lesson-3": {
+        "title": "Week 3 · Decisions & Logic",
+        "section_ids": ["welcome", "video", "reading", "activity", "quiz", "wrapup"],
+        "prerequisite": "python-beginner-lesson-2",
+        "video_dir": os.environ.get(
+            "PYTHON_LESSON3_VIDEO_DIR", "assets/videos/python-lesson3"
+        ),
+        "recording_segments": [
+            {
+                "part": 1,
+                "title": "Comparisons and if / else",
+                "duration": "Recording 1",
+                "slug": "comparisons-if-else",
+            },
+            {
+                "part": 2,
+                "title": "elif, nesting, and grade logic",
+                "duration": "Recording 2",
+                "slug": "elif-and-grades",
+            },
+            {
+                "part": 3,
+                "title": "Class Recording",
+                "duration": "Recording 3",
+                "slug": "class-recording",
+            },
+        ],
+    },
+    "python-beginner-lesson-4": {
+        "title": "Week 4 · Loops & Repetition",
+        "section_ids": ["welcome", "video", "reading", "activity", "quiz", "wrapup"],
+        "prerequisite": "python-beginner-lesson-3",
+        "video_dir": os.environ.get(
+            "PYTHON_LESSON4_VIDEO_DIR", "assets/videos/python-lesson4"
+        ),
+        "recording_segments": [
+            {
+                "part": 1,
+                "title": "while loops and counters",
+                "duration": "Recording 1",
+                "slug": "while-loops",
+            },
+            {
+                "part": 2,
+                "title": "for loops and range()",
+                "duration": "Recording 2",
+                "slug": "for-loops-range",
+            },
+            {
+                "part": 3,
+                "title": "Class Recording",
+                "duration": "Recording 3",
+                "slug": "class-recording",
+            },
+        ],
+    },
     "python-daily-practice": {
         "title": "Python Practical · Daily Track",
         "section_ids": ["welcome", "predict", "code", "visual", "projects", "wrapup"],
@@ -366,17 +456,21 @@ COURSES = {
         "entry_path": "prework.html",
         "price_label": "Manual checkout",
         "description": (
-            "Week 0 Python readiness, then Week 1 getting started with Python: "
-            "install tools, first programs, print() practice, and class lab work."
+            "Week 0 readiness, then four weeks of Python: setup and print(), "
+            "variables and input, decisions, and loops — each week includes "
+            "recordings, notes, a multi-day activity lab, and a quiz."
         ),
         "highlights": [
             "Week 0: Python readiness quiz and coding review",
-            "Week 1: Class recordings and expanded notes",
-            "Week 1: Full practical lab and quiz",
+            "Weeks 1–4: Full-week plans (not single-day cramming)",
+            "Class activities, notes, and quizzes each week",
         ],
         "lesson_slugs": [
             "intermediate-readiness-week",
             "python-beginner-lesson-1",
+            "python-beginner-lesson-2",
+            "python-beginner-lesson-3",
+            "python-beginner-lesson-4",
         ],
     },
     "python-practical": {

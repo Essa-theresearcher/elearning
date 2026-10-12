@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Python Week 2 Activity — Variables & Input</title>
+<style>
+  :root{--navy:#132A4C;--gold:#C9A227;--ivory:#FAF6EC;--line:#E3D9BE;--soft:#6E6E6E;--code-bg:#0F1F38;--code-text:#E8E3D3;}
+  *{box-sizing:border-box} body{margin:0;background:var(--ivory);font-family:Helvetica,Arial,sans-serif;color:#2B2B2B;line-height:1.5}
+  .topbar{background:var(--navy);border-bottom:3px solid var(--gold);padding:12px 18px;color:#fff;font-size:13px;font-weight:700}
+  .wrap{max-width:780px;margin:0 auto;padding:24px 16px 60px}
+  h1{font-family:Georgia,serif;color:var(--navy);font-size:26px;margin:8px 0}
+  .lead{color:var(--soft);font-size:14px}
+  .week-plan{width:100%;border-collapse:collapse;margin:20px 0;font-size:13px}
+  .week-plan th,.week-plan td{border:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}
+  .week-plan th{background:#e2f0ec;color:var(--navy)}
+  .phase{font-family:Georgia,serif;color:var(--navy);font-size:19px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin:28px 0 12px}
+  .box{background:#fff;border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:14px}
+  textarea,input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:5px;padding:10px;font:inherit;margin:6px 0 12px}
+  pre{background:var(--code-bg);color:var(--code-text);padding:12px;border-radius:4px;font-size:13px;overflow:auto}
+  label{font-size:12px;font-weight:700;color:var(--navy)}
+</style>
+</head>
+<body>
+<div class="topbar">DIGITAL BRIDGE ACADEMY · Python Fundamentals · Week 2 Lab</div>
+<div class="wrap">
+  <h1>Week 2 — Variables, Types &amp; input()</h1>
+  <p class="lead"><strong>Plan 5–7 days.</strong> Do one or two rows per weekday; use the weekend to finish the project and submit. Do not rush all phases in one sitting.</p>
+
+  <table class="week-plan" aria-label="Week 2 schedule">
+    <thead><tr><th>Day</th><th>Your work (about 45–75 min)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Mon</strong></td><td>Watch Recording 1. Read notes on variables &amp; types. Phase A checklist below.</td></tr>
+      <tr><td><strong>Tue</strong></td><td>Watch Recording 2. Practice <code>input()</code> and <code>int()</code> / <code>float()</code>. Problems 1–3.</td></tr>
+      <tr><td><strong>Wed</strong></td><td>Problems 4–6. Debug type errors on purpose — write what the error means.</td></tr>
+      <tr><td><strong>Thu</strong></td><td>Problems 7–8. Start mini-project outline (receipt or age calculator).</td></tr>
+      <tr><td><strong>Fri</strong></td><td>Finish mini-project code. Paste below and run in VS Code.</td></tr>
+      <tr><td><strong>Sat–Sun</strong></td><td>Catch-up, redo weak problems, take Week 2 quiz on the lesson page.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="phase">Phase A — Types diary (Mon)</h2>
+  <div class="box">
+    <p>Predict the type, then run in Python and write the actual type with <code>type(...)</code>.</p>
+    <pre>name = "Amina"
+age = 17
+price = 19.99
+active = True</pre>
+    <label for="typesDiary">Your type() results and one sentence on text vs number</label>
+    <textarea id="typesDiary" rows="4"></textarea>
+  </div>
+
+  <h2 class="phase">Phase B — input() practice (Tue–Wed)</h2>
+  <div class="box">
+    <label>Problem 1: Read a name, print Hello, NAME!</label>
+    <textarea rows="3" placeholder="paste code"></textarea>
+    <label>Problem 2: Read two numbers, print their sum (use int())</label>
+    <textarea rows="3"></textarea>
+    <label>Problem 3: Read price, print price with 16% VAT (float)</label>
+    <textarea rows="3"></textarea>
+  </div>
+
+  <h2 class="phase">Phase C — Fix the bug (Wed–Thu)</h2>
+  <div class="box">
+    <p>Each snippet has a type bug. Fix and explain in one line.</p>
+    <pre>age = input("Age? ")
+print(age + 1)</pre>
+    <textarea rows="2" placeholder="fixed code + explanation"></textarea>
+    <pre>total = "20" + 5</pre>
+    <textarea rows="2"></textarea>
+  </div>
+
+  <h2 class="phase">Phase D — Week project (Thu–Fri)</h2>
+  <div class="box">
+    <p><strong>Choose one:</strong> (A) Age in 5 years calculator, or (B) Simple receipt (item, qty, line total, grand total).</p>
+    <label for="projectCode">Paste full program</label>
+    <textarea id="projectCode" rows="10"></textarea>
+    <label for="projectSample">Sample run (what you typed and what printed)</label>
+    <textarea id="projectSample" rows="4"></textarea>
+  </div>
+
+  <p class="lead">Submit this page from the lesson when Phases A–D are done, then mark <strong>Class activity</strong> complete on Week 2.</p>
+</div>
+</body>
+</html>

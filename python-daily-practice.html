@@ -853,6 +853,43 @@
       font-size: 14px;
     }
 
+    .student-day-notes {
+      margin: 12px 0 0;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--paper);
+      font-size: 14px;
+    }
+
+    .student-day-notes h4 {
+      margin: 0 0 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 16px;
+      color: var(--navy-dark);
+    }
+
+    .student-day-notes .notes-lead {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .student-day-notes ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--navy-dark);
+      line-height: 1.55;
+    }
+
+    .student-day-notes li + li {
+      margin-top: 6px;
+    }
+
+    .student-day-notes-compact {
+      margin-bottom: 16px;
+    }
+
     .day-task-pills {
       display: flex;
       flex-wrap: wrap;
@@ -1150,6 +1187,11 @@
                 <strong id="dayWorkTitle"></strong>
                 <p id="daySessionIntro" style="margin:8px 0 0;font-size:13px"></p>
                 <ul id="daySessionGoals" style="margin:8px 0 0;padding-left:18px;font-size:13px"></ul>
+                <div class="student-day-notes" id="dayStudentNotesPanel" hidden>
+                  <h4>Read before you start</h4>
+                  <p class="notes-lead">What you are working on today and how to use your time well.</p>
+                  <ul id="dayStudentNotes"></ul>
+                </div>
                 <p id="dayWorkDesc" style="margin:6px 0 0"></p>
                 <div class="day-task-pills">
                   <span class="day-task-pill" id="pillPredict">Predict</span>
@@ -1175,6 +1217,10 @@
           </div>
           <div class="section-body">
             <div class="section-locked-banner" hidden>Finish the Welcome section first (mark complete), then return here.</div>
+            <div class="student-day-notes student-day-notes-compact" id="predictDayNotes" hidden aria-label="Today's focus notes">
+              <h4>Today&apos;s focus</h4>
+              <ul id="predictDayNotesList"></ul>
+            </div>
             <div class="thinking-panel">
               <h3>How to tackle predict questions</h3>
               <ol>
@@ -1348,6 +1394,10 @@
       const dayWorkDesc = document.getElementById("dayWorkDesc");
       const daySessionIntro = document.getElementById("daySessionIntro");
       const daySessionGoals = document.getElementById("daySessionGoals");
+      const dayStudentNotesPanel = document.getElementById("dayStudentNotesPanel");
+      const dayStudentNotes = document.getElementById("dayStudentNotes");
+      const predictDayNotes = document.getElementById("predictDayNotes");
+      const predictDayNotesList = document.getElementById("predictDayNotesList");
       const pillPredict = document.getElementById("pillPredict");
       const pillCode = document.getElementById("pillCode");
       const pillVisual = document.getElementById("pillVisual");
@@ -1748,13 +1798,25 @@
         visualHubFrame.src = "assets/python-practice/visual-play-hub.html?" + q;
       }
 
+      function renderStudentNotesList(container, notes) {
+        if (!container) return;
+        container.innerHTML = "";
+        (notes || []).forEach(function (note) {
+          var li = document.createElement("li");
+          li.textContent = note;
+          container.appendChild(li);
+        });
+      }
+
       function updateDayBanner(date) {
         if (!date) {
           dayWorkBanner.hidden = true;
+          if (predictDayNotes) predictDayNotes.hidden = true;
           return;
         }
         const plan = WeeklyContent.planForDate(date);
         const rec = WeeklySchedule.getRecord(date);
+        const notes = plan.studentNotes || [];
         dayWorkBanner.hidden = false;
         dayWorkTitle.textContent = plan.name + " · " + plan.title + " (" + (plan.sessionMinutes || "60–75") + " min)";
         if (daySessionIntro) daySessionIntro.textContent = plan.sessionIntro || plan.logic;
@@ -1765,6 +1827,22 @@
             li.textContent = g;
             daySessionGoals.appendChild(li);
           });
+        }
+        if (dayStudentNotesPanel && dayStudentNotes) {
+          if (notes.length) {
+            dayStudentNotesPanel.hidden = false;
+            renderStudentNotesList(dayStudentNotes, notes);
+          } else {
+            dayStudentNotesPanel.hidden = true;
+          }
+        }
+        if (predictDayNotes && predictDayNotesList) {
+          if (notes.length) {
+            predictDayNotes.hidden = false;
+            renderStudentNotesList(predictDayNotesList, notes);
+          } else {
+            predictDayNotes.hidden = true;
+          }
         }
         dayWorkDesc.textContent =
           WeeklyContent.practiceSummary(plan) + ". Theme: " + plan.logic + ". Visual: " + WeeklyContent.visualSummary(plan) + ".";
