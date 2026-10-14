@@ -84,7 +84,7 @@
     .hint { font-size: 13px; color: var(--mut); margin-top: 8px; }
     ul { margin: 8px 0 0; padding-left: 18px; color: var(--mut); font-size: 13px; }
   </style>
-  <link rel="stylesheet" href="thinking-coach.css">
+  <link rel="stylesheet" href="thinking-coach.css?v=2">
 </head>
 <body>
   <div class="layout">
@@ -96,8 +96,11 @@
         <button type="button" id="runBtn">Run game</button>
         <button type="button" class="ghost" id="stepBtn">One step</button>
         <button type="button" class="ghost" id="resetBtn">Reset board</button>
+        <button type="button" class="ghost" id="hintBtn">Hint</button>
+        <span class="hint" id="hintCount">Hints 0 of 3</span>
       </div>
       <p class="status" id="gameStatus">Edit your function, then run.</p>
+      <div id="hintLog"></div>
       <div id="coachSlot"></div>
     </div>
     <div class="panel">
@@ -130,7 +133,7 @@
       </ul>
     </div>
   </div>
-  <script src="thinking-coach.js"></script>
+  <script src="thinking-coach.js?v=3"></script>
   <script src="weekly-visual-progress.js"></script>
   <script src="visual-progress.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
@@ -176,8 +179,12 @@
         food: { x: 12, y: 8 },
         alive: true,
         score: 0,
-        steps: 0
+        steps: 0,
+        crash: null
       };
+      var hints = 0;
+      var hintPlan = null;
+      var lastInfo = null;
 
       function randFood() {
         while (true) {
@@ -195,6 +202,7 @@
         state.alive = true;
         state.score = 0;
         state.steps = 0;
+        state.crash = null;
       }
 
       function draw() {
@@ -217,6 +225,110 @@
           ctx.fillStyle = i === 0 ? "#c9a227" : "#1f9d57";
           ctx.fillRect(seg.x * CELL + 1, seg.y * CELL + 1, CELL - 2, CELL - 2);
         });
+        if (state.crash) {
+          ctx.strokeStyle = "#d64545";
+          ctx.lineWidth = 3;
+          ctx.strokeRect(state.crash.x * CELL + 1, state.crash.y * CELL + 1, CELL - 2, CELL - 2);
+        }
+      }
+
+      function dirName(d) {
+        if (d.x === 1) return "right";
+        if (d.x === -1) return "left";
+        if (d.y === 1) return "down";
+        return "up";
+      }
+
+      function paintHintCount() {
+        var el = document.getElementById("hintCount");
+        if (el) el.textContent = "Hints " + hints + " of 3";
+        var btn = document.getElementById("hintBtn");
+        if (btn) btn.disabled = hints >= 3;
+      }
+
+      function explain(info) {
+        lastInfo = info;
+        var messages;
+        var rows;
+        if (info.kind === "body") {
+          messages = [
+            "The next cell (x " + info.nx + ", y " + info.ny + ") is part of the body.",
+            "What is right: the head is at x " + info.hx + ", y " + info.hy + ", and the food is still at x " + info.fx + ", y " + info.fy + ".",
+            "What is different: " + info.dir + " moves onto the body.",
+            "Where to look next: the return that chooses " + info.dir + ". Skip a cell that is already in body."
+          ];
+          rows = [
+            { label: "Head", yours: info.hx + ", " + info.hy, expected: "open", ok: true },
+            { label: "Move " + info.dir, yours: info.nx + ", " + info.ny, expected: "empty cell", ok: false },
+            { label: "Food", yours: info.fx + ", " + info.fy, expected: info.fx + ", " + info.fy, ok: true }
+          ];
+        } else if (info.kind === "return") {
+          messages = [
+            "choose_direction returned " + info.got + ".",
+            "What is right: the function ran.",
+            "What is different: the game only understands up, down, left, or right.",
+            "Where to look next: the return line."
+          ];
+          rows = [{ label: "Return", yours: info.got, expected: "up, down, left, or right", ok: false }];
+        } else {
+          messages = [
+            "The function stopped while the head was at x " + info.hx + ", y " + info.hy + ".",
+            "What is right: the board was ready for one move.",
+            "What is different: " + info.detail,
+            "Where to look next: the last line of the error, then return one direction."
+          ];
+          rows = [{ label: "Error", yours: info.detail, expected: "a direction", ok: false }];
+        }
+        if (window.ThinkingCoach) {
+          showCoach(ThinkingCoach.whereLookHtml(messages) + ThinkingCoach.compareTableHtml(rows) + ThinkingCoach.recordStruggle());
+        }
+      }
+
+      function saferDir(info) {
+        var options = [
+          { name: "right", x: 1, y: 0 },
+          { name: "left", x: -1, y: 0 },
+          { name: "down", x: 0, y: 1 },
+          { name: "up", x: 0, y: -1 }
+        ];
+        var best = null;
+        options.forEach(function (d) {
+          var x = (info.hx + d.x + GRID) % GRID;
+          var y = (info.hy + d.y + GRID) % GRID;
+          if ((info.body || []).some(function (s) { return s.x === x && s.y === y; })) return;
+          var gap = Math.abs(info.fx - x) + Math.abs(info.fy - y);
+          if (!best || gap < best.gap) best = { name: d.name, gap: gap };
+        });
+        return best ? best.name : "another open direction";
+      }
+
+      function useHint() {
+        if (hints >= 3) return;
+        if (!hintPlan) {
+          if (lastInfo && lastInfo.kind === "body") {
+            var safe = saferDir(lastInfo);
+            hintPlan = [
+              "Hint 1 — the idea: move toward the food only when that cell is not in body.",
+              "Hint 2 — the spot: the red cell is x " + lastInfo.nx + ", y " + lastInfo.ny + ". You returned " + lastInfo.dir + ".",
+              "Hint 3 — nearly there: from the head, " + safe + " is open. Return " + safe + " when " + lastInfo.dir + " would touch the body."
+            ];
+          } else if (lastInfo && lastInfo.kind === "return") {
+            hintPlan = [
+              "Hint 1 — the idea: the function must return a direction word.",
+              "Hint 2 — the spot: the return line is the one the game reads.",
+              "Hint 3 — nearly there: return one of \"up\", \"down\", \"left\", or \"right\"."
+            ];
+          } else {
+            hintPlan = [
+              "Hint 1 — the idea: each step should get closer to the food without touching the body.",
+              "Hint 2 — the spot: compare head x, y with food x, y. Close the larger gap first.",
+              "Hint 3 — nearly there: if the closer direction is in body, return the other axis. You can finish without a full copied function."
+            ];
+          }
+        }
+        hints += 1;
+        document.getElementById("hintLog").insertAdjacentHTML("beforeend", '<p class="hint">' + hintPlan[hints - 1] + "</p>");
+        paintHintCount();
       }
 
       function rd(path) {
@@ -274,11 +386,17 @@
           }
         } catch (e) {
           state.alive = false;
-          gameStatus.textContent = e.message || String(e);
+          var msg = e.message || String(e);
+          var headNow = state.snake[0];
+          gameStatus.textContent = "The move did not run. See where to look.";
           gameStatus.className = "status bad";
-          if (window.ThinkingCoach) {
-            showCoach(ThinkingCoach.snakeCrashHtml(e.message || String(e)) + ThinkingCoach.recordStruggle());
-          }
+          explain({
+            kind: /up, down, left, or right/i.test(msg) ? "return" : "error",
+            got: msg.replace(/^choose_direction must return up, down, left, or right \(got /, "").replace(/\)$/, ""),
+            detail: msg,
+            hx: headNow.x,
+            hy: headNow.y
+          });
           stopLoop();
           return;
         }
@@ -287,13 +405,20 @@
         var ny = (head.y + state.dir.y + GRID) % GRID;
         if (state.snake.some(function (s) { return s.x === nx && s.y === ny; })) {
           state.alive = false;
-          gameStatus.textContent = "Crash! Snake hit itself.";
+          state.crash = { x: nx, y: ny };
+          gameStatus.textContent = "The head met the body at x " + nx + ", y " + ny + ".";
           gameStatus.className = "status bad";
-          if (window.ThinkingCoach) {
-            showCoach(ThinkingCoach.snakeCrashHtml(
-              "The head moved onto a body cell. Your choose_direction must avoid cells in body, not only chase food."
-            ) + ThinkingCoach.recordStruggle());
-          }
+          explain({
+            kind: "body",
+            dir: dirName(state.dir),
+            hx: head.x,
+            hy: head.y,
+            nx: nx,
+            ny: ny,
+            fx: state.food.x,
+            fy: state.food.y,
+            body: state.snake.slice()
+          });
           stopLoop();
           draw();
           return;
@@ -343,11 +468,16 @@
           codeStatus.className = "status ok";
         }).catch(function (e) {
           compiledFn = null;
-          codeStatus.textContent = e.message || String(e);
+          var msg = e.message || String(e);
+          codeStatus.textContent = "The function did not run. See where to look.";
           codeStatus.className = "status bad";
-          if (window.ThinkingCoach) {
-            showCoach(ThinkingCoach.codeFailHtml({ error: e.message || String(e) }));
-          }
+          explain({
+            kind: /up, down, left, or right/i.test(msg) ? "return" : "error",
+            got: msg.replace(/^choose_direction must return up, down, left, or right \(got /, "").replace(/\)$/, ""),
+            detail: msg,
+            hx: state.snake[0].x,
+            hy: state.snake[0].y
+          });
         });
       });
 
@@ -375,6 +505,7 @@
         stepOnce();
       });
 
+      document.getElementById("hintBtn").addEventListener("click", useHint);
       document.getElementById("resetBtn").addEventListener("click", function () {
         stopLoop();
         resetState();

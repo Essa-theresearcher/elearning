@@ -26,7 +26,7 @@
       visualGames: [
         { id: "snake", label: "1 · Snake chase", hint: "Score 3 apples — follow the food.", winScore: 3, variant: 0 },
         { id: "maze", label: "2 · Open maze", hint: "Reach the star (80 steps max).", variant: 0 },
-        { id: "sudoku", label: "3 · Row & column rules", hint: "Pass all is_safe tests.", variant: 0 }
+        { id: "sudoku", label: "3 · Row & column rules", hint: "Check names the row or column that repeats a number.", variant: 0 }
       ]
     },
     {
@@ -55,7 +55,7 @@
       visualGames: [
         { id: "maze", label: "1 · Tight corridors", hint: "Reach the star in 60 steps.", variant: 1 },
         { id: "snake", label: "2 · Corner snake", hint: "Score 4 apples without crashing.", winScore: 4, variant: 1 },
-        { id: "sudoku", label: "3 · Box checker", hint: "Includes an extra 2×2 box test.", variant: 1 }
+        { id: "sudoku", label: "3 · Box checker", hint: "Check names the 3×3 box when a number is repeated.", variant: 1 }
       ]
     },
     {
@@ -75,7 +75,7 @@
         "Sudoku → Snake → Maze is today’s visual order."
       ],
       visualGames: [
-        { id: "sudoku", label: "1 · Repeat the rules", hint: "Loop-friendly safety checks.", variant: 2 },
+        { id: "sudoku", label: "1 · Repeat the rules", hint: "New grid. Fix one repeated number, then check again.", variant: 2 },
         { id: "snake", label: "2 · Tail watch", hint: "Score 5 apples — avoid your body.", winScore: 5, variant: 2 },
         { id: "maze", label: "3 · Long path", hint: "Reach the star in 100 steps.", variant: 2 }
       ]
@@ -98,7 +98,7 @@
       ],
       visualGames: [
         { id: "snake", label: "1 · If/else chase", hint: "Score 3 apples with smart turns.", winScore: 3, variant: 3 },
-        { id: "sudoku", label: "2 · Decision grid", hint: "Fail cases need elif-style thinking.", variant: 3 },
+        { id: "sudoku", label: "2 · Where to look", hint: "The first problem tells you where to look and why.", variant: 3 },
         { id: "maze", label: "3 · Wall choices", hint: "Use hit_wall before every move.", variant: 3 }
       ]
     },
@@ -120,7 +120,7 @@
       ],
       visualGames: [
         { id: "maze", label: "1 · Data path", hint: "Track steps like a list counter.", variant: 4 },
-        { id: "sudoku", label: "2 · Grid as lists", hint: "Think rows as list indexes.", variant: 4 },
+        { id: "sudoku", label: "2 · Cell by cell", hint: "Crosses show every cell that differs. The answer stays hidden.", variant: 4 },
         { id: "snake", label: "3 · Body list", hint: "Score 4 — body grows like append.", winScore: 4, variant: 4 }
       ]
     },
@@ -141,7 +141,7 @@
         "Visual order: Sudoku → Maze → Snake."
       ],
       visualGames: [
-        { id: "sudoku", label: "1 · Function tests", hint: "Return True/False from is_safe.", variant: 5 },
+        { id: "sudoku", label: "1 · Three hints", hint: "Hint 1 names a group. Hint 3 names one number.", variant: 5 },
         { id: "maze", label: "2 · choose_direction API", hint: "Return a direction string.", variant: 5 },
         { id: "snake", label: "3 · Score function", hint: "Score 5 to finish strong.", winScore: 5, variant: 5 }
       ]
@@ -165,7 +165,7 @@
       visualGames: [
         { id: "snake", label: "1 · Review snake", hint: "Score 3 — warm up.", winScore: 3, variant: 6 },
         { id: "maze", label: "2 · Review maze", hint: "Reach the star in 70 steps.", variant: 6 },
-        { id: "sudoku", label: "3 · Review sudoku", hint: "All tests from the week combined.", variant: 6 }
+        { id: "sudoku", label: "3 · Review sudoku", hint: "Review: Check first. Hints cost stars.", variant: 6 }
       ]
     }
   ];

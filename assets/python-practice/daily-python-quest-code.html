@@ -43,7 +43,7 @@ textarea{width:100%;min-height:200px;background:var(--code);color:var(--ink);bor
 .day div.on{background:var(--gold);border-color:var(--gold);color:#14284B;font-weight:700}
 .center{text-align:center}.big{font-size:44px}.mut{color:var(--mut);font-size:13px}
 </style>
-<link rel="stylesheet" href="thinking-coach.css">
+<link rel="stylesheet" href="thinking-coach.css?v=2">
 </head>
 <body><div class="wrap">
 <div class="top"><h1>🐍 Daily Python Quest</h1><div><span class="pill" id="streak">🔥 0</span> <span class="pill" id="xp">⭐ 0</span></div></div>
@@ -51,7 +51,7 @@ textarea{width:100%;min-height:200px;background:var(--code);color:var(--ink);bor
 <div id="main"></div>
 <p class="center mut" id="codeBlurb">5 coding challenges today. Failed tests show step-by-step debugging — hints cost stars.</p>
 </div>
-<script src="thinking-coach.js"></script>
+<script src="thinking-coach.js?v=3"></script>
 <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
 <script>
@@ -115,20 +115,13 @@ function norm(s){return s.split("\n").map(function(l){return l.replace(/\s+$/,""
 function vars(m){var h="",k,n=0;if(!m||!m.$d)return"";for(k in m.$d){if(k.indexOf("__")==0||n>=8)continue;var v=m.$d[k],t=v&&v.tp$name;if(t=="function"||t=="module")continue;try{h+='<div class="box"><b>'+esc(k)+'</b><i>'+esc(Sk.misceval.objectRepr(v).v)+'</i></div>';n++}catch(e){}}
  return h?'<div class="mut" style="margin-top:10px">What your variables hold at the end:</div><div class="mem">'+h+'</div>':""}
 async function run(){if(busy||done)return;if(typeof Sk==="undefined"){$("out").innerHTML='<div class="tr no">The Python engine did not load. Check your internet and reload the page.</div>';return}
- busy=true;$("rb").disabled=true;var c=set[i],code=$("ed").value,rows="",pass=0,first=null,err=null;
+ busy=true;$("rb").disabled=true;var c=set[i],code=$("ed").value,tests=[],pass=0,first=null,err=null;
  $("out").innerHTML='<div class="mut" style="margin-top:10px">Running...</div>';
  for(var k=0;k<c.T.length;k++){var t=c.T[k],r=await runPy(code,t[0]);if(!first)first=r.mod;
   var got=norm(r.out),okk=!r.err&&got==norm(t[1]);if(okk)pass++;if(r.err&&!err)err=r.err;
-  rows+='<div class="tr '+(okk?'ok':'no')+'">'+(okk?'✓':'✗')+' Test '+(k+1)+' · input: '+esc(t[0].join(" | "))+(okk?'':'\nexpected: '+esc(t[1])+'\ngot:      '+esc(r.err?(got?got+'\n':'')+r.err:got||'(nothing printed)'))+'</div>'}
- var h='<div class="fb" style="color:'+(pass==c.T.length?'var(--ok)':'var(--bad)')+'">'+(pass==c.T.length?'All tests passed!':pass+' of '+c.T.length+' tests passed. Use the coach below, then fix one thing and run again.')+'</div>'+rows;
- if(pass<c.T.length&&window.ThinkingCoach){
-  h+=ThinkingCoach.codeFailHtml({
-   error:err||"",
-   emptyOutput:!err&&pass===0,
-   outputMismatch:!err&&pass>0
-  });
-  h+=ThinkingCoach.recordStruggle();
- }
+  tests.push({input:t[0].join(" | "),expected:norm(t[1]),got:got,err:r.err||"",ok:okk})}
+ var h=window.ThinkingCoach?ThinkingCoach.codeOutputHtml(tests):'<div class="fb">'+pass+' of '+c.T.length+' tests match.</div>';
+ if(pass<c.T.length&&window.ThinkingCoach)h+=ThinkingCoach.recordStruggle();
  if(pass==c.T.length&&window.ThinkingCoach)ThinkingCoach.resetStruggle();
  if(err)h+='<div class="mut" style="margin-top:6px">Tip: read the error from the end. This editor runs a simplified Python, so if an f-string gives an error, join text with + and str() instead.</div>';
  if(pass==c.T.length&&c.h&&c.h.length)h+='<div class="hint"><b>What you practiced:</b> '+esc(c.h[c.h.length-1])+'</div>';

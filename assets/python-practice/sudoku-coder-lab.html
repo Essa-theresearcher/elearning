@@ -3,110 +3,773 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sudoku Logic Lab</title>
-  <link rel="stylesheet" href="thinking-coach.css">
+  <title>Sudoku — Where to look</title>
+  <link rel="stylesheet" href="thinking-coach.css?v=2">
   <style>
     :root { --bg:#0e1a33; --card:#16264a; --ink:#f3efe0; --mut:#a9b3c7; --gold:#c9a227; --ok:#1f9d57; --bad:#d64545; --line:#2b3d68; }
-    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,sans-serif;padding:12px}
-    .wrap{max-width:720px;margin:0 auto}.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:10px}
-    textarea{width:100%;min-height:220px;background:#0b1530;color:var(--ink);border:2px solid var(--line);border-left:4px solid var(--gold);border-radius:8px;padding:10px;font:13px/1.45 ui-monospace,Menlo,monospace}
-    button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:8px 14px;font-weight:700;background:var(--ink);color:var(--bg);margin-top:8px}
-    .grid{display:grid;grid-template-columns:repeat(4,48px);gap:4px;justify-content:center;margin:12px 0}
-    .cell{width:48px;height:48px;display:grid;place-items:center;background:#0b1530;border:1px solid var(--line);font-weight:700}
-    .status{font-size:13px;margin-top:8px}.ok{color:var(--ok)}.bad{color:var(--bad)}
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 system-ui, sans-serif; padding: 12px; }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 0 0 6px; }
+    .lead { color: var(--mut); margin: 0 0 8px; }
+    .panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-top: 10px; }
+    button { font: inherit; cursor: pointer; border: 0; border-radius: 8px; padding: 8px 14px; font-weight: 700; background: var(--ink); color: var(--bg); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    button.ghost { background: transparent; color: var(--ink); border: 2px solid var(--line); }
+    button.primary { background: var(--gold); color: #14284b; }
+    button.on { border-color: var(--gold); color: var(--gold); }
+    .toolbar, .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+    .board-wrap { display: flex; justify-content: center; margin-top: 12px; }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      width: min(100%, 396px);
+      border: 3px solid #e7e1cf;
+      background: #0b1530;
+      gap: 0;
+    }
+    .cell {
+      position: relative;
+      aspect-ratio: 1;
+      border: 0;
+      margin: 0;
+      padding: 0;
+      border-radius: 0;
+      background: #0b1530;
+      color: #9fd0ff;
+      font: 700 18px/1 system-ui, sans-serif;
+      box-shadow: inset 0 0 0 1px #2b3d68;
+    }
+    .cell.given { color: var(--ink); background: #15284a; }
+    .cell.thick-r { box-shadow: inset -3px 0 0 #e7e1cf, inset 0 0 0 1px #2b3d68; }
+    .cell.thick-b { box-shadow: inset 0 -3px 0 #e7e1cf, inset 0 0 0 1px #2b3d68; }
+    .cell.thick-r.thick-b { box-shadow: inset -3px 0 0 #e7e1cf, inset 0 -3px 0 #e7e1cf, inset 0 0 0 1px #2b3d68; }
+    .cell.band { background: #3a2e18; }
+    .cell.rule-break { background: #8a2a2a; color: #fff; }
+    .cell.selected { outline: 2px solid var(--gold); outline-offset: -3px; z-index: 2; }
+    .cell.hinted { outline: 3px solid var(--gold); outline-offset: -4px; z-index: 3; background: #4a3d16; color: #fff; }
+    .cell.miss::after {
+      content: "×";
+      position: absolute;
+      top: 0;
+      right: 2px;
+      color: #ffb4b4;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .pad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; width: min(100%, 396px); margin: 10px auto 0; }
+    .pad button { margin: 0; min-height: 40px; }
+    .sel-label { text-align: center; color: var(--mut); font-size: 13px; margin: 8px 0 0; }
+    .stars { font-size: 14px; color: var(--mut); }
+    .bulb { display: flex; gap: 4px; font-size: 18px; }
+    .bulb span { opacity: 0.25; }
+    .bulb span.on { opacity: 1; }
+    .hint { background: rgba(201, 162, 39, 0.16); border-radius: 10px; padding: 8px 12px; margin-top: 8px; font-size: 14px; }
+    .summary { margin-top: 8px; font-weight: 700; }
+    .where { margin-top: 10px; border-radius: 10px; padding: 10px 12px; }
+    .where.alert { background: rgba(214, 69, 69, 0.1); border: 1px solid rgba(214, 69, 69, 0.35); }
+    .where.calm { background: rgba(201, 162, 39, 0.14); border: 1px solid rgba(201, 162, 39, 0.45); }
+    .where strong { display: block; margin-bottom: 6px; }
+    .where ul { margin: 0 0 0 18px; padding: 0; }
+    .where li { margin: 4px 0; }
+    .legend { color: var(--mut); font-size: 13px; margin: 8px 0; }
+    .ok { color: var(--ok); }
+    .cmp { overflow-x: auto; }
+    .cmp-row { display: grid; grid-template-columns: 52px repeat(9, minmax(22px, 1fr)); gap: 3px; align-items: center; margin-top: 3px; }
+    .cmp-h, .cmp-lab { font-size: 11px; color: var(--mut); text-align: center; }
+    .cmp-lab { text-align: left; }
+    .pip { text-align: center; font: 12px/1.2 ui-monospace, Menlo, monospace; border-radius: 4px; padding: 3px 0; background: #0b1530; }
+    .pip.ok { color: #8ee0b0; }
+    .pip.bad { color: #ffb4b4; background: rgba(214, 69, 69, 0.18); }
+    .pip.empty { color: var(--mut); }
+    .done-box { margin-top: 10px; padding: 12px 14px; border-radius: 10px; background: linear-gradient(135deg, rgba(31, 157, 87, 0.18), rgba(201, 162, 39, 0.2)); border: 1px solid rgba(201, 162, 39, 0.55); }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Sudoku Logic Lab · Level 3</h1>
-    <p>Write <code>is_safe(grid, row, col, value)</code> for a 4×4 grid. Run tests — when all pass, you finish the visual track.</p>
-    <div class="grid" id="gridView"></div>
-    <div class="panel">
-      <textarea id="code" spellcheck="false">def is_safe(grid, row, col, value):
-    """
-    grid: list of 4 lists, each with 4 ints (0 = empty).
-    Return True if putting value at (row, col) breaks no Sudoku rules.
-    Ignore the cell (row,col) when checking its row/col/box.
-    """
-    for c in range(4):
-        if c != col and grid[row][c] == value:
-            return False
-    for r in range(4):
-        if r != row and grid[r][col] == value:
-            return False
-    br, bc = (row // 2) * 2, (col // 2) * 2
-    for r in range(br, br + 2):
-        for c in range(bc, bc + 2):
-            if (r != row or c != col) and grid[r][c] == value:
-                return False
-    return True
-</textarea>
-      <button type="button" id="runBtn">Run all tests</button>
-      <div class="status" id="out"></div>
-      <div id="coachSlot"></div>
+    <h1>Sudoku</h1>
+    <p class="lead"><strong>Problem:</strong> a check that only says “pass” or “not passed” never shows where you slipped, so you get stuck. <strong>Goal:</strong> every check that finds a problem tells you where to look and why, in plain English, without the full answer.</p>
+    <p class="sel-label" id="selLabel">Tap a cell, then tap a number.</p>
+    <div class="board-wrap"><div class="board" id="board" role="grid" aria-label="Sudoku grid"></div></div>
+    <div class="pad" id="pad"></div>
+    <div class="toolbar">
+      <button type="button" class="primary" id="checkBtn">Check</button>
+      <button type="button" class="ghost" id="hintBtn">Hint</button>
+      <div class="bulb" id="bulb" aria-hidden="true"><span>💡</span><span>💡</span><span>💡</span></div>
+      <button type="button" class="ghost" id="missBtn" aria-pressed="false">Show mistakes</button>
+      <button type="button" class="ghost" id="clearBtn">Clear my numbers</button>
     </div>
+    <p class="stars" id="starLine">If you finish now: ⭐⭐⭐ · Hints cost stars. You can always finish.</p>
+    <div id="hintLog"></div>
+    <div id="report"></div>
   </div>
-  <script src="thinking-coach.js"></script>
+  <script src="thinking-coach.js?v=3"></script>
   <script src="weekly-visual-progress.js"></script>
   <script src="visual-progress.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
   <script>
-(function(){
-  var qp=new URLSearchParams(location.search);
-  var weeklyMode=qp.get("weekly")==="1";
-  var dbaDate=qp.get("dbaDate")||"";
-  var visualOrder=window.WeeklyVisualProgress?WeeklyVisualProgress.parseOrder(qp):["snake","maze","sudoku"];
-  var variant=parseInt(qp.get("dbaVariant")||"0",10);
-  function onVisualWin(){
-    if(weeklyMode&&dbaDate&&window.WeeklyVisualProgress){WeeklyVisualProgress.markGame(dbaDate,"sudoku",visualOrder);return;}
-    if(window.VisualProgress)VisualProgress.markDone("sudoku");
+(function () {
+  var qp = new URLSearchParams(location.search);
+  var weeklyMode = qp.get("weekly") === "1";
+  var dbaDate = qp.get("dbaDate") || "";
+  var visualOrder = window.WeeklyVisualProgress ? WeeklyVisualProgress.parseOrder(qp) : ["snake", "maze", "sudoku"];
+  var variant = parseInt(qp.get("dbaVariant") || "0", 10);
+  if (isNaN(variant)) variant = 0;
+
+  function onVisualWin() {
+    if (weeklyMode && dbaDate && window.WeeklyVisualProgress) {
+      WeeklyVisualProgress.markGame(dbaDate, "sudoku", visualOrder);
+      return;
+    }
+    if (window.VisualProgress) VisualProgress.markDone("sudoku");
   }
-  if(weeklyMode&&dbaDate&&window.WeeklyVisualProgress&&!WeeklyVisualProgress.isUnlocked(dbaDate,"sudoku",visualOrder)){
-    document.body.innerHTML='<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish the previous visual game for this day first.</p></div>';
+
+  if (weeklyMode && dbaDate && window.WeeklyVisualProgress && !WeeklyVisualProgress.isUnlocked(dbaDate, "sudoku", visualOrder)) {
+    document.body.innerHTML = '<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish the previous visual game for this day first.</p></div>';
     return;
   }
-  if(!weeklyMode&&window.VisualProgress&&!VisualProgress.isUnlocked("sudoku")){
-    document.body.innerHTML='<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish <strong>Maze Coder Lab</strong> to unlock Sudoku.</p></div>';
+  if (!weeklyMode && window.VisualProgress && !VisualProgress.isUnlocked("sudoku")) {
+    document.body.innerHTML = '<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish <strong>Maze Coder Lab</strong> to unlock Sudoku.</p></div>';
     return;
   }
-  var puzzle=[[1,0,0,4],[0,0,3,0],[0,3,0,0],[4,0,0,1]];
-  var g=document.getElementById("gridView");puzzle.forEach(function(row){row.forEach(function(v){var d=document.createElement("div");d.className="cell";d.textContent=v||"·";g.appendChild(d);});});
-  var TESTS=[
-    {grid:[[1,2,0,4],[0,0,3,0],[0,3,0,0],[4,0,0,1]],row:0,col:2,val:3,expect:false},
-    {grid:[[1,2,0,4],[0,0,3,0],[0,3,0,0],[4,0,0,1]],row:0,col:2,val:0,expect:true},
-    {grid:[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],row:1,col:1,val:2,expect:true}
+
+  var BASE_SOL = [
+    [5, 3, 4, 6, 7, 8, 9, 1, 2],
+    [6, 7, 2, 1, 9, 5, 3, 4, 8],
+    [1, 9, 8, 3, 4, 2, 5, 6, 7],
+    [8, 5, 9, 7, 6, 1, 4, 2, 3],
+    [4, 2, 6, 8, 5, 3, 7, 9, 1],
+    [7, 1, 3, 9, 2, 4, 8, 5, 6],
+    [9, 6, 1, 5, 3, 7, 2, 8, 4],
+    [2, 8, 7, 4, 1, 9, 6, 3, 5],
+    [3, 4, 5, 2, 8, 6, 1, 7, 9]
   ];
-  if(variant%2===1)TESTS.push({grid:[[2,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,2]],row:0,col:1,val:2,expect:false});
-  if(variant>=2)TESTS.push({grid:[[0,0,0,0],[0,1,0,0],[0,0,0,0],[0,0,0,0]],row:0,col:0,val:1,expect:false});
-  function rd(x){return Sk.builtinFiles.files[x];}
-  function runPy(code,grid,row,col,val){
-    var setup="grid = "+JSON.stringify(grid)+"\nrow = "+row+"\ncol = "+col+"\nvalue = "+val+"\n";
-    return Sk.misceval.asyncToPromise(function(){
-      Sk.configure({read:rd,__future__:Sk.python3});
-      return Sk.importMainWithBody("<user>",false,setup+code+"\nresult = is_safe(grid, row, col, value)",true);
-    }).then(function(m){return Sk.misceval.callsim(m.$d.is_safe,Sk.ffi.remapToPy(grid),Sk.ffi.remapToPy(row),Sk.ffi.remapToPy(col),Sk.ffi.remapToPy(val));});
+  var BASE_CLUES = [
+    [5, 3, 0, 0, 7, 0, 0, 0, 0],
+    [6, 0, 0, 1, 9, 5, 0, 0, 0],
+    [0, 9, 8, 0, 0, 0, 0, 6, 0],
+    [8, 0, 0, 0, 6, 0, 0, 0, 3],
+    [4, 0, 0, 8, 0, 3, 0, 0, 1],
+    [7, 0, 0, 0, 2, 0, 0, 0, 6],
+    [0, 6, 0, 0, 0, 0, 2, 8, 0],
+    [0, 0, 0, 4, 1, 9, 0, 0, 5],
+    [0, 0, 0, 0, 8, 0, 0, 7, 9]
+  ];
+
+  function cloneGrid(g) {
+    return g.map(function (row) { return row.slice(); });
   }
-  document.getElementById("runBtn").onclick=async function(){
-    var code=document.getElementById("code").value,out=document.getElementById("out"),coach=document.getElementById("coachSlot"),pass=0,html="";
-    for(var i=0;i<TESTS.length;i++){
-      var t=TESTS[i];
-      try{
-        var r=await runPy(code,t.grid,t.row,t.col,t.val);
-        var got=Boolean(r.v!==undefined?r.v:r);
-        var ok=got===t.expect; if(ok)pass++;
-        html+="<div class=\""+(ok?"ok":"bad")+"\">Test "+(i+1)+": "+(ok?"pass":"fail")+" (expected "+t.expect+", got "+got+")</div>";
-      }catch(e){html+="<div class=\"bad\">Test "+(i+1)+": error "+e+"</div>";}
+  function mapDigits(g, map) {
+    return g.map(function (row) {
+      return row.map(function (n) { return n ? map[n] : 0; });
+    });
+  }
+  function transpose(g) {
+    var out = [];
+    for (var c = 0; c < 9; c++) {
+      var row = [];
+      for (var r = 0; r < 9; r++) row.push(g[r][c]);
+      out.push(row);
     }
-    out.innerHTML=pass+"/"+TESTS.length+" tests passed.";
-    out.className="status "+(pass===TESTS.length?"ok":"bad");
-    if(pass<TESTS.length&&window.ThinkingCoach){
-      coach.innerHTML=ThinkingCoach.codeFailHtml({outputMismatch:true})+ThinkingCoach.recordStruggle();
-    }else if(pass===TESTS.length){
-      onVisualWin();
-      if(window.ThinkingCoach){ThinkingCoach.resetStruggle();coach.innerHTML='<div class="coach-affirm"><strong>All visual levels complete</strong><p>You finished Snake, Maze, and Sudoku logic. That is sustained critical thinking.</p></div>';}
+    return out;
+  }
+  function rotate90(g) {
+    var out = [];
+    for (var c = 0; c < 9; c++) {
+      var row = [];
+      for (var r = 8; r >= 0; r--) row.push(g[r][c]);
+      out.push(row);
     }
-  };
+    return out;
+  }
+  function swapBands(g) {
+    return g.slice(6, 9).concat(g.slice(3, 6), g.slice(0, 3));
+  }
+  function buildPuzzle(v) {
+    var sol = cloneGrid(BASE_SOL);
+    var clues = cloneGrid(BASE_CLUES);
+    var n = ((v % 7) + 7) % 7;
+    if (n === 1 || n === 6) {
+      var cyc = {};
+      for (var d = 1; d <= 9; d++) cyc[d] = (d % 9) + 1;
+      sol = mapDigits(sol, cyc);
+      clues = mapDigits(clues, cyc);
+    }
+    if (n === 2 || n === 6) {
+      sol = transpose(sol);
+      clues = transpose(clues);
+    }
+    if (n === 3) {
+      sol = rotate90(sol);
+      clues = rotate90(clues);
+    }
+    if (n === 4) {
+      sol = swapBands(sol);
+      clues = swapBands(clues);
+    }
+    if (n === 5) {
+      var rev = {};
+      for (var d2 = 1; d2 <= 9; d2++) rev[d2] = 10 - d2;
+      sol = mapDigits(sol, rev);
+      clues = mapDigits(clues, rev);
+    }
+    return { solution: sol, puzzle: clues };
+  }
+
+  var built = buildPuzzle(variant);
+  var solution = built.solution;
+  var puzzle = built.puzzle;
+  var grid = cloneGrid(puzzle);
+  var given = puzzle.map(function (row) { return row.map(function (n) { return n !== 0; }); });
+  var sel = firstEmpty();
+  var hints = 0;
+  var hintPlan = null;
+  var hintAt = null;
+  var showMistakes = false;
+  var solved = false;
+  var won = false;
+  var lastMarks = null;
+
+  var BOX_NAME = [
+    ["top-left", "top-middle", "top-right"],
+    ["middle-left", "center", "middle-right"],
+    ["bottom-left", "bottom-middle", "bottom-right"]
+  ];
+  var COUNT_WORD = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+
+  function firstEmpty() {
+    for (var r = 0; r < 9; r++) {
+      for (var c = 0; c < 9; c++) if (!puzzle[r][c]) return { r: r, c: c };
+    }
+    return { r: 0, c: 0 };
+  }
+  function key(r, c) { return r + "," + c; }
+  function cellsOf(type, index) {
+    var list = [];
+    if (type === "row") {
+      for (var c = 0; c < 9; c++) list.push([index, c]);
+    } else if (type === "col") {
+      for (var r = 0; r < 9; r++) list.push([r, index]);
+    } else {
+      var br = Math.floor(index / 3) * 3;
+      var bc = (index % 3) * 3;
+      for (var rr = br; rr < br + 3; rr++) {
+        for (var cc = bc; cc < bc + 3; cc++) list.push([rr, cc]);
+      }
+    }
+    return list;
+  }
+  function unitPhrase(type, index) {
+    if (type === "row") return "row " + (index + 1);
+    if (type === "col") return "column " + (index + 1);
+    var br = Math.floor(index / 3);
+    var bc = index % 3;
+    return "the " + BOX_NAME[br][bc] + " box";
+  }
+  function unitTitle(type, index) {
+    var p = unitPhrase(type, index);
+    return p.charAt(0).toUpperCase() + p.slice(1);
+  }
+  function humanJoin(parts) {
+    if (!parts.length) return "";
+    if (parts.length === 1) return parts[0];
+    if (parts.length === 2) return parts[0] + " and " + parts[1];
+    return parts.slice(0, -1).join(", ") + ", and " + parts[parts.length - 1];
+  }
+  function joinNums(label, nums) {
+    if (!nums.length) return "";
+    var name = nums.length > 1 ? label + "s" : label;
+    var bits = nums.map(String);
+    var text = bits.length === 1 ? bits[0] : bits.slice(0, -1).join(", ") + " and " + bits[bits.length - 1];
+    return name + " " + text;
+  }
+
+  function checkGrid(current) {
+    var messages = [];
+    var issues = [];
+
+    function consider(type, index) {
+      var coords = cellsOf(type, index);
+      var counts = {};
+      var empty = 0;
+      coords.forEach(function (rc) {
+        var v = current[rc[0]][rc[1]];
+        if (!v) empty += 1;
+        else counts[v] = (counts[v] || 0) + 1;
+      });
+      var dupVals = Object.keys(counts).filter(function (k) { return counts[k] > 1; }).map(Number);
+      if (!dupVals.length) {
+        if (empty === 0) {
+          var wrong = coords.filter(function (rc) {
+            return current[rc[0]][rc[1]] !== solution[rc[0]][rc[1]];
+          });
+          if (wrong.length === 2) {
+            var a = wrong[0];
+            var b = wrong[1];
+            var swapped = current[a[0]][a[1]] === solution[b[0]][b[1]] && current[b[0]][b[1]] === solution[a[0]][a[1]];
+            if (swapped) {
+              var swapMsg = unitTitle(type, index) + " has two numbers that traded places";
+              messages.push(swapMsg);
+              issues.push({ type: type, index: index, message: swapMsg, kind: "swap", cells: wrong, unitCells: coords });
+            }
+          }
+        }
+        return;
+      }
+      dupVals.sort(function (a, b) { return a - b; });
+      var value = dupVals[0];
+      var name = unitTitle(type, index);
+      var dupMsg = name + " has " + (COUNT_WORD[counts[value]] || counts[value]) + " " + value + "s";
+      var missing = [];
+      if (empty === 0) {
+        for (var n = 1; n <= 9; n++) if (!counts[n]) missing.push(n);
+      }
+      var msg = missing.length === 1 ? name + " is missing a " + missing[0] : dupMsg;
+      var badCells = coords.filter(function (rc) {
+        var v = current[rc[0]][rc[1]];
+        return dupVals.indexOf(v) >= 0 && v !== solution[rc[0]][rc[1]];
+      });
+      if (!badCells.length) {
+        badCells = coords.filter(function (rc) {
+          return dupVals.indexOf(current[rc[0]][rc[1]]) >= 0 && !given[rc[0]][rc[1]];
+        });
+      }
+      messages.push(msg);
+      issues.push({
+        type: type,
+        index: index,
+        message: msg,
+        dupMessage: dupMsg,
+        kind: missing.length === 1 ? "missing" : "dup",
+        value: value,
+        count: counts[value],
+        missing: missing.length === 1 ? missing[0] : null,
+        cells: badCells,
+        unitCells: coords
+      });
+    }
+
+    var r, c;
+    for (r = 0; r < 9; r++) consider("row", r);
+    for (c = 0; c < 9; c++) consider("col", c);
+    for (var b = 0; b < 9; b++) consider("box", b);
+
+    if (!issues.length) {
+      var wrongCells = [];
+      for (r = 0; r < 9; r++) {
+        for (c = 0; c < 9; c++) {
+          if (current[r][c] && current[r][c] !== solution[r][c]) wrongCells.push([r, c]);
+        }
+      }
+      if (wrongCells.length) {
+        var fr = wrongCells[0][0];
+        var legalMsg = "Row " + (fr + 1) + " has a filled cell that follows the repeat rules and still does not match this puzzle";
+        messages.push(legalMsg);
+        issues.push({
+          type: "row",
+          index: fr,
+          message: legalMsg,
+          kind: "legal",
+          cells: [wrongCells[0]],
+          unitCells: cellsOf("row", fr)
+        });
+      }
+    }
+
+    var correct = 0;
+    var emptyCount = 0;
+    var differ = 0;
+    for (r = 0; r < 9; r++) {
+      for (c = 0; c < 9; c++) {
+        if (!current[r][c]) emptyCount += 1;
+        else if (current[r][c] === solution[r][c]) correct += 1;
+        else differ += 1;
+      }
+    }
+    messages.issues = issues;
+    messages.correct = correct;
+    messages.empty = emptyCount;
+    messages.differ = differ;
+    messages.solved = correct === 81;
+    return messages;
+  }
+
+  function errorGroups(current) {
+    var rows = [];
+    var cols = [];
+    var boxes = [];
+    function unitBad(coords) {
+      var counts = {};
+      var bad = false;
+      coords.forEach(function (rc) {
+        var v = current[rc[0]][rc[1]];
+        if (!v) return;
+        if (v !== solution[rc[0]][rc[1]]) bad = true;
+        counts[v] = (counts[v] || 0) + 1;
+        if (counts[v] > 1) bad = true;
+      });
+      return bad;
+    }
+    for (var r = 0; r < 9; r++) if (unitBad(cellsOf("row", r))) rows.push(r + 1);
+    for (var c = 0; c < 9; c++) if (unitBad(cellsOf("col", c))) cols.push(c + 1);
+    for (var b = 0; b < 9; b++) if (unitBad(cellsOf("box", b))) boxes.push(unitPhrase("box", b));
+    return { rows: rows, cols: cols, boxes: boxes };
+  }
+
+  function summaryText(messages, groups) {
+    var head = messages.correct + " of 81 cells match.";
+    if (messages.solved) return "All 81 cells match. Every row, column, and box uses 1 through 9 once.";
+    var bits = [];
+    if (groups.rows.length) bits.push(joinNums("row", groups.rows));
+    if (groups.cols.length) bits.push(joinNums("column", groups.cols));
+    if (groups.boxes.length) bits.push(humanJoin(groups.boxes));
+    var emptyBit = messages.empty ? " " + messages.empty + (messages.empty === 1 ? " cell is" : " cells are") + " still empty." : "";
+    if (!bits.length) return head + emptyBit + " No row, column, or box has a repeated number.";
+    return head + emptyBit + " Still to fix: " + humanJoin(bits) + ".";
+  }
+
+  function diagnosisLines(issue) {
+    var place = unitPhrase(issue.type, issue.index);
+    if (issue.kind === "dup" || issue.kind === "missing") {
+      var spot = issue.cells.length === 1 ? "the red cell" : "the red cells";
+      var next = issue.kind === "missing"
+        ? "Where to look next: " + spot + " in " + place + ". Replace the extra " + issue.value + " so " + issue.missing + " has room."
+        : "Where to look next: " + spot + " in " + place + ". Change one " + issue.value + " so it appears only once.";
+      var different = issue.kind === "missing"
+        ? "What is different: " + issue.value + " was used " + (COUNT_WORD[issue.count] || issue.count) + " times, so " + issue.missing + " never got a cell."
+        : "What is different: " + issue.value + " was used " + (COUNT_WORD[issue.count] || issue.count) + " times.";
+      return [
+        issue.message + ".",
+        "What is right: a clue, and any number that appears only once in " + place + ", can stay.",
+        different,
+        next
+      ];
+    }
+    if (issue.kind === "swap") {
+      return [
+        issue.message + ".",
+        "What is right: every number in " + place + " appears once, so the repeat rule holds.",
+        "What is different: two cells have each other's numbers.",
+        "Where to look next: the two crosses in " + place + " on the cell-by-cell list. Switch those two numbers, then check again."
+      ];
+    }
+    return [
+      issue.message + ".",
+      "What is right: that number is not repeated in its row, column, or box.",
+      "What is different: it is still not the number this puzzle uses in that cell.",
+      "Where to look next: the cross in " + place + " on the list below. Show mistakes marks that cell on the grid and does not reveal the number."
+    ];
+  }
+
+  function calmLines(messages) {
+    return [
+      messages.correct + " of 81 cells match, including the clues.",
+      "What is right: every number you placed appears once in its row, column, and box.",
+      "What is left: " + messages.empty + (messages.empty === 1 ? " empty cell" : " empty cells") + ".",
+      "Where to look next: fill an empty cell with a number you do not already see in that row, column, and box — or use Hint."
+    ];
+  }
+
+  function correctWork() {
+    return grid.map(function (row, r) {
+      return row.map(function (v, c) { return v && v === solution[r][c] ? v : 0; });
+    });
+  }
+  function candidatesAt(work, r, c) {
+    if (work[r][c]) return [];
+    var used = {};
+    var i, j;
+    for (i = 0; i < 9; i++) {
+      if (work[r][i]) used[work[r][i]] = true;
+      if (work[i][c]) used[work[i][c]] = true;
+    }
+    var br = Math.floor(r / 3) * 3;
+    var bc = Math.floor(c / 3) * 3;
+    for (i = br; i < br + 3; i++) {
+      for (j = bc; j < bc + 3; j++) if (work[i][j]) used[work[i][j]] = true;
+    }
+    var out = [];
+    for (var n = 1; n <= 9; n++) if (!used[n]) out.push(n);
+    return out;
+  }
+  function emptyIn(work, type, index) {
+    return cellsOf(type, index).filter(function (rc) { return !work[rc[0]][rc[1]]; }).length;
+  }
+  function tightUnit(work, r, c) {
+    var boxIndex = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+    var options = [
+      { type: "row", index: r, empty: emptyIn(work, "row", r) },
+      { type: "col", index: c, empty: emptyIn(work, "col", c) },
+      { type: "box", index: boxIndex, empty: emptyIn(work, "box", boxIndex) }
+    ];
+    options.sort(function (a, b) { return a.empty - b.empty; });
+    return options[0];
+  }
+  function findForced() {
+    var work = correctWork();
+    var best = null;
+    for (var r = 0; r < 9; r++) {
+      for (var c = 0; c < 9; c++) {
+        if (grid[r][c] === solution[r][c]) continue;
+        var cs = candidatesAt(work, r, c);
+        if (cs.length !== 1) continue;
+        var unit = tightUnit(work, r, c);
+        var item = { r: r, c: c, n: cs[0], unit: unit, empty: !grid[r][c] };
+        if (!best || (item.empty && !best.empty) || (item.empty === best.empty && unit.empty < best.unit.empty)) best = item;
+      }
+    }
+    return best;
+  }
+
+  function buildHintPlan() {
+    var report = checkGrid(grid);
+    var dup = null;
+    report.issues.forEach(function (issue) {
+      if (!dup && (issue.kind === "dup" || issue.kind === "missing")) dup = issue;
+    });
+    if (dup) {
+      var place = unitPhrase(dup.type, dup.index);
+      var many = dup.cells.length !== 1;
+      return {
+        cells: dup.cells,
+        steps: [
+          "Hint 1 — the idea: look at " + place + ". Something there is repeated, so a new number would sit on a broken rule.",
+          "Hint 2 — the spot: the highlighted " + (many ? "cells" : "cell") + " in " + place + (many ? " are" : " is") + " the repeated number.",
+          "Hint 3 — nearly there: " + dup.message + ". Change " + (many ? "one of those cells" : "that cell") + " so the number appears once. The rest of the grid stays yours to finish."
+        ]
+      };
+    }
+    var forced = findForced();
+    if (forced) {
+      var uname = unitPhrase(forced.unit.type, forced.unit.index);
+      return {
+        cells: [[forced.r, forced.c]],
+        steps: [
+          "Hint 1 — the idea: look at " + uname + ". It has a cell that can only be one number.",
+          "Hint 2 — the spot: the highlighted cell is that cell. It is in row " + (forced.r + 1) + ", column " + (forced.c + 1) + ".",
+          "Hint 3 — nearly there: it must be " + forced.n + ". The other numbers are already in its row, column, and box."
+        ]
+      };
+    }
+    var hole = null;
+    var work = correctWork();
+    var bestLen = 10;
+    for (var r = 0; r < 9; r++) {
+      for (var c = 0; c < 9; c++) {
+        if (grid[r][c] === solution[r][c]) continue;
+        var cs = candidatesAt(work, r, c);
+        if (cs.length && cs.length < bestLen) {
+          bestLen = cs.length;
+          hole = { r: r, c: c, cs: cs, unit: tightUnit(work, r, c) };
+        }
+      }
+    }
+    if (!hole) {
+      return {
+        cells: [],
+        steps: [
+          "Hint 1 — the idea: the clues already follow every rule. Fill a row that has the most numbers in it.",
+          "Hint 2 — the spot: pick any empty cell in that row and test a number that is missing from the row.",
+          "Hint 3 — nearly there: if Check draws a cross, that number does not belong there. Try the next missing number. You can finish one cell at a time."
+        ]
+      };
+    }
+    var list = hole.cs.join(" or ");
+    return {
+      cells: [[hole.r, hole.c]],
+      steps: [
+        "Hint 1 — the idea: look at " + unitPhrase(hole.unit.type, hole.unit.index) + ". An open cell there has only a few numbers left.",
+        "Hint 2 — the spot: the highlighted cell is row " + (hole.r + 1) + ", column " + (hole.c + 1) + ".",
+        "Hint 3 — nearly there: that cell can only be " + list + ". Keep the one that is not already in its row, column, and box, then press Check."
+      ]
+    };
+  }
+
+  function starCount() { return Math.max(1, 3 - hints); }
+  function starGlyph() {
+    var s = starCount();
+    return "⭐".repeat(s) + "☆".repeat(3 - s);
+  }
+  function paintStars() {
+    document.getElementById("starLine").textContent = solved
+      ? "You finished with " + starGlyph() + ". Hints used: " + hints + "."
+      : "If you finish now: " + starGlyph() + " · Each hint costs a star. You can always finish.";
+    var bulbs = document.getElementById("bulb").children;
+    for (var i = 0; i < bulbs.length; i++) bulbs[i].className = i < hints ? "on" : "";
+    var hintBtn = document.getElementById("hintBtn");
+    hintBtn.disabled = solved || hints >= 3;
+    if (hints >= 3) hintBtn.textContent = "All 3 hints used";
+  }
+
+  function comparisonHtml() {
+    var html = '<p class="legend">Your answer next to a mark for every cell. <span class="ok">Green check</span> matches this puzzle. <span style="color:#ffb4b4">Red cross</span> is different. A dot is empty. Correct numbers stay hidden.</p><div class="cmp">';
+    html += '<div class="cmp-row"><div></div>';
+    for (var c = 1; c <= 9; c++) html += '<div class="cmp-h">' + c + "</div>";
+    html += "</div>";
+    for (var r = 0; r < 9; r++) {
+      html += '<div class="cmp-row"><div class="cmp-lab">Row ' + (r + 1) + "</div>";
+      for (var col = 0; col < 9; col++) {
+        var v = grid[r][col];
+        var cls, text;
+        if (!v) { cls = "empty"; text = "·"; }
+        else if (v === solution[r][col]) { cls = "ok"; text = v + "✓"; }
+        else { cls = "bad"; text = v + "✗"; }
+        html += '<div class="pip ' + cls + '">' + text + "</div>";
+      }
+      html += "</div>";
+    }
+    return html + "</div>";
+  }
+
+  function renderBoard() {
+    var board = document.getElementById("board");
+    board.innerHTML = "";
+    for (var r = 0; r < 9; r++) {
+      for (var c = 0; c < 9; c++) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "cell";
+        if (given[r][c]) btn.classList.add("given");
+        if ((c + 1) % 3 === 0 && c !== 8) btn.classList.add("thick-r");
+        if ((r + 1) % 3 === 0 && r !== 8) btn.classList.add("thick-b");
+        if (sel && sel.r === r && sel.c === c) btn.classList.add("selected");
+        if (lastMarks && lastMarks.band[key(r, c)]) btn.classList.add("band");
+        if (lastMarks && lastMarks.bad[key(r, c)]) btn.classList.add("rule-break");
+        if (hintAt && hintAt[key(r, c)] && hints >= 2) btn.classList.add("hinted");
+        if (showMistakes && grid[r][c] && grid[r][c] !== solution[r][c]) btn.classList.add("miss");
+        btn.textContent = grid[r][c] ? String(grid[r][c]) : "";
+        btn.setAttribute("role", "gridcell");
+        btn.setAttribute("aria-label", "Row " + (r + 1) + " column " + (c + 1) + (grid[r][c] ? ", " + grid[r][c] : ", empty") + (given[r][c] ? ", given" : ""));
+        (function (rr, cc) {
+          btn.addEventListener("click", function () { select(rr, cc); });
+        })(r, c);
+        board.appendChild(btn);
+      }
+    }
+    var label = document.getElementById("selLabel");
+    if (!sel) label.textContent = "Tap a cell, then tap a number.";
+    else if (given[sel.r][sel.c]) label.textContent = "Row " + (sel.r + 1) + ", column " + (sel.c + 1) + " is a clue. Pick an empty cell.";
+    else label.textContent = "Selected: row " + (sel.r + 1) + ", column " + (sel.c + 1) + ".";
+  }
+
+  function select(r, c) {
+    if (solved) return;
+    sel = { r: r, c: c };
+    renderBoard();
+  }
+  function place(n) {
+    if (solved || !sel || given[sel.r][sel.c]) return;
+    grid[sel.r][sel.c] = n;
+    lastMarks = null;
+    document.getElementById("report").innerHTML = "";
+    renderBoard();
+  }
+
+  function applyMarks(report) {
+    var band = {};
+    var bad = {};
+    report.issues.forEach(function (issue) {
+      if (issue.kind !== "dup" && issue.kind !== "missing") return;
+      issue.unitCells.forEach(function (rc) { band[key(rc[0], rc[1])] = true; });
+      issue.cells.forEach(function (rc) { bad[key(rc[0], rc[1])] = true; });
+    });
+    if (!Object.keys(bad).length && report.issues[0]) {
+      report.issues[0].unitCells.forEach(function (rc) { band[key(rc[0], rc[1])] = true; });
+    }
+    lastMarks = { band: band, bad: bad };
+  }
+
+  function showReport() {
+    var messages = checkGrid(grid);
+    var groups = errorGroups(grid);
+    var box = document.getElementById("report");
+    if (messages.solved) {
+      solved = true;
+      lastMarks = null;
+      hintAt = null;
+      if (!won) { won = true; onVisualWin(); if (window.ThinkingCoach) ThinkingCoach.resetStruggle(); }
+      paintStars();
+      document.getElementById("checkBtn").disabled = true;
+      document.getElementById("missBtn").disabled = true;
+      box.innerHTML = '<div class="done-box"><strong>The grid is complete</strong><p>Every cell matches. Each row, column, and 3×3 box holds 1 through 9 once. ' + starGlyph() + "</p></div>" + comparisonHtml();
+      renderBoard();
+      return;
+    }
+    applyMarks(messages);
+    var html = '<p class="summary">' + summaryText(messages, groups) + "</p>";
+    if (!messages.issues.length) {
+      html += '<div class="where calm"><strong>Where to look</strong><ul>' + calmLines(messages).map(function (line) {
+        return "<li>" + line + "</li>";
+      }).join("") + "</ul></div>";
+    } else {
+      html += '<div class="where alert"><strong>Where to look</strong><ul>' + diagnosisLines(messages.issues[0]).map(function (line) {
+        return "<li>" + line + "</li>";
+      }).join("") + "</ul></div>";
+      if (window.ThinkingCoach) html += ThinkingCoach.recordStruggle();
+    }
+    html += comparisonHtml();
+    box.innerHTML = html;
+    renderBoard();
+  }
+
+  function useHint() {
+    if (solved || hints >= 3) return;
+    if (!hintPlan) hintPlan = buildHintPlan();
+    hints += 1;
+    hintAt = {};
+    if (hints >= 2) {
+      hintPlan.cells.forEach(function (rc) { hintAt[key(rc[0], rc[1])] = true; });
+    }
+    document.getElementById("hintLog").insertAdjacentHTML("beforeend", '<div class="hint">' + hintPlan.steps[hints - 1] + "</div>");
+    paintStars();
+    renderBoard();
+  }
+
+  function clearMine() {
+    if (solved) return;
+    grid = cloneGrid(puzzle);
+    lastMarks = null;
+    sel = firstEmpty();
+    document.getElementById("report").innerHTML = "";
+    renderBoard();
+  }
+
+  var pad = document.getElementById("pad");
+  for (var n = 1; n <= 9; n++) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = String(n);
+    (function (num) { b.addEventListener("click", function () { place(num); }); })(n);
+    pad.appendChild(b);
+  }
+  var clearCell = document.createElement("button");
+  clearCell.type = "button";
+  clearCell.className = "ghost";
+  clearCell.textContent = "Erase";
+  clearCell.addEventListener("click", function () { place(0); });
+  pad.appendChild(clearCell);
+
+  document.getElementById("checkBtn").addEventListener("click", showReport);
+  document.getElementById("hintBtn").addEventListener("click", useHint);
+  document.getElementById("clearBtn").addEventListener("click", clearMine);
+  document.getElementById("missBtn").addEventListener("click", function () {
+    showMistakes = !showMistakes;
+    this.setAttribute("aria-pressed", showMistakes ? "true" : "false");
+    this.classList.toggle("on", showMistakes);
+    this.textContent = showMistakes ? "Hide mistake marks" : "Show mistakes";
+    renderBoard();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (!sel || solved) return;
+    if (e.key >= "1" && e.key <= "9") { place(Number(e.key)); e.preventDefault(); }
+    else if (e.key === "Backspace" || e.key === "Delete" || e.key === "0") { place(0); e.preventDefault(); }
+    else if (e.key === "ArrowUp" && sel.r > 0) { select(sel.r - 1, sel.c); e.preventDefault(); }
+    else if (e.key === "ArrowDown" && sel.r < 8) { select(sel.r + 1, sel.c); e.preventDefault(); }
+    else if (e.key === "ArrowLeft" && sel.c > 0) { select(sel.r, sel.c - 1); e.preventDefault(); }
+    else if (e.key === "ArrowRight" && sel.c < 8) { select(sel.r, sel.c + 1); e.preventDefault(); }
+  });
+
+  paintStars();
+  renderBoard();
 })();
   </script>
 </body>

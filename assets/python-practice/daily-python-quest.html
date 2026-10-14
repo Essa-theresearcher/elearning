@@ -48,7 +48,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .center{text-align:center}
 .big{font-size:44px}
 </style>
-<link rel="stylesheet" href="thinking-coach.css">
+<link rel="stylesheet" href="thinking-coach.css?v=2">
 </head>
 <body><div class="wrap">
 <div class="top"><h1>🐍 Daily Python Quest</h1><div><span class="pill" id="streak">🔥 0</span> <span class="pill" id="xp">⭐ 0</span></div></div>
@@ -56,7 +56,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 <div class="card" id="main"></div>
 <p class="center" style="color:var(--mut);font-size:13px" id="practiceBlurb">8 predict-and-reason challenges today. Wrong answers show step-by-step thinking — hints cost stars, so try first.</p>
 </div>
-<script src="thinking-coach.js"></script>
+<script src="thinking-coach.js?v=3"></script>
 <script>
 var POOL=[
 {t:"Predict",q:"What does this print?",code:"x = 5\ny = x * 2\nx = 3\nprint(y)",o:["10","6","5","15"],a:0,mem:{x:"3",y:"10"},h:["Python runs one line at a time, top to bottom.","y gets its value on line 2, when x is 5.","Changing x later does not change y."]},
@@ -114,9 +114,9 @@ function win(){var c=set[i];done=true;var st=stars();res.push(st);
  var why=whyText?'<div class="hint"><b>Why this is right:</b> '+whyText+'</div>':'';
  $("fb").innerHTML='<span style="color:var(--ok)">Correct! '+"⭐".repeat(st)+'</span>'+why+mem(c.mem);$("nx").style.display="";$("hb").style.display="none";
  if(i==PREDICT_N-1)$("nx").textContent="Finish 🎉"}
-function ans(k,el){if(done)return;var c=set[i];if(k==c.a){el.classList.add("good");if(window.ThinkingCoach)ThinkingCoach.resetStruggle();win()}else{el.classList.add("bad");wrongs++;var fb=window.ThinkingCoach?ThinkingCoach.wrongChoiceHtml(c,k):'<span style="color:var(--bad)">Not yet.</span>';if(window.ThinkingCoach)fb+=ThinkingCoach.recordStruggle();$("fb").innerHTML=fb}}
+function ans(k,el){if(done)return;var c=set[i];if(k==c.a){el.classList.add("good");if(window.ThinkingCoach)ThinkingCoach.resetStruggle();win()}else{el.classList.add("bad");wrongs++;var fb=window.ThinkingCoach?ThinkingCoach.wrongChoiceHtml(c,k):'<span style="color:var(--bad)">That choice differs. Read the code from the top.</span>';if(window.ThinkingCoach)fb+=ThinkingCoach.recordStruggle();$("fb").innerHTML=fb}}
 function chk(){if(done)return;var c=set[i];var ok=pick.length==c.lines.length&&pick.every(function(k,p){return k==p});
- if(ok){if(window.ThinkingCoach)ThinkingCoach.resetStruggle();win()}else{wrongs++;var fb=window.ThinkingCoach?ThinkingCoach.wrongOrderHtml(c):'<span style="color:var(--bad)">Not quite.</span>';if(window.ThinkingCoach)fb+=ThinkingCoach.recordStruggle();$("fb").innerHTML=fb;$("slot").style.animation="sh .3s";setTimeout(function(){$("slot").style.animation=""},300)}}
+ if(ok){if(window.ThinkingCoach)ThinkingCoach.resetStruggle();win()}else{wrongs++;var fb=window.ThinkingCoach?ThinkingCoach.wrongOrderHtml(c,pick):'<span style="color:var(--bad)">Slot by slot, something differs.</span>';if(window.ThinkingCoach)fb+=ThinkingCoach.recordStruggle();$("fb").innerHTML=fb;$("slot").style.animation="sh .3s";setTimeout(function(){$("slot").style.animation=""},300)}}
 function hint(){if(hints>=3||done)return;$("hn").insertAdjacentHTML("beforeend",'<div class="hint">💡 Hint '+(hints+1)+': '+set[i].h[hints]+'</div>');hints++;
  var b=$("bulb").children;for(var k=0;k<hints;k++)b[k].className="on";if(hints>=3)$("hb").style.display="none"}
 function next(){if(i<PREDICT_N-1){i++;show()}else finish()}

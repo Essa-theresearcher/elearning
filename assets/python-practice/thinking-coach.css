@@ -44,3 +44,34 @@
   margin-bottom: 6px;
   color: inherit;
 }
+.where {
+  margin-top: 10px;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-weight: 400;
+}
+.where.alert {
+  background: rgba(214, 69, 69, 0.1);
+  border: 1px solid rgba(214, 69, 69, 0.35);
+}
+.where.calm {
+  background: rgba(201, 162, 39, 0.14);
+  border: 1px solid rgba(201, 162, 39, 0.45);
+}
+.where strong { display: block; margin-bottom: 6px; }
+.where ul { margin: 0 0 0 18px; padding: 0; }
+.where li { margin: 4px 0; }
+.cmp-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font: 400 13px/1.4 ui-monospace, Menlo, Consolas, monospace;
+}
+.cmp-table th, .cmp-table td {
+  text-align: left;
+  padding: 4px 6px;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(127, 127, 127, 0.25);
+}
+.mark-ok { color: #1f9d57; font-weight: 700; }
+.mark-bad { color: #d64545; font-weight: 700; }

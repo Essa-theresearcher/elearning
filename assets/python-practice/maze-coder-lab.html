@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Maze Coder Lab</title>
-  <link rel="stylesheet" href="thinking-coach.css">
+  <link rel="stylesheet" href="thinking-coach.css?v=2">
   <style>
     :root { --bg:#0e1a33; --card:#16264a; --ink:#f3efe0; --mut:#a9b3c7; --gold:#c9a227; --ok:#1f9d57; --bad:#d64545; --line:#2b3d68; }
     *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,sans-serif;padding:12px}
@@ -13,7 +13,9 @@
     canvas{display:block;width:100%;max-width:336px;margin:0 auto;border-radius:8px;background:#0b1530}
     textarea{width:100%;min-height:200px;background:#0b1530;color:var(--ink);border:2px solid var(--line);border-left:4px solid var(--gold);border-radius:8px;padding:10px;font:13px/1.45 ui-monospace,Menlo,monospace}
     button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:8px 14px;font-weight:700;background:var(--ink);color:var(--bg)}
-    button.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)} .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    button.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)} .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+    .hint{font-size:13px;color:var(--mut)}
+    button:disabled{opacity:.45;cursor:default}
     .status{font-size:13px;margin-top:8px;min-height:1.4em}.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}
   </style>
 </head>
@@ -27,8 +29,11 @@
         <button type="button" id="runBtn">Run to goal</button>
         <button type="button" class="ghost" id="stepBtn">One step</button>
         <button type="button" class="ghost" id="resetBtn">Reset</button>
+        <button type="button" class="ghost" id="hintBtn">Hint</button>
+        <span class="hint" id="hintCount">Hints 0 of 3</span>
       </div>
       <p class="status" id="gameStatus"></p>
+      <div id="hintLog"></div>
       <div id="coachSlot"></div>
     </div>
     <div class="panel">
@@ -51,7 +56,7 @@
       <p class="status" id="codeStatus"></p>
     </div>
   </div>
-  <script src="thinking-coach.js"></script>
+  <script src="thinking-coach.js?v=3"></script>
   <script src="weekly-visual-progress.js"></script>
   <script src="visual-progress.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
@@ -78,7 +83,7 @@
   }
   var GRID=12,CELL=28,canvas=document.getElementById("board"),ctx=canvas.getContext("2d");
   var walls=new Set(["0,0","1,0","2,0","3,0","4,0","5,0","6,0","7,0","8,0","9,0","10,0","11,0","0,1","0,2","0,3","11,1","11,2","11,3","5,3","5,4","5,5","5,6","5,7","3,5","4,5","6,5","7,5","8,5","8,6","8,7","8,8","2,8","3,8","4,8","10,8","11,8","11,9","11,10","11,11"]);
-  var player={r:1,c:1},goal={r:10,c:10},timer=null,compiledFn=null,steps=0,maxSteps=maxStepsByVariant[variant]||80;
+  var player={r:1,c:1},goal={r:10,c:10},timer=null,compiledFn=null,steps=0,maxSteps=maxStepsByVariant[variant]||80,crash=null,hints=0,hintPlan=null,lastInfo=null;
   function draw(){
     ctx.fillStyle="#0b1530";ctx.fillRect(0,0,canvas.width,canvas.height);
     for(var r=0;r<GRID;r++)for(var c=0;c<GRID;c++){
@@ -88,8 +93,95 @@
     }
     ctx.fillStyle="#c9a227";ctx.fillRect(goal.c*CELL+4,goal.r*CELL+4,CELL-8,CELL-8);
     ctx.fillStyle="#1f9d57";ctx.fillRect(player.c*CELL+4,player.r*CELL+4,CELL-8,CELL-8);
+    if(crash){ctx.strokeStyle="#d64545";ctx.lineWidth=3;ctx.strokeRect(crash.c*CELL+1,crash.r*CELL+1,CELL-2,CELL-2);}
   }
-  function reset(){player={r:1,c:1};steps=0;draw();document.getElementById("gameStatus").textContent="";}
+  function reset(){player={r:1,c:1};steps=0;crash=null;draw();document.getElementById("gameStatus").textContent="";}
+  function paintHints(){document.getElementById("hintCount").textContent="Hints "+hints+" of 3";document.getElementById("hintBtn").disabled=hints>=3;}
+  function gap(){return Math.abs(goal.r-player.r)+Math.abs(goal.c-player.c);}
+  function openToward(){
+    var opts=[{n:"up",r:-1,c:0},{n:"down",r:1,c:0},{n:"left",r:0,c:-1},{n:"right",r:0,c:1}];
+    var best=null;
+    opts.forEach(function(d){
+      var r=player.r+d.r,c=player.c+d.c;
+      if(wallAt(r,c))return;
+      var g=Math.abs(goal.r-r)+Math.abs(goal.c-c);
+      if(!best||g<best.g)best={n:d.n,g:g};
+    });
+    return best?best.n:"an open direction";
+  }
+  function explain(info){
+    lastInfo=info;if(hints===0)hintPlan=null;
+    var messages,rows;
+    if(info.kind==="wall"){
+      messages=[
+        "row "+info.r+", column "+info.c+" is a wall. Those are the numbers your function receives.",
+        "What is right: you are still on row "+player.r+", column "+player.c+".",
+        "What is different: "+info.dir+" steps onto that wall. hit_wall[\""+info.dir+"\"] is True.",
+        "Where to look next: the return \""+info.dir+"\". Only return it when hit_wall[\""+info.dir+"\"] is False."
+      ];
+      rows=[
+        {label:"You",yours:"row "+player.r+", column "+player.c,expected:"open floor",ok:true},
+        {label:"Move "+info.dir,yours:"row "+info.r+", column "+info.c,expected:"open floor",ok:false},
+        {label:"Star",yours:"row "+goal.r+", column "+goal.c,expected:"row "+goal.r+", column "+goal.c,ok:true}
+      ];
+    }else if(info.kind==="limit"){
+      messages=[
+        "You used "+maxSteps+" steps and the star is still "+gap()+" steps away in a straight count.",
+        "What is right: you stayed off the walls.",
+        "What is different: the path is looping or walking away from the star.",
+        "Where to look next: prefer the direction that shrinks the gap to row "+goal.r+", column "+goal.c+"."
+      ];
+      rows=[
+        {label:"You",yours:"row "+player.r+", column "+player.c,expected:"closer to the star",ok:false},
+        {label:"Star",yours:"row "+goal.r+", column "+goal.c,expected:gap()+" steps of gap left",ok:false}
+      ];
+    }else if(info.kind==="return"){
+      messages=[
+        "choose_direction returned "+info.got+".",
+        "What is right: the function ran.",
+        "What is different: the maze only understands up, down, left, or right.",
+        "Where to look next: the return line."
+      ];
+      rows=[{label:"Return",yours:info.got,expected:"up, down, left, or right",ok:false}];
+    }else{
+      messages=[
+        "The function stopped at row "+player.r+", column "+player.c+".",
+        "What is right: the board was ready for one move.",
+        "What is different: "+info.detail,
+        "Where to look next: the last line of the error."
+      ];
+      rows=[{label:"Error",yours:info.detail,expected:"a direction",ok:false}];
+    }
+    if(window.ThinkingCoach)coach(ThinkingCoach.whereLookHtml(messages)+ThinkingCoach.compareTableHtml(rows)+ThinkingCoach.recordStruggle());
+  }
+  function useHint(){
+    if(hints>=3)return;
+    if(!hintPlan){
+      var dir=openToward();
+      if(lastInfo&&lastInfo.kind==="wall"){
+        hintPlan=[
+          "Hint 1 — the idea: move toward the star, and refuse a direction when hit_wall for it is True.",
+          "Hint 2 — the spot: the red cell is row "+lastInfo.r+", column "+lastInfo.c+". You returned "+lastInfo.dir+".",
+          "Hint 3 — nearly there: from where you stand, "+dir+" is open and gets closer to the star. Return "+dir+" instead of "+lastInfo.dir+"."
+        ];
+      }else if(lastInfo&&lastInfo.kind==="limit"){
+        hintPlan=[
+          "Hint 1 — the idea: each move should shrink the gap to the star.",
+          "Hint 2 — the spot: you are at row "+player.r+", column "+player.c+". The star is row "+goal.r+", column "+goal.c+".",
+          "Hint 3 — nearly there: the open direction that closes the gap is "+dir+"."
+        ];
+      }else{
+        hintPlan=[
+          "Hint 1 — the idea: compare your row and column with the star, then avoid walls.",
+          "Hint 2 — the spot: check hit_wall before every return.",
+          "Hint 3 — nearly there: the open direction toward the star from the start is "+dir+"."
+        ];
+      }
+    }
+    hints++;
+    document.getElementById("hintLog").insertAdjacentHTML("beforeend",'<p class="hint">'+hintPlan[hints-1]+"</p>");
+    paintHints();
+  }
   function wallAt(r,c){return r<0||c<0||r>=GRID||c>=GRID||walls.has(c+","+r);}
   function hitMap(r,c){
     return{up:wallAt(r-1,c),down:wallAt(r+1,c),left:wallAt(r,c-1),right:wallAt(r,c+1)};
@@ -115,7 +207,16 @@
     if(!compiledFn)return;
     try{
       var d=callFn(compiledFn),nr=player.r+d.r,nc=player.c+d.c;
-      if(wallAt(nr,nc))throw new Error("Your direction hit a wall. Check hit_wall before moving.");
+      if(wallAt(nr,nc)){
+        clearInterval(timer);timer=null;
+        crash={r:nr,c:nc};
+        var dirName=d.r<0?"up":d.r>0?"down":d.c<0?"left":"right";
+        document.getElementById("gameStatus").textContent="row "+nr+", column "+nc+" is a wall.";
+        document.getElementById("gameStatus").className="status bad";
+        explain({kind:"wall",r:nr,c:nc,dir:dirName});
+        draw();
+        return;
+      }
       player.r=nr;player.c=nc;steps++;
       draw();
       if(player.r===goal.r&&player.c===goal.c){
@@ -128,25 +229,29 @@
       }
       if(steps>=maxSteps){
         clearInterval(timer);timer=null;
-        document.getElementById("gameStatus").textContent="Step limit — simplify your path logic and try again.";
+        document.getElementById("gameStatus").textContent="The step limit arrived before the star.";
         document.getElementById("gameStatus").className="status bad";
-        if(window.ThinkingCoach)coach(ThinkingCoach.snakeCrashHtml("Too many steps without reaching the star.")+ThinkingCoach.recordStruggle());
+        crash={r:player.r,c:player.c};
+        explain({kind:"limit"});
+        draw();
       }
     }catch(e){
       clearInterval(timer);timer=null;
-      document.getElementById("gameStatus").textContent=e.message||String(e);
+      var msg=e.message||String(e);
+      document.getElementById("gameStatus").textContent="The move did not run. See where to look.";
       document.getElementById("gameStatus").className="status bad";
-      if(window.ThinkingCoach)coach(ThinkingCoach.codeFailHtml({error:e.message})+ThinkingCoach.recordStruggle());
+      explain({kind:/up, down, left, or right/i.test(msg)?"return":"error",got:msg,detail:msg});
     }
   }
   document.getElementById("testBtn").onclick=function(){
     compile().then(function(fn){compiledFn=fn;document.getElementById("codeStatus").textContent="Function OK";document.getElementById("codeStatus").className="status ok";})
-    .catch(function(e){document.getElementById("codeStatus").textContent=e.message;document.getElementById("codeStatus").className="status bad";});
+    .catch(function(e){document.getElementById("codeStatus").textContent="The function did not run. See where to look.";document.getElementById("codeStatus").className="status bad";explain({kind:"error",detail:e.message||String(e),got:e.message||String(e)});});
   };
   document.getElementById("runBtn").onclick=function(){
     compile().then(function(fn){compiledFn=fn;reset();timer=setInterval(step,350);});
   };
   document.getElementById("stepBtn").onclick=step;
+  document.getElementById("hintBtn").onclick=useHint;
   document.getElementById("resetBtn").onclick=function(){if(timer)clearInterval(timer);timer=null;reset();};
   reset();
   if(window.ThinkingCoach)coach(ThinkingCoach.protocolHtml("Maze — think before each move"));

@@ -19,7 +19,7 @@
     .note{font-size:12px;color:var(--mut);margin-top:8px}
     .weekly-badge{display:inline-block;background:var(--gold);color:#14284b;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;margin-left:6px}
   </style>
-  <link rel="stylesheet" href="thinking-coach.css">
+  <link rel="stylesheet" href="thinking-coach.css?v=2">
 </head>
 <body>
   <h1 id="title">Visual Play Track</h1>
@@ -31,7 +31,7 @@
   <script src="weekly-content.js"></script>
   <script src="weekly-visual-progress.js"></script>
   <script src="visual-progress.js"></script>
-  <script src="thinking-coach.js"></script>
+  <script src="thinking-coach.js?v=3"></script>
   <script>
 (function(){
   var qp=new URLSearchParams(location.search);
@@ -113,7 +113,7 @@
   var GAMES=[
     {id:"snake",label:"1 · Snake",file:"snake-coder-lab.html",hint:"Score 5 apples to unlock maze."},
     {id:"maze",label:"2 · Maze",file:"maze-coder-lab.html",hint:"Reach the star to unlock Sudoku."},
-    {id:"sudoku",label:"3 · Sudoku logic",file:"sudoku-coder-lab.html",hint:"Pass all tests to complete the track."}
+    {id:"sudoku",label:"3 · Sudoku logic",file:"sudoku-coder-lab.html",hint:"Check explains where a rule breaks. Hints cost stars."}
   ];
   function renderTabs(active){
     tabs.innerHTML="";
