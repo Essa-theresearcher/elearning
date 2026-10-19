@@ -1673,6 +1673,12 @@ class LearningHandler(SimpleHTTPRequestHandler):
             request_path = "/home.html"
         if request_path == "/teacher.html":
             request_path = "/admin.html"
+        if request_path in {
+            "/student-login",
+            "/login",
+            "/student/sign-in",
+        }:
+            request_path = "/student-login.html"
 
         relative = Path(request_path.lstrip("/"))
         target = (ROOT / relative).resolve()
