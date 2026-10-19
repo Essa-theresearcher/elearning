@@ -293,6 +293,19 @@
       font-weight: 700;
     }
 
+    .auth-footer {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .auth-footer a {
+      color: var(--navy);
+      font-weight: 800;
+      text-decoration: underline;
+    }
+
     body.auth-locked .topbar,
     body.auth-locked .layout {
       pointer-events: none;
@@ -1046,6 +1059,7 @@
         </label>
         <button class="auth-submit" type="submit">Sign in</button>
         <p class="auth-error" id="loginMessage" role="alert"></p>
+        <p class="auth-footer">Having trouble? Use the <a href="student-login.html?next=python-daily-practice.html">student sign-in page</a>.</p>
       </form>
     </div>
   </div>
@@ -1149,7 +1163,7 @@
             <div class="intro-band">
               <div>
                 <p>
-                  Each day you get a full workout: <strong>8 predict</strong> challenges, <strong>5 coding</strong> tasks at your level, and <strong>3 visual</strong> games (order changes by weekday). Miss a day in the week and that day locks — stay consistent.
+                  Each day you get a full workout: <strong>8 predict</strong> challenges, <strong>5 coding</strong> tasks at your level, and <strong>3 visual stages</strong> — Beginner, then Intermediate, then Advanced. Miss a day in the week and that day locks — stay consistent.
                 </p>
                 <div class="callout">
                   <strong>Daily rhythm (~60–75 min):</strong> Predict &amp; Reason (~25) → Write Code (~25) → Visual Play (~20) → Today&apos;s log (~5). Replay quests for extra reps after you finish once.
@@ -1181,7 +1195,7 @@
             <div class="week-calendar" id="weekCalendar" aria-label="Weekly schedule Sunday to Saturday">
               <h3>This week (Sunday → Saturday)</h3>
               <p class="week-range" id="weekRangeLabel"></p>
-              <p class="week-range">Work in order from Sunday through Saturday. If you skip a day, that day <strong>locks</strong> and you cannot open it again. Each day has different predict logic, code level, and <strong>three visual games</strong> (order and goals change by day).</p>
+              <p class="week-range">Work in order from Sunday through Saturday. If you skip a day, that day <strong>locks</strong> and you cannot open it again. Each day has different predict logic and code level. Visual stages always run Beginner, then Intermediate, then Advanced.</p>
               <div class="week-days" id="weekDays"></div>
               <div class="day-work-banner" id="dayWorkBanner" hidden>
                 <strong id="dayWorkTitle"></strong>
@@ -1267,7 +1281,7 @@
             <div class="section-title">
               <span class="eyebrow">See your code move</span>
               <h2>Visual Play — today’s game</h2>
-              <p>Three visual labs per day — Snake, Maze, and Sudoku in a <strong>different order and challenge</strong> each weekday. Finish all three in the tabs to check off visual practice.</p>
+              <p>Three visual stages each day: <strong>Beginner</strong> (Snake), then <strong>Intermediate</strong> (Maze), then <strong>Advanced</strong> (Sudoku). The challenge changes by weekday. Finish all three in the tabs to check off visual practice.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="visual">Mark complete</button>
           </div>
@@ -1959,7 +1973,7 @@
           if (id === "visual" && !visualSectionCanComplete() && !completed.has(id)) {
             alert(activePracticeDate
               ? "Finish all three visual games for this day first, then mark this section complete."
-              : "Finish all three visual games in order (Snake, then Maze, then Sudoku) before marking this section complete.");
+              : "Finish Beginner, then Intermediate, then Advanced before marking this section complete.");
             return;
           }
           if (!isSectionUnlocked(id) && !completed.has(id)) {

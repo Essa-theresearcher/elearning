@@ -24,9 +24,9 @@
         "When you finish, write in Today's log: one rule about when a variable changes."
       ],
       visualGames: [
-        { id: "snake", label: "1 · Snake chase", hint: "Score 3 apples — follow the food.", winScore: 3, variant: 0 },
-        { id: "maze", label: "2 · Open maze", hint: "Reach the star (80 steps max).", variant: 0 },
-        { id: "sudoku", label: "3 · Row & column rules", hint: "Check names the row or column that repeats a number.", variant: 0 }
+        { id: "snake", label: "Beginner · Snake chase", hint: "Score 3 apples — follow the food.", winScore: 3, variant: 0 },
+        { id: "maze", label: "Intermediate · Open maze", hint: "Reach the star (80 steps max).", variant: 0 },
+        { id: "sudoku", label: "Advanced · Row & column rules", hint: "Check names the row or column that repeats a number.", variant: 0 }
       ]
     },
     {
@@ -42,20 +42,20 @@
       sessionGoals: [
         "8 predict items (string + bug focus)",
         "5 beginner coding tasks (text & input)",
-        "3 visual games: Maze → Snake → Sudoku",
+        "3 visual stages: Beginner, then Intermediate, then Advanced",
         "In Today's log: one sentence on text vs int"
       ],
       studentNotes: [
         "Look for quotes: '5' is text, 5 is a number — they behave differently with + and input().",
         "On fix-the-bug items, find the first line where text and numbers are mixed wrongly.",
         "Coding today is beginner level: names, joining words, and simple input — take your time.",
-        "Visual order today: Maze first, then Snake, then Sudoku — finish each before the next tab unlocks.",
+        "Visual stages always run Beginner, then Intermediate, then Advanced. Finish each stage before the next tab unlocks.",
         "If you feel stuck, use the coach steps; hints cost stars, so try one full attempt first."
       ],
       visualGames: [
-        { id: "maze", label: "1 · Tight corridors", hint: "Reach the star in 60 steps.", variant: 1 },
-        { id: "snake", label: "2 · Corner snake", hint: "Score 4 apples without crashing.", winScore: 4, variant: 1 },
-        { id: "sudoku", label: "3 · Box checker", hint: "Check names the 3×3 box when a number is repeated.", variant: 1 }
+        { id: "snake", label: "Beginner · Corner snake", hint: "Score 4 apples without crashing.", winScore: 4, variant: 1 },
+        { id: "maze", label: "Intermediate · Tight corridors", hint: "Reach the star in 60 steps.", variant: 1 },
+        { id: "sudoku", label: "Advanced · Box checker", hint: "Check names the 3×3 box when a number is repeated.", variant: 1 }
       ]
     },
     {
@@ -72,12 +72,12 @@
         "For every loop question, write the first three values the counter takes (often 0, 1, 2).",
         "Coding level is intermediate today — loops, grades, and strings together.",
         "Ask yourself: does this line run once or many times? That is the heart of loops.",
-        "Sudoku → Snake → Maze is today’s visual order."
+        "Visual stages run Beginner, then Intermediate, then Advanced."
       ],
       visualGames: [
-        { id: "sudoku", label: "1 · Repeat the rules", hint: "New grid. Fix one repeated number, then check again.", variant: 2 },
-        { id: "snake", label: "2 · Tail watch", hint: "Score 5 apples — avoid your body.", winScore: 5, variant: 2 },
-        { id: "maze", label: "3 · Long path", hint: "Reach the star in 100 steps.", variant: 2 }
+        { id: "snake", label: "Beginner · Tail watch", hint: "Score 5 apples — avoid your body.", winScore: 5, variant: 2 },
+        { id: "maze", label: "Intermediate · Long path", hint: "Reach the star in 100 steps.", variant: 2 },
+        { id: "sudoku", label: "Advanced · Repeat the rules", hint: "New grid. Fix one repeated number, then check again.", variant: 2 }
       ]
     },
     {
@@ -94,12 +94,12 @@
         "Read if / elif / else from top to bottom — stop at the first condition that is True.",
         "Grade and comparison questions are training for real-world rules (pass marks, limits).",
         "When code fails tests, change one condition at a time, then run again.",
-        "Visual order: Snake → Sudoku → Maze."
+        "Visual stages run Beginner, then Intermediate, then Advanced."
       ],
       visualGames: [
-        { id: "snake", label: "1 · If/else chase", hint: "Score 3 apples with smart turns.", winScore: 3, variant: 3 },
-        { id: "sudoku", label: "2 · Where to look", hint: "The first problem tells you where to look and why.", variant: 3 },
-        { id: "maze", label: "3 · Wall choices", hint: "Use hit_wall before every move.", variant: 3 }
+        { id: "snake", label: "Beginner · If/else chase", hint: "Score 3 apples with smart turns.", winScore: 3, variant: 3 },
+        { id: "maze", label: "Intermediate · Wall choices", hint: "Use hit_wall before every move.", variant: 3 },
+        { id: "sudoku", label: "Advanced · Where to look", hint: "The first problem tells you where to look and why.", variant: 3 }
       ]
     },
     {
@@ -116,12 +116,12 @@
         "Draw the list on paper after each append — predict questions love len() and last item.",
         "For dictionaries, say the key aloud, then what value it points to.",
         "Coding is tougher today; read each test’s expected output before you edit code.",
-        "Visual order: Maze → Sudoku → Snake."
+        "Visual stages run Beginner, then Intermediate, then Advanced."
       ],
       visualGames: [
-        { id: "maze", label: "1 · Data path", hint: "Track steps like a list counter.", variant: 4 },
-        { id: "sudoku", label: "2 · Cell by cell", hint: "Crosses show every cell that differs. The answer stays hidden.", variant: 4 },
-        { id: "snake", label: "3 · Body list", hint: "Score 4 — body grows like append.", winScore: 4, variant: 4 }
+        { id: "snake", label: "Beginner · Body list", hint: "Score 4 — body grows like append.", winScore: 4, variant: 4 },
+        { id: "maze", label: "Intermediate · Data path", hint: "Track steps like a list counter.", variant: 4 },
+        { id: "sudoku", label: "Advanced · Cell by cell", hint: "Crosses show every cell that differs. The answer stays hidden.", variant: 4 }
       ]
     },
     {
@@ -138,12 +138,12 @@
         "If you do not see return in a function, the result is None — watch for that in predict items.",
         "Nested dicts (data['key']['inner']) are like opening boxes inside boxes.",
         "Finish functions in coding tasks before moving on — tests check edge cases.",
-        "Visual order: Sudoku → Maze → Snake."
+        "Visual stages run Beginner, then Intermediate, then Advanced."
       ],
       visualGames: [
-        { id: "sudoku", label: "1 · Three hints", hint: "Hint 1 names a group. Hint 3 names one number.", variant: 5 },
-        { id: "maze", label: "2 · choose_direction API", hint: "Return a direction string.", variant: 5 },
-        { id: "snake", label: "3 · Score function", hint: "Score 5 to finish strong.", winScore: 5, variant: 5 }
+        { id: "snake", label: "Beginner · Score function", hint: "Score 5 to finish strong.", winScore: 5, variant: 5 },
+        { id: "maze", label: "Intermediate · choose_direction API", hint: "Return a direction string.", variant: 5 },
+        { id: "sudoku", label: "Advanced · Three hints", hint: "Hint 1 names a group. Hint 3 names one number.", variant: 5 }
       ]
     },
     {
@@ -163,9 +163,9 @@
         "Replay any quest for extra practice after you finish once."
       ],
       visualGames: [
-        { id: "snake", label: "1 · Review snake", hint: "Score 3 — warm up.", winScore: 3, variant: 6 },
-        { id: "maze", label: "2 · Review maze", hint: "Reach the star in 70 steps.", variant: 6 },
-        { id: "sudoku", label: "3 · Review sudoku", hint: "Review: Check first. Hints cost stars.", variant: 6 }
+        { id: "snake", label: "Beginner · Review snake", hint: "Score 3 — warm up.", winScore: 3, variant: 6 },
+        { id: "maze", label: "Intermediate · Review maze", hint: "Reach the star in 70 steps.", variant: 6 },
+        { id: "sudoku", label: "Advanced · Review sudoku", hint: "Review: Check first. Hints cost stars.", variant: 6 }
       ]
     }
   ];
@@ -185,7 +185,7 @@
   function visualSummary(plan) {
     return (plan.visualGames || [])
       .map(function (g) {
-        return g.label.replace(/^\d+\s·\s/, "");
+        return g.label.split(" · ")[0];
       })
       .join(" → ");
   }

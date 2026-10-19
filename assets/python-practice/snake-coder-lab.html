@@ -89,7 +89,7 @@
 <body>
   <div class="layout">
     <div class="panel">
-      <h1>Snake Coder Lab</h1>
+      <h1>Beginner · Snake Coder Lab</h1>
       <p class="lead">Write Python for <code>choose_direction</code>. Press <strong>Run game</strong> and watch the snake follow your logic on the grid.</p>
       <canvas id="board" width="320" height="320" aria-label="Snake game board"></canvas>
       <div class="row">
@@ -148,7 +148,7 @@
       var winScore = weeklyMode ? (forcedWin > 0 ? forcedWin : 3) : 5;
       if (weeklyMode && dbaDate && window.WeeklyVisualProgress && !WeeklyVisualProgress.isUnlocked(dbaDate, "snake", visualOrder)) {
         document.body.innerHTML =
-          '<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui;color:#f3efe0;background:#0e1a33;min-height:100vh"><h1>Locked</h1><p>Finish the previous visual game for this day first.</p></div>';
+          '<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui;color:#f3efe0;background:#0e1a33;min-height:100vh"><h1>Locked</h1><p>Finish the earlier stage first. Stages run Beginner, then Intermediate, then Advanced.</p></div>';
         return;
       }
       function onVisualWin() {

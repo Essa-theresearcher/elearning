@@ -210,7 +210,7 @@
     <section class="heading">
       <span class="lesson-tag">Week 0 Python Readiness Quiz</span>
       <h1>Intermediate Python readiness quiz</h1>
-      <p>Plan about 45 minutes. Answer every question, then review the category breakdown before submitting the coding review. This checks the Python skills you need for the intermediate track.</p>
+      <p>Plan about 45 minutes. Questions run in order: Beginner, then Intermediate, then Advanced. Answer every question, then review the category breakdown before submitting the coding review.</p>
     </section>
 
     <form id="quizForm" class="quiz"></form>
@@ -223,6 +223,7 @@
     <div class="result" id="result" hidden></div>
   </div>
 
+  <script src="quiz-where.js"></script>
   <script>
     const questions = [
       {
@@ -432,7 +433,17 @@
 
     function renderQuiz() {
       form.innerHTML = "";
+      var lastStage = "";
       questions.forEach(function (question, index) {
+        var stage = window.QuizWhere ? QuizWhere.stageName(index, questions.length) : "";
+        if (stage && stage !== lastStage) {
+          const head = document.createElement("h2");
+          head.textContent = stage;
+          head.style.margin = "22px 0 8px";
+          head.style.fontSize = "18px";
+          form.appendChild(head);
+          lastStage = stage;
+        }
         const block = document.createElement("section");
         block.className = "question";
 
@@ -508,7 +519,7 @@
       });
     }
 
-    function showResult(score, stats) {
+    function showResult(score, stats, answers) {
       const pct = Math.round((score / questions.length) * 100);
       const ready = pct >= 75;
       result.hidden = false;
@@ -534,12 +545,37 @@
         breakdown.appendChild(item);
       });
       result.appendChild(breakdown);
+
+      (answers || []).forEach(function (item) {
+        if (item.isCorrect) return;
+        const card = document.createElement("div");
+        card.className = "stat";
+        card.style.marginTop = "10px";
+        const q = questions[item.questionNumber - 1];
+        if (window.QuizWhere && q) {
+          card.innerHTML = "<strong>Question " + item.questionNumber + "</strong>" + QuizWhere.missInnerHtml({
+            category: q.category,
+            options: q.choices,
+            correct: q.answer,
+            explanation: ""
+          }, item.selectedAnswer);
+          QuizWhere.appendHints(card, {
+            category: q.category,
+            options: q.choices,
+            correct: q.answer,
+            explanation: ""
+          });
+        } else {
+          card.textContent = "Question " + item.questionNumber + ": you chose " + item.selectedAnswer + ". Reread the " + item.category + " part.";
+        }
+        result.appendChild(card);
+      });
     }
 
     submitBtn.addEventListener("click", function () {
       const graded = gradeQuiz();
       saveQuiz(graded.score, graded.stats, graded.answers);
-      showResult(graded.score, graded.stats);
+      showResult(graded.score, graded.stats, graded.answers);
       result.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
 

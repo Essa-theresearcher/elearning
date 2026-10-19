@@ -22,7 +22,7 @@
 <body>
   <div class="layout">
     <div class="panel">
-      <h1>Maze Coder Lab · Level 2</h1>
+      <h1>Intermediate · Maze Coder Lab</h1>
       <p class="lead">Guide the player to the star. Avoid walls. Write <code>choose_direction</code>.</p>
       <canvas id="board" width="336" height="336"></canvas>
       <div class="row">
@@ -74,11 +74,11 @@
     if(window.VisualProgress)VisualProgress.markDone("maze");
   }
   if(weeklyMode&&dbaDate&&window.WeeklyVisualProgress&&!WeeklyVisualProgress.isUnlocked(dbaDate,"maze",visualOrder)){
-    document.body.innerHTML='<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish the previous visual game for this day first.</p></div>';
+    document.body.innerHTML='<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish the Beginner stage first.</p></div>';
     return;
   }
   if(!weeklyMode&&window.VisualProgress&&!VisualProgress.isUnlocked("maze")){
-    document.body.innerHTML='<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish <strong>Snake Coder Lab</strong> (score 5) to unlock the maze.</p></div>';
+    document.body.innerHTML='<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish <strong>Beginner · Snake</strong> (score 5) to unlock Intermediate.</p></div>';
     return;
   }
   var GRID=12,CELL=28,canvas=document.getElementById("board"),ctx=canvas.getContext("2d");

@@ -87,7 +87,7 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>Sudoku</h1>
+    <h1>Advanced · Sudoku</h1>
     <p class="lead"><strong>Problem:</strong> a check that only says “pass” or “not passed” never shows where you slipped, so you get stuck. <strong>Goal:</strong> every check that finds a problem tells you where to look and why, in plain English, without the full answer.</p>
     <p class="sel-label" id="selLabel">Tap a cell, then tap a number.</p>
     <div class="board-wrap"><div class="board" id="board" role="grid" aria-label="Sudoku grid"></div></div>
@@ -124,11 +124,11 @@
   }
 
   if (weeklyMode && dbaDate && window.WeeklyVisualProgress && !WeeklyVisualProgress.isUnlocked(dbaDate, "sudoku", visualOrder)) {
-    document.body.innerHTML = '<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish the previous visual game for this day first.</p></div>';
+    document.body.innerHTML = '<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish the Intermediate stage first.</p></div>';
     return;
   }
   if (!weeklyMode && window.VisualProgress && !VisualProgress.isUnlocked("sudoku")) {
-    document.body.innerHTML = '<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish <strong>Maze Coder Lab</strong> to unlock Sudoku.</p></div>';
+    document.body.innerHTML = '<div style="padding:24px;max-width:480px;margin:40px auto;text-align:center;font-family:system-ui"><h1>Locked</h1><p>Finish <strong>Intermediate · Maze</strong> to unlock Advanced.</p></div>';
     return;
   }
 

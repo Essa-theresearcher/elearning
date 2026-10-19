@@ -23,7 +23,7 @@
 </head>
 <body>
   <h1 id="title">Visual Play Track</h1>
-  <p class="lead" id="lead">Finish each game in order. You cannot skip ahead.</p>
+  <p class="lead" id="lead">Play in order: Beginner, then Intermediate, then Advanced.</p>
   <div class="track" id="tabs"></div>
   <iframe id="frame" title="Visual game lab"></iframe>
   <p class="note" id="trackNote"></p>
@@ -47,8 +47,8 @@
     var order=GAMES.map(function(g){return g.id;});
     var orderParam=encodeURIComponent(order.join(","));
 
-    document.getElementById("title").innerHTML="Today's visual set (3 games) <span class=\"weekly-badge\">"+plan.short+"</span>";
-    document.getElementById("lead").textContent=plan.logic+" — order today: "+WeeklyContent.visualSummary(plan)+".";
+    document.getElementById("title").innerHTML="Today's visual stages <span class=\"weekly-badge\">"+plan.short+"</span>";
+    document.getElementById("lead").textContent=plan.logic+" — "+WeeklyContent.visualSummary(plan)+".";
     document.getElementById("tabs").style.display="flex";
 
     function gameSrc(g){
@@ -67,10 +67,10 @@
         var b=document.createElement("button");
         b.type="button";
         b.className="tab"+(g.id===activeId?" active":"")+(done?" done":"")+(!unlocked?" locked":"");
-        b.innerHTML="<strong>"+g.label+"</strong><small>"+(done?"Complete":unlocked?g.hint:"Finish the previous game first")+"</small>";
+        b.innerHTML="<strong>"+g.label+"</strong><small>"+(done?"Complete":unlocked?g.hint:"Finish the earlier stage first")+"</small>";
         b.onclick=function(){
           if(!unlocked){
-            note.textContent="Finish game "+(order.indexOf(g.id))+" first — no skipping on daily practice.";
+            note.textContent="Finish the earlier stage first. Stages run Beginner, then Intermediate, then Advanced.";
             if(window.ThinkingCoach)document.getElementById("affirmSlot").innerHTML=ThinkingCoach.encouragementHtml();
             return;
           }
@@ -111,9 +111,9 @@
   }
 
   var GAMES=[
-    {id:"snake",label:"1 · Snake",file:"snake-coder-lab.html",hint:"Score 5 apples to unlock maze."},
-    {id:"maze",label:"2 · Maze",file:"maze-coder-lab.html",hint:"Reach the star to unlock Sudoku."},
-    {id:"sudoku",label:"3 · Sudoku logic",file:"sudoku-coder-lab.html",hint:"Check explains where a rule breaks. Hints cost stars."}
+    {id:"snake",label:"Beginner · Snake",file:"snake-coder-lab.html",hint:"Score 5 apples to unlock Intermediate."},
+    {id:"maze",label:"Intermediate · Maze",file:"maze-coder-lab.html",hint:"Reach the star to unlock Advanced."},
+    {id:"sudoku",label:"Advanced · Sudoku",file:"sudoku-coder-lab.html",hint:"Check explains where a rule breaks. Hints cost stars."}
   ];
   function renderTabs(active){
     tabs.innerHTML="";
@@ -124,7 +124,7 @@
       b.innerHTML="<strong>"+g.label+"</strong><small>"+(VisualProgress.isDone(g.id)?"Complete":VisualProgress.isUnlocked(g.id)?g.hint:"Locked")+"</small>";
       b.onclick=function(){
         if(!VisualProgress.isUnlocked(g.id)){
-          note.textContent="Finish the previous level first — no skipping. You are building real skill.";
+          note.textContent="Finish the earlier stage first. Stages run Beginner, then Intermediate, then Advanced.";
           if(window.ThinkingCoach)document.getElementById("affirmSlot").innerHTML=ThinkingCoach.encouragementHtml();
           return;
         }
@@ -144,9 +144,9 @@
   window.addEventListener("message",function(e){
     if(!e.data||e.data.type!=="pp-visual-done")return;
     renderTabs(e.data.game);
-    if(e.data.game==="snake")note.textContent="Maze unlocked! Click level 2.";
-    if(e.data.game==="maze")note.textContent="Sudoku unlocked! Click level 3.";
-    if(VisualProgress.allDone())note.textContent="All three visual levels complete. Mark Visual Play complete on the lesson page.";
+    if(e.data.game==="snake")note.textContent="Intermediate unlocked. Open the Maze stage.";
+    if(e.data.game==="maze")note.textContent="Advanced unlocked. Open the Sudoku stage.";
+    if(VisualProgress.allDone())note.textContent="Beginner, Intermediate, and Advanced are complete. Mark Visual Play complete on the lesson page.";
   });
   var start="snake";
   GAMES.forEach(function(g){if(!VisualProgress.isDone(g.id)&&VisualProgress.isUnlocked(g.id))start=g.id;});

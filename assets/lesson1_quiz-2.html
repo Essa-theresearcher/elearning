@@ -373,6 +373,7 @@
 
 </div>
 
+<script src="quiz-where.js"></script>
 <script>
 (function(){
 
@@ -515,7 +516,8 @@
 
     feedbackEl.className = 'feedback';
     nextBtn.classList.remove('show');
-    progressTextEl.textContent = `Question ${current + 1} of ${TOTAL}`;
+    progressTextEl.textContent = window.QuizWhere ? QuizWhere.progressLabel(current, TOTAL) : `Question ${current + 1} of ${TOTAL}`;
+    if (window.QuizWhere) QuizWhere.paintStages(current, TOTAL);
     renderByteMeter(current);
   }
 
@@ -537,23 +539,25 @@
       explanation: q.explanation
     };
 
-    buttons.forEach((btn, i) => {
-      btn.disabled = true;
-      if(i === q.correct) btn.classList.add('correct-answer');
-      else if(i === idx) btn.classList.add('wrong-answer');
-      else btn.classList.add('dimmed');
-    });
-
     if(isCorrect){
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if(i === idx) btn.classList.add('correct-answer');
+        else btn.classList.add('dimmed');
+      });
       score++;
       catStats[q.category].correct++;
       feedbackEl.className = 'feedback show is-correct';
-      feedbackLabelEl.textContent = 'Correct.';
+      feedbackLabelEl.textContent = 'That matches.';
+      feedbackExplainEl.textContent = 'Why this is right: ' + q.explanation;
+    } else if(window.QuizWhere){
+      QuizWhere.showMiss({buttons:buttons,feedbackEl:feedbackEl,feedbackLabelEl:feedbackLabelEl,feedbackExplainEl:feedbackExplainEl}, q, idx);
     } else {
+      buttons.forEach((btn, i) => { btn.disabled = true; if(i === idx) btn.classList.add('wrong-answer'); else btn.classList.add('dimmed'); });
       feedbackEl.className = 'feedback show is-incorrect';
-      feedbackLabelEl.textContent = 'Not quite.';
+      feedbackLabelEl.textContent = 'Where to look';
+      feedbackExplainEl.textContent = 'You chose ' + q.options[idx] + '. Reread the question.';
     }
-    feedbackExplainEl.textContent = q.explanation;
 
     nextBtn.textContent = (current === TOTAL - 1) ? 'See results →' : 'Next question →';
     nextBtn.classList.add('show');

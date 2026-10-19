@@ -180,9 +180,23 @@
 
     .search-box,
     .checkout-form,
-    .login-form {
+    .cart-signin-cta {
       display: grid;
-      gap: 9px;
+      gap: 10px;
+      padding: 14px;
+      border-radius: var(--radius);
+      border: 1px dashed var(--line);
+      background: var(--ivory);
+    }
+
+    .cart-signin-cta p {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .cart-signin-cta .primary-action {
+      display: inline-block;
+      text-align: center;
     }
 
     label {
@@ -545,7 +559,7 @@
       <nav class="nav" aria-label="Course marketplace navigation">
         <a href="home.html">Home</a>
         <a href="courses.html" aria-current="page">Courses</a>
-        <button id="signInButton" type="button">Student sign in</button>
+        <a id="signInLink" href="student-login.html?next=courses.html">Student sign in</a>
         <button id="logoutButton" type="button" hidden>Log out</button>
       </nav>
     </div>
@@ -589,18 +603,11 @@
 
         <div class="cart-items" id="cartItems"></div>
 
-        <form class="login-form" id="loginForm">
-          <span class="eyebrow">Student login</span>
-          <label>
-            Username
-            <input name="username" autocomplete="username" required>
-          </label>
-          <label>
-            Password
-            <input name="password" type="password" autocomplete="current-password" required>
-          </label>
-          <button class="primary-action" type="submit">Sign in</button>
-        </form>
+        <div class="cart-signin-cta" id="cartSignInCta" hidden>
+          <span class="eyebrow">Checkout</span>
+          <p><strong>Sign in first.</strong> Student login is on its own page — not here in the cart.</p>
+          <a class="primary-action" id="cartSignInLink" href="student-login.html?next=courses.html">Go to student login</a>
+        </div>
 
         <form class="checkout-form" id="checkoutForm" hidden>
           <span class="eyebrow">Payment confirmation</span>
@@ -630,9 +637,9 @@
       const cartCount = document.getElementById("cartCount");
       const cartItems = document.getElementById("cartItems");
       const cartMessage = document.getElementById("cartMessage");
-      const loginForm = document.getElementById("loginForm");
       const checkoutForm = document.getElementById("checkoutForm");
-      const signInButton = document.getElementById("signInButton");
+      const cartSignInCta = document.getElementById("cartSignInCta");
+      const cartSignInLink = document.getElementById("cartSignInLink");
       const logoutButton = document.getElementById("logoutButton");
       const studentStatusText = document.getElementById("studentStatusText");
 
@@ -824,15 +831,13 @@
 
         if (currentUser) {
           studentStatusText.textContent = "Signed in as " + (currentUser.displayName || currentUser.username) + ".";
-          loginForm.hidden = true;
+          if (cartSignInCta) cartSignInCta.hidden = true;
           checkoutForm.hidden = false;
-          signInButton.hidden = true;
           logoutButton.hidden = false;
         } else {
-          studentStatusText.textContent = "Sign in to checkout and see approval status.";
-          loginForm.hidden = false;
+          studentStatusText.textContent = "Sign in on the student login page to checkout.";
+          if (cartSignInCta) cartSignInCta.hidden = false;
           checkoutForm.hidden = true;
-          signInButton.hidden = false;
           logoutButton.hidden = true;
         }
 
@@ -892,18 +897,6 @@
         renderAll();
       }
 
-      function focusStudentLogin() {
-        document.getElementById("checkoutPanel").scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-        window.setTimeout(function () {
-          if (!loginForm.hidden) {
-            loginForm.elements.username.focus();
-          }
-        }, 320);
-      }
-
       function mergeEnrollments(newEnrollments) {
         newEnrollments.forEach(function (newEnrollment) {
           enrollments = enrollments.filter(function (enrollment) {
@@ -928,28 +921,6 @@
       }
 
       courseSearch.addEventListener("input", renderCourses);
-
-      signInButton.addEventListener("click", focusStudentLogin);
-
-      loginForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        setMessage("");
-        postJson("/api/auth/login", {
-          loginRole: "student",
-          username: loginForm.elements.username.value,
-          password: loginForm.elements.password.value
-        }).then(function (data) {
-          currentUser = data.user || null;
-          loginForm.reset();
-          return fetch("/api/enrollments").then(parseJsonResponse);
-        }).then(function (data) {
-          enrollments = Array.isArray(data.enrollments) ? data.enrollments : [];
-          setMessage("Signed in. You can checkout now.");
-          renderAll();
-        }).catch(function (error) {
-          setMessage(error.message, true);
-        });
-      });
 
       checkoutForm.addEventListener("submit", function (event) {
         event.preventDefault();
