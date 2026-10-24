@@ -1404,7 +1404,7 @@
             <div class="section-title">
               <span class="eyebrow">Reading notes</span>
               <h2>Week 3 Notes (expanded)</h2>
-              <p>Comparisons, if/elif/else, and tracing branches — pair with the Week 3 lab schedule.</p>
+              <p>Decisions and logic — pairs with Python Practical Wednesday and builds toward real programs.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="reading">Mark complete</button>
           </div>
@@ -1412,86 +1412,124 @@
             <div class="reader-layout">
               <div class="reader-actions">
                 <h3>How to use these notes</h3>
-                <p>Mon–Tue: sections 1–4 with Recording 1. Wed–Thu: 5–7 with Recording 2 and lab Phase B. Fri: menu project. Trace conditions on paper before you run code.</p>
+                <p>Week 3 is <strong>decision week</strong>. Trace each branch on paper before running. Stuck on Practical <em>Wednesday · Decisions &amp; grades</em>? Use sections 1–6 and the map in section 10.</p>
                 <div class="button-row">
-                  <a class="secondary-link" href="#activity">Jump to Week 3 lab</a>
+                  <a class="secondary-link" href="#activity">Week 3 lab</a>
+                  <a class="secondary-link" href="python-daily-practice.html?course=python-practical">Python Practical</a>
+                  <a class="secondary-link" href="python-lesson2.html">Week 2 notes (variables/input)</a>
                 </div>
               </div>
               <div class="topic-stack">
                 <article class="topic">
-                  <h3>1. Comparisons give True or False</h3>
+                  <h3>1. Comparisons → True or False</h3>
                   <pre class="code-sample"><code>age = 20
 print(age >= 18)   # True
 print(age == 17)   # False</code></pre>
-                  <p>Operators: <code>==</code> equal, <code>!=</code> not equal, <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code>. Do not use <code>=</code> for comparison.</p>
+                  <p>Use <code>==</code> to compare, <code>=</code> to assign. Practical grade questions assume you read comparisons slowly.</p>
                 </article>
                 <article class="topic">
-                  <h3>2. if / else</h3>
+                  <h3>2. if / else — one path runs</h3>
                   <pre class="code-sample"><code>score = 55
 if score >= 50:
     print("Pass")
 else:
     print("Retake")</code></pre>
-                  <p>Indented lines belong to the block. Only one branch runs.</p>
+                  <p>Indented block = body. Everything at the same indent as <code>if</code> is outside the branch.</p>
                 </article>
                 <article class="topic">
-                  <h3>3. elif chains (grade ladders)</h3>
-                  <p>Check conditions <strong>top to bottom</strong>. First true branch wins; rest are skipped.</p>
+                  <h3>3. elif ladders (grades, tickets, tiers)</h3>
                   <pre class="code-sample"><code>mark = 72
 if mark >= 80:
-    print("A")
+    grade = "A"
 elif mark >= 60:
-    print("B")
+    grade = "B"
 else:
-    print("C")</code></pre>
-                  <div class="callout"><strong>Trace habit:</strong> For mark 72, which lines are tested? Which print runs?</div>
+    grade = "C"
+print(grade)</code></pre>
+                  <p>Order matters: put <strong>stricter</strong> thresholds first (<code>&gt;= 80</code> before <code>&gt;= 60</code>).</p>
                 </article>
                 <article class="topic">
-                  <h3>4. Combining conditions</h3>
-                  <p><code>and</code> — both must be true. <code>or</code> — at least one true. <code>not</code> flips boolean.</p>
+                  <h3>4. and / or / not</h3>
                   <pre class="code-sample"><code>age = 16
-has_id = True
-if age >= 18 or has_id:
-    print("Enter")</code></pre>
+paid = True
+if age >= 18 and paid:
+    print("Full access")
+elif paid:
+    print("Guest pass")</code></pre>
+                  <p>Real rules combine facts — membership, payment, age limits — same pattern as small business apps.</p>
                 </article>
                 <article class="topic">
                   <h3>5. input() + decisions</h3>
-                  <pre class="code-sample"><code>pwd = input("Password? ")
-if pwd == "dba2026":
-    print("Welcome")
+                  <pre class="code-sample"><code>mark = int(input("Mark? "))
+if mark >= 50:
+    print("Pass")
 else:
-    print("Denied")</code></pre>
-                  <p>Compare strings with <code>==</code>. Remember <code>input</code> returns text.</p>
+    print("Retake")</code></pre>
+                  <p>Convert input before comparing to numbers (Week 2). String login checks use <code>==</code> on text passwords.</p>
                 </article>
                 <article class="topic">
-                  <h3>6. Common mistakes</h3>
+                  <h3>6. Nested decisions (intermediate preview)</h3>
+                  <pre class="code-sample"><code>role = input("Role? ")
+if role == "admin":
+    code = input("Code? ")
+    if code == "9999":
+        print("Admin OK")
+    else:
+        print("Bad code")
+else:
+    print("Student view")</code></pre>
+                  <p>Inner <code>if</code> runs only when outer condition is true — trace from outside in.</p>
+                </article>
+                <article class="topic">
+                  <h3>7. Common mistakes (Practical fix-the-logic)</h3>
                   <ul>
-                    <li>Using <code>if x = 5:</code> instead of <code>==</code></li>
-                    <li>Wrong indentation (SyntaxError or wrong branch)</li>
-                    <li>elif order too loose (e.g. checking <code>&gt;= 60</code> before <code>&gt;= 80</code>)</li>
+                    <li><code>if x = 5</code> → use <code>==</code></li>
+                    <li>Wrong indent → wrong branch or SyntaxError</li>
+                    <li>elif order reversed → everyone gets “B” when they deserved “A”</li>
+                    <li>Comparing string <code>"50"</code> to int <code>50</code> → always False; convert first</li>
                   </ul>
                 </article>
                 <article class="topic">
-                  <h3>7. Weekly lab map</h3>
+                  <h3>8. Week 3 lab map</h3>
                   <ul>
-                    <li><strong>Mon–Tue:</strong> Phase A trace drills</li>
-                    <li><strong>Wed–Thu:</strong> Phase B age, grade, password programs</li>
-                    <li><strong>Fri:</strong> Phase C menu project</li>
+                    <li><strong>Mon–Tue:</strong> Phase A — trace elif examples</li>
+                    <li><strong>Wed–Thu:</strong> Phase B — age, grades, password, even/odd</li>
+                    <li><strong>Fri:</strong> Phase C — menu (1–4 options)</li>
                     <li><strong>Sat–Sun:</strong> Quiz</li>
                   </ul>
                 </article>
                 <article class="topic">
-                  <h3>8. Vocabulary</h3>
+                  <h3>9. Project: text menu (Phase C)</h3>
+                  <p>Print options, read choice, print different messages with <code>if/elif/else</code>. Later (Week 4) wrap the menu in a <code>while</code> loop so it repeats until Quit — that is a small <strong>interactive project</strong>.</p>
+                </article>
+                <article class="topic">
+                  <h3>10. Python Practical — when you are stuck, re-read…</h3>
+                  <table class="note-table" aria-label="Week 3 to Practical">
+                    <thead><tr><th>Practical day</th><th>Theme</th><th>These notes</th></tr></thead>
+                    <tbody>
+                      <tr><td>Wednesday</td><td>Decisions &amp; grades</td><td>Sections 1–5, 7</td></tr>
+                      <tr><td>Monday</td><td>String bugs</td><td><a href="python-lesson2.html#reading">Week 2</a> §3–5</td></tr>
+                      <tr><td>Tuesday</td><td>Loops</td><td><a href="python-lesson4.html#reading">Week 4</a> (decisions inside loops)</td></tr>
+                      <tr><td>Saturday</td><td>Weekly mix</td><td>Weeks 2–3 sections + Week 4 loops</td></tr>
+                    </tbody>
+                  </table>
+                </article>
+                <article class="topic">
+                  <h3>11. From beginner to “can ship a small script”</h3>
+                  <p>After Week 3 you should read rules in English and write matching Python: pass marks, discounts, login checks. Combine with Week 2 I/O for CLI tools users type into.</p>
+                </article>
+                <article class="topic">
+                  <h3>12. Vocabulary</h3>
                   <table class="note-table" aria-label="Week 3 vocabulary">
                     <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
                     <tbody>
-                      <tr><td>Condition</td><td>Expression that is True or False</td></tr>
-                      <tr><td>Branch</td><td>Block executed when a condition matches</td></tr>
-                      <tr><td>Boolean</td><td><code>True</code> or <code>False</code></td></tr>
-                      <tr><td>Control flow</td><td>Order in which lines run (not always top-to-bottom)</td></tr>
+                      <tr><td>Boolean</td><td><code>True</code> / <code>False</code></td></tr>
+                      <tr><td>Branch</td><td>Block under if/elif/else</td></tr>
+                      <tr><td>Control flow</td><td>Which lines run and when</td></tr>
+                      <tr><td>Guard</td><td>Early check that stops bad input</td></tr>
                     </tbody>
                   </table>
-                  <div class="callout"><strong>Next step:</strong> <a href="#activity">Class Activity</a> — complete all phases across the week before marking activity done.</div>
+                  <div class="callout"><strong>Next:</strong> Week 4 loops — repeat menus and games. Finish <a href="#activity">activity</a> + quiz.</div>
                 </article>
               </div>
             </div>

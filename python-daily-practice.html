@@ -888,6 +888,18 @@
       font-size: 13px;
     }
 
+    .student-day-notes .notes-lead a {
+      color: var(--navy);
+      font-weight: 800;
+      text-decoration: underline;
+    }
+
+    #dayFundamentalsRef {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
     .student-day-notes ul {
       margin: 0;
       padding-left: 18px;
@@ -1205,6 +1217,7 @@
                   <h4>Read before you start</h4>
                   <p class="notes-lead">What you are working on today and how to use your time well.</p>
                   <ul id="dayStudentNotes"></ul>
+                  <p class="notes-lead" id="dayFundamentalsRef" hidden></p>
                 </div>
                 <p id="dayWorkDesc" style="margin:6px 0 0"></p>
                 <div class="day-task-pills">
@@ -1411,6 +1424,7 @@
       const daySessionGoals = document.getElementById("daySessionGoals");
       const dayStudentNotesPanel = document.getElementById("dayStudentNotesPanel");
       const dayStudentNotes = document.getElementById("dayStudentNotes");
+      const dayFundamentalsRef = document.getElementById("dayFundamentalsRef");
       const predictDayNotes = document.getElementById("predictDayNotes");
       const predictDayNotesList = document.getElementById("predictDayNotesList");
       const pillPredict = document.getElementById("pillPredict");
@@ -1844,9 +1858,22 @@
           });
         }
         if (dayStudentNotesPanel && dayStudentNotes) {
-          if (notes.length) {
+          if (notes.length || plan.fundamentalsLink) {
             dayStudentNotesPanel.hidden = false;
             renderStudentNotesList(dayStudentNotes, notes);
+            if (dayFundamentalsRef && plan.fundamentalsLink) {
+              var fl = plan.fundamentalsLink;
+              dayFundamentalsRef.hidden = false;
+              dayFundamentalsRef.innerHTML =
+                "Turn back to lesson notes: <a href=\"" +
+                fl.href +
+                "\">" +
+                fl.label +
+                "</a> — " +
+                fl.sections;
+            } else if (dayFundamentalsRef) {
+              dayFundamentalsRef.hidden = true;
+            }
           } else {
             dayStudentNotesPanel.hidden = true;
           }

@@ -23,6 +23,11 @@
         "In coding tasks, print one small result before writing the full answer.",
         "When you finish, write in Today's log: one rule about when a variable changes."
       ],
+      fundamentalsLink: {
+        href: "python-lesson2.html?course=python-fundamentals#reading",
+        label: "Python Fundamentals · Week 2",
+        sections: "Sections 1–2 (variables & types), 7 (tracing drills)"
+      },
       visualGames: [
         { id: "snake", label: "Beginner · Snake chase", hint: "Score 3 apples — follow the food.", winScore: 3, variant: 0 },
         { id: "maze", label: "Intermediate · Open maze", hint: "Reach the star (80 steps max).", variant: 0 },
@@ -52,6 +57,11 @@
         "Visual stages always run Beginner, then Intermediate, then Advanced. Finish each stage before the next tab unlocks.",
         "If you feel stuck, use the coach steps; hints cost stars, so try one full attempt first."
       ],
+      fundamentalsLink: {
+        href: "python-lesson2.html?course=python-fundamentals#reading",
+        label: "Python Fundamentals · Week 2",
+        sections: "Sections 3–6 (strings, input, conversion, f-strings)"
+      },
       visualGames: [
         { id: "snake", label: "Beginner · Corner snake", hint: "Score 4 apples without crashing.", winScore: 4, variant: 1 },
         { id: "maze", label: "Intermediate · Tight corridors", hint: "Reach the star in 60 steps.", variant: 1 },
@@ -74,6 +84,11 @@
         "Ask yourself: does this line run once or many times? That is the heart of loops.",
         "Visual stages run Beginner, then Intermediate, then Advanced."
       ],
+      fundamentalsLink: {
+        href: "python-lesson4.html?course=python-fundamentals#reading",
+        label: "Python Fundamentals · Week 4",
+        sections: "Sections 2–6 (while, for, range, accumulators, break)"
+      },
       visualGames: [
         { id: "snake", label: "Beginner · Tail watch", hint: "Score 5 apples — avoid your body.", winScore: 5, variant: 2 },
         { id: "maze", label: "Intermediate · Long path", hint: "Reach the star in 100 steps.", variant: 2 },
@@ -96,6 +111,11 @@
         "When code fails tests, change one condition at a time, then run again.",
         "Visual stages run Beginner, then Intermediate, then Advanced."
       ],
+      fundamentalsLink: {
+        href: "python-lesson3.html?course=python-fundamentals#reading",
+        label: "Python Fundamentals · Week 3",
+        sections: "Sections 1–5, 7 (comparisons, if/elif, grades, mistakes)"
+      },
       visualGames: [
         { id: "snake", label: "Beginner · If/else chase", hint: "Score 3 apples with smart turns.", winScore: 3, variant: 3 },
         { id: "maze", label: "Intermediate · Wall choices", hint: "Use hit_wall before every move.", variant: 3 },
@@ -118,6 +138,11 @@
         "Coding is tougher today; read each test’s expected output before you edit code.",
         "Visual stages run Beginner, then Intermediate, then Advanced."
       ],
+      fundamentalsLink: {
+        href: "python-lesson4.html?course=python-fundamentals#reading",
+        label: "Python Fundamentals · Week 4",
+        sections: "Section 9 (lists) — intermediate bridge"
+      },
       visualGames: [
         { id: "snake", label: "Beginner · Body list", hint: "Score 4 — body grows like append.", winScore: 4, variant: 4 },
         { id: "maze", label: "Intermediate · Data path", hint: "Track steps like a list counter.", variant: 4 },
@@ -140,6 +165,11 @@
         "Finish functions in coding tasks before moving on — tests check edge cases.",
         "Visual stages run Beginner, then Intermediate, then Advanced."
       ],
+      fundamentalsLink: {
+        href: "python-lesson4.html?course=python-fundamentals#reading",
+        label: "Python Fundamentals · Week 4",
+        sections: "Section 10 (functions & return)"
+      },
       visualGames: [
         { id: "snake", label: "Beginner · Score function", hint: "Score 5 to finish strong.", winScore: 5, variant: 5 },
         { id: "maze", label: "Intermediate · choose_direction API", hint: "Return a direction string.", variant: 5 },
@@ -162,6 +192,11 @@
         "Work in order: Predict → Code → Visual games, then mark the day complete.",
         "Replay any quest for extra practice after you finish once."
       ],
+      fundamentalsLink: {
+        href: "python-lesson4.html?course=python-fundamentals#reading",
+        label: "Fundamentals Weeks 2–4",
+        sections: "Week 4 §11 full Practical ↔ notes map; revisit weak weeks"
+      },
       visualGames: [
         { id: "snake", label: "Beginner · Review snake", hint: "Score 3 — warm up.", winScore: 3, variant: 6 },
         { id: "maze", label: "Intermediate · Review maze", hint: "Reach the star in 70 steps.", variant: 6 },

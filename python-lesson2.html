@@ -1407,7 +1407,7 @@
             <div class="section-title">
               <span class="eyebrow">Reading notes</span>
               <h2>Week 2 Notes (expanded)</h2>
-              <p>Variables, types, <code>input()</code>, and conversion — use with the weekly activity lab.</p>
+              <p>Beginner core: variables, strings, <code>input()</code>, and types — aligned with Python Practical Sun–Mon when you get stuck.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="reading">Mark complete</button>
           </div>
@@ -1415,89 +1415,128 @@
             <div class="reader-layout">
               <div class="reader-actions">
                 <h3>How to use these notes</h3>
-                <p>Spread sections <strong>1–8 across Mon–Thu</strong> with the recordings. Use Fri–Sun for the activity lab phases and quiz. About <strong>45–75 minutes per study day</strong> — not one cram session.</p>
+                <p>Spread sections <strong>1–12 across the week</strong> with recordings and the lab. If you also do <a href="python-daily-practice.html?course=python-practical">Python Practical</a>, keep this page open — the table in section 9 tells you which notes to re-read when a daily quest feels hard.</p>
                 <div class="button-row">
-                  <a class="secondary-link" href="#activity">Jump to Week 2 lab (Mon–Sun schedule)</a>
+                  <a class="secondary-link" href="#activity">Week 2 lab schedule</a>
+                  <a class="secondary-link" href="python-daily-practice.html?course=python-practical">Python Practical (daily)</a>
                 </div>
               </div>
               <div class="topic-stack">
                 <article class="topic">
-                  <h3>1. Variables store values</h3>
-                  <p>A <strong>variable</strong> is a name that points to a value in memory. You assign with <code>=</code> (read as “gets”, not “equals”).</p>
-                  <pre class="code-sample"><code>name = "Amina"
-age = 17
-price = 19.99</code></pre>
-                  <p>Names should be readable: <code>student_count</code> beats <code>x</code> for humans reading your code.</p>
+                  <h3>1. Variables store values (trace like Practical Sunday)</h3>
+                  <p>A <strong>variable</strong> is a name for a value. Assignment uses <code>=</code> (“gets”, not “equals”). Python runs lines <strong>in order</strong>; each assignment can replace what the name points to.</p>
+                  <pre class="code-sample"><code>score = 10
+score = score + 5
+print(score)   # 15</code></pre>
+                  <p><strong>Predict habit:</strong> Before you run code, say each variable’s value after every line — same skill as Practical <em>Sunday · Trace &amp; predict variables</em>.</p>
                 </article>
                 <article class="topic">
-                  <h3>2. Core types (Week 2 focus)</h3>
+                  <h3>2. Core types you must recognize</h3>
                   <table class="note-table" aria-label="Types">
-                    <thead><tr><th>Type</th><th>Example</th><th>Use</th></tr></thead>
+                    <thead><tr><th>Type</th><th>Example</th><th>Common use</th></tr></thead>
                     <tbody>
-                      <tr><td><code>str</code></td><td><code>"hello"</code></td><td>Text</td></tr>
-                      <tr><td><code>int</code></td><td><code>42</code></td><td>Whole numbers</td></tr>
-                      <tr><td><code>float</code></td><td><code>3.14</code></td><td>Decimals</td></tr>
-                      <tr><td><code>bool</code></td><td><code>True</code>, <code>False</code></td><td>Yes/no flags</td></tr>
+                      <tr><td><code>str</code></td><td><code>"hello"</code></td><td>Names, messages, anything in quotes</td></tr>
+                      <tr><td><code>int</code></td><td><code>42</code></td><td>Counts, whole amounts</td></tr>
+                      <tr><td><code>float</code></td><td><code>19.99</code></td><td>Money, measurements</td></tr>
+                      <tr><td><code>bool</code></td><td><code>True</code>, <code>False</code></td><td>Yes/no (Week 3 decisions)</td></tr>
                     </tbody>
                   </table>
-                  <p>Check with <code>type(value)</code>. Mixing text and numbers without conversion causes errors.</p>
+                  <p>Use <code>type(x)</code> when debugging. Practical predict questions often hide a type change — watch for quotes.</p>
                 </article>
                 <article class="topic">
-                  <h3>3. input() always returns text</h3>
-                  <pre class="code-sample"><code>name = input("Your name? ")
-print("Hello,", name)</code></pre>
-                  <p><code>input()</code> returns a <strong>string</strong>, even if the user types digits. For math, convert:</p>
-                  <pre class="code-sample"><code>age = int(input("Age? "))
-height = float(input("Height (m)? "))</code></pre>
+                  <h3>3. Strings vs numbers (Practical Monday)</h3>
+                  <p><code>"5"</code> is text; <code>5</code> is a number. They are not interchangeable without converting.</p>
+                  <pre class="code-sample"><code>print("Hello" + " World")   # Hello World
+print(3 + 4)                 # 7
+# print("3" + 4)             # TypeError</code></pre>
+                  <p>Join text with <code>+</code> or f-strings. Do math only on <code>int</code> / <code>float</code>. Stuck on Practical <em>Strings &amp; small bugs</em>? Re-read this section and section 4.</p>
                 </article>
                 <article class="topic">
-                  <h3>4. Type conversion</h3>
+                  <h3>4. input() always returns a string</h3>
+                  <pre class="code-sample"><code>name = input("Name? ")
+age = int(input("Age? "))
+price = float(input("Price? "))</code></pre>
+                  <p>Even if the user types <code>17</code>, <code>input()</code> gives <code>"17"</code>. Convert before <code>+</code>, <code>-</code>, or comparisons with numbers.</p>
+                </article>
+                <article class="topic">
+                  <h3>5. Conversion cheat sheet</h3>
                   <ul>
-                    <li><code>int("12")</code> → 12</li>
+                    <li><code>int("12")</code> → whole number 12</li>
                     <li><code>float("3.5")</code> → 3.5</li>
-                    <li><code>str(100)</code> → <code>"100"</code> for joining text</li>
+                    <li><code>str(100)</code> → <code>"100"</code> for building messages</li>
                   </ul>
-                  <div class="callout"><strong>Classic bug:</strong> <code>age = input("Age? "); print(age + 1)</code> → TypeError. Fix: <code>int(input(...))</code>.</div>
+                  <div class="callout"><strong>Fix-the-bug pattern:</strong> <code>total = input(...); total + 1</code> → wrap with <code>int()</code> or <code>float()</code>.</div>
                 </article>
                 <article class="topic">
-                  <h3>5. f-strings (readable output)</h3>
-                  <pre class="code-sample"><code>qty = 3
-unit = 250
-print(f"You bought {qty} items for {qty * unit} KES total.")</code></pre>
-                  <p>Use f-strings when mixing text and numbers in one line.</p>
+                  <h3>6. f-strings for receipts and reports</h3>
+                  <pre class="code-sample"><code>item = "Notebook"
+qty = 2
+unit = 150
+print(f"{qty} x {item} = {qty * unit} KES")
+print(f"VAT 16%: {qty * unit * 0.16:.2f}")</code></pre>
+                  <p>Projects look professional when labels and numbers print cleanly — use this in your Week 2 mini-project.</p>
                 </article>
                 <article class="topic">
-                  <h3>6. Guided practice (Tue–Wed)</h3>
+                  <h3>7. Reading code top to bottom (guided drills)</h3>
                   <ol>
-                    <li>Store your name and town in two variables; print both.</li>
-                    <li>Read two integers; print sum and product.</li>
-                    <li>Read price; print price + 16% VAT (use <code>float</code>).</li>
-                    <li>Fix the type bug: <code>total = "20" + 5</code>.</li>
+                    <li>Predict, then run: three assignments to one name — what prints?</li>
+                    <li>Two <code>input</code> values → sum and product as numbers.</li>
+                    <li>Fix: <code>print("Total: " + 50)</code> and <code>age = input(); print(age + 1)</code>.</li>
+                    <li>Build a 4-line “intro card”: name, town, favourite subject, one goal.</li>
                   </ol>
                 </article>
                 <article class="topic">
-                  <h3>7. Weekly lab alignment</h3>
-                  <p>The activity page maps to your calendar:</p>
+                  <h3>8. Week 2 class lab (Mon–Sun)</h3>
                   <ul>
-                    <li><strong>Mon:</strong> Phase A type diary</li>
+                    <li><strong>Mon:</strong> Phase A — type diary</li>
                     <li><strong>Tue–Wed:</strong> Phase B input problems + Phase C bug fixes</li>
-                    <li><strong>Thu–Fri:</strong> Phase D mini-project (receipt or age calculator)</li>
+                    <li><strong>Thu–Fri:</strong> Phase D — receipt or age-in-5-years project</li>
                     <li><strong>Sat–Sun:</strong> Quiz + catch-up</li>
                   </ul>
                 </article>
                 <article class="topic">
-                  <h3>8. Vocabulary</h3>
+                  <h3>9. Python Practical — when you are stuck, re-read…</h3>
+                  <table class="note-table" aria-label="Week 2 to Practical map">
+                    <thead><tr><th>Practical day (weekly)</th><th>Theme</th><th>Fundamentals notes</th></tr></thead>
+                    <tbody>
+                      <tr><td>Sunday</td><td>Trace &amp; predict variables</td><td>Sections 1, 2, 7</td></tr>
+                      <tr><td>Monday</td><td>Strings &amp; small bugs</td><td>Sections 3, 4, 5, 6</td></tr>
+                      <tr><td>Tuesday</td><td>Loops (preview)</td><td>Week 4 notes §2–4 when you reach loops</td></tr>
+                      <tr><td>Wednesday</td><td>Decisions</td><td>Week 3 notes (after this week)</td></tr>
+                    </tbody>
+                  </table>
+                  <p>Open <a href="python-daily-practice.html?course=python-practical">Python Practical</a> only when Week 2 basics feel OK — use it for extra reps, not instead of this lab.</p>
+                </article>
+                <article class="topic">
+                  <h3>10. Beginner project: simple receipt (Phase D)</h3>
+                  <p>Skills: <code>input</code>, <code>float</code>, f-string, one clear output block.</p>
+                  <ol>
+                    <li>Ask item name, quantity, unit price.</li>
+                    <li>Compute line total and optional VAT.</li>
+                    <li>Print a short receipt (at least 4 lines).</li>
+                  </ol>
+                  <p>Extension (intermediate taste): loop in Week 4 to add multiple items — plan the receipt now, upgrade later.</p>
+                </article>
+                <article class="topic">
+                  <h3>11. Debugging checklist</h3>
+                  <ul>
+                    <li><strong>TypeError</strong> → mixed str and int/float? Convert or use f-string.</li>
+                    <li><strong>ValueError</strong> on <code>int(input())</code> → user typed letters; validate or retry.</li>
+                    <li>Wrong math → print intermediate values with <code>print("debug", x)</code>.</li>
+                  </ul>
+                </article>
+                <article class="topic">
+                  <h3>12. Vocabulary &amp; next week</h3>
                   <table class="note-table" aria-label="Week 2 vocabulary">
                     <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
                     <tbody>
-                      <tr><td>Variable</td><td>Name bound to a value</td></tr>
-                      <tr><td>Assignment</td><td><code>name = value</code></td></tr>
-                      <tr><td>Literal</td><td>Value written directly, e.g. <code>17</code></td></tr>
-                      <tr><td>Cast / convert</td><td>Change type with <code>int()</code>, <code>float()</code>, <code>str()</code></td></tr>
-                      <tr><td>TypeError</td><td>Operation on incompatible types</td></tr>
+                      <tr><td>Variable</td><td>Name for a value</td></tr>
+                      <tr><td>Literal</td><td>Fixed value in code (<code>42</code>, <code>"hi"</code>)</td></tr>
+                      <tr><td>Expression</td><td>Code that produces a value (<code>3 + 4</code>)</td></tr>
+                      <tr><td>f-string</td><td><code>f"..."</code> with <code>{expressions}</code> inside</td></tr>
                     </tbody>
                   </table>
-                  <div class="callout"><strong>Next step:</strong> Open <a href="#activity">Class Activity</a> and follow the Mon–Sun table through Phase D before marking activity complete.</div>
+                  <div class="callout"><strong>Next:</strong> Week 3 — decisions (<code>if</code> / <code>elif</code>). Finish <a href="#activity">Class Activity</a> Phase D and the quiz first.</div>
                 </article>
               </div>
             </div>

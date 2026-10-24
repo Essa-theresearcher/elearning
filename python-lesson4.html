@@ -1404,7 +1404,7 @@
             <div class="section-title">
               <span class="eyebrow">Reading notes</span>
               <h2>Week 4 Notes (expanded)</h2>
-              <p>while and for loops, range(), accumulators — spread across the full week with the lab.</p>
+              <p>Loops plus a bridge to lists, functions, and project patterns — aligned with Practical Tue, Thu, Fri.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="reading">Mark complete</button>
           </div>
@@ -1412,73 +1412,132 @@
             <div class="reader-layout">
               <div class="reader-actions">
                 <h3>How to use these notes</h3>
-                <p>Mon–Tue: while/for basics. Wed–Thu: accumulators and loop programs. Fri: project. If a loop never stops, you forgot to update the counter — fix, don’t panic.</p>
+                <p>Week 4 covers <strong>loops</strong> and opens the door to <strong>intermediate</strong> topics (lists, functions) you will drill in Python Practical. Sections 1–8 are core; 9–11 are your project reference.</p>
                 <div class="button-row">
-                  <a class="secondary-link" href="#activity">Jump to Week 4 lab</a>
+                  <a class="secondary-link" href="#activity">Week 4 lab</a>
+                  <a class="secondary-link" href="python-daily-practice.html?course=python-practical">Python Practical</a>
+                  <a class="secondary-link" href="python-lesson3.html#reading">Week 3 notes</a>
                 </div>
               </div>
               <div class="topic-stack">
                 <article class="topic">
                   <h3>1. Why loops?</h3>
-                  <p>Loops repeat work without copy-pasting code. Two main styles in Week 4: <code>while</code> (repeat while a condition is true) and <code>for</code> (repeat over a sequence or range).</p>
+                  <p>Projects need repetition: menus, games, reports over many rows. <code>while</code> and <code>for</code> avoid copy-pasting the same lines.</p>
                 </article>
                 <article class="topic">
-                  <h3>2. while loops</h3>
+                  <h3>2. while loops (Practical Tuesday)</h3>
                   <pre class="code-sample"><code>count = 0
 while count &lt; 5:
     print(count)
     count += 1</code></pre>
-                  <p>The condition is checked before each iteration. If it is never false, you get an <strong>infinite loop</strong>.</p>
+                  <p>Update the variable in the condition every iteration. Stuck on Practical <em>Loops &amp; repetition</em>? Write the first three values of the counter on paper.</p>
                 </article>
                 <article class="topic">
                   <h3>3. for and range()</h3>
                   <pre class="code-sample"><code>for i in range(5):
-    print(i)          # 0, 1, 2, 3, 4
+    print(i)
 
-for n in range(1, 6):
-    print(n)          # 1 .. 5</code></pre>
-                  <p><code>range(stop)</code> or <code>range(start, stop)</code> — stop is <em>not</em> included.</p>
+for n in range(1, 13):
+    print(f"5 x {n} = {5 * n}")</code></pre>
+                  <p><code>range(stop)</code> starts at 0. <code>range(a, b)</code> stops before <code>b</code>.</p>
                 </article>
                 <article class="topic">
-                  <h3>4. Accumulators</h3>
+                  <h3>4. Accumulators (sums, counts, averages)</h3>
                   <pre class="code-sample"><code>total = 0
-for n in range(1, 101):
-    total += n
-print(total)</code></pre>
-                  <p>Initialize before the loop, update inside, use after.</p>
+count = 0
+for _ in range(5):
+    mark = int(input("Mark? "))
+    total += mark
+    count += 1
+print("Average:", total / count)</code></pre>
+                  <p>Pattern: <code>total = 0</code> before loop, <code>+=</code> inside, use after — used in school result tools.</p>
                 </article>
                 <article class="topic">
                   <h3>5. while vs for</h3>
                   <ul>
-                    <li><code>for</code> — known number of repetitions (tables, ranges)</li>
-                    <li><code>while</code> — repeat until user succeeds or condition changes (guessing game)</li>
+                    <li><code>for</code> — times table, processing fixed range</li>
+                    <li><code>while</code> — “until correct guess” or “until user types quit”</li>
                   </ul>
                 </article>
                 <article class="topic">
-                  <h3>6. break (optional stretch)</h3>
-                  <p><code>break</code> exits the loop early — useful when the user quits or guesses correctly.</p>
+                  <h3>6. break and loop + decisions</h3>
+                  <pre class="code-sample"><code>secret = 7
+while True:
+    guess = int(input("Guess 1-10: "))
+    if guess == secret:
+        print("Correct!")
+        break
+    print("Try again")</code></pre>
+                  <p>Week 3 <code>if</code> inside Week 4 loop = small games and menus that repeat.</p>
                 </article>
                 <article class="topic">
-                  <h3>7. Weekly lab map</h3>
+                  <h3>7. Week 4 lab map</h3>
                   <ul>
-                    <li><strong>Mon–Tue:</strong> Phase A predict output</li>
-                    <li><strong>Wed–Thu:</strong> Phase B countdown, times table, sum</li>
-                    <li><strong>Fri:</strong> Phase C guessing game or star pattern</li>
-                    <li><strong>Sat–Sun:</strong> Quiz; optional Python Practical daily track</li>
+                    <li><strong>Mon–Tue:</strong> Phase A — predict loop output</li>
+                    <li><strong>Wed–Thu:</strong> Phase B — countdown, times table, sum 1..n</li>
+                    <li><strong>Fri:</strong> Phase C — guessing game or star pattern</li>
+                    <li><strong>Sat–Sun:</strong> Quiz + Practical review day</li>
                   </ul>
                 </article>
                 <article class="topic">
-                  <h3>8. Vocabulary</h3>
+                  <h3>8. Capstone projects (beginner → intermediate)</h3>
+                  <p>Pick one for Phase C or after the quiz:</p>
+                  <ul>
+                    <li><strong>Guessing game</strong> — <code>while</code>, <code>if</code>, guess counter</li>
+                    <li><strong>Fee calculator</strong> — loop to add many students’ fees (use list in §9)</li>
+                    <li><strong>Quiz master</strong> — loop questions, track score (needs list of prompts)</li>
+                    <li><strong>Pattern printer</strong> — nested loops for triangles of <code>*</code></li>
+                  </ul>
+                </article>
+                <article class="topic">
+                  <h3>9. Lists — store many values (Practical Thursday)</h3>
+                  <pre class="code-sample"><code>names = ["Amina", "Ben", "Chen"]
+print(names[0], len(names))
+names.append("Dina")
+for n in names:
+    print("Hello", n)</code></pre>
+                  <p>Lists + loops = process a class roster, cart items, or scores. Re-read when Practical <em>Lists &amp; data</em> feels hard.</p>
+                </article>
+                <article class="topic">
+                  <h3>10. Functions — reusable steps (Practical Friday)</h3>
+                  <pre class="code-sample"><code>def line_total(qty, price):
+    return qty * price
+
+def greet(name):
+    return f"Hello, {name}"
+
+print(line_total(3, 250))
+print(greet("Amina"))</code></pre>
+                  <p><code>return</code> sends a value back; without <code>return</code>, result is <code>None</code>. Split big projects into small functions.</p>
+                </article>
+                <article class="topic">
+                  <h3>11. Python Practical — full weekly map (Fundamentals Weeks 2–4)</h3>
+                  <table class="note-table" aria-label="Practical to Fundamentals">
+                    <thead><tr><th>Day</th><th>Practical focus</th><th>Fundamentals home base</th></tr></thead>
+                    <tbody>
+                      <tr><td>Sun</td><td>Variables &amp; trace</td><td><a href="python-lesson2.html#reading">Week 2</a> §1–2, 7</td></tr>
+                      <tr><td>Mon</td><td>Strings &amp; bugs</td><td>Week 2 §3–6</td></tr>
+                      <tr><td>Tue</td><td>Loops</td><td>Week 4 §2–6</td></tr>
+                      <tr><td>Wed</td><td>Decisions</td><td><a href="python-lesson3.html#reading">Week 3</a> §1–5</td></tr>
+                      <tr><td>Thu</td><td>Lists &amp; dicts</td><td>Week 4 §9</td></tr>
+                      <tr><td>Fri</td><td>Functions</td><td>Week 4 §10</td></tr>
+                      <tr><td>Sat</td><td>Mixed review</td><td>All reading sections + Practical log</td></tr>
+                    </tbody>
+                  </table>
+                  <p>Fundamentals teaches the concepts across four weeks; Practical gives daily reps. Use both to reach project-ready confidence.</p>
+                </article>
+                <article class="topic">
+                  <h3>12. Vocabulary &amp; what comes next</h3>
                   <table class="note-table" aria-label="Week 4 vocabulary">
                     <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
                     <tbody>
-                      <tr><td>Iteration</td><td>One pass through the loop body</td></tr>
-                      <tr><td>Counter</td><td>Variable that tracks how many times</td></tr>
-                      <tr><td>Infinite loop</td><td>Condition never becomes false</td></tr>
-                      <tr><td>Accumulator</td><td>Variable that builds a running total</td></tr>
+                      <tr><td>Iteration</td><td>One loop pass</td></tr>
+                      <tr><td>Accumulator</td><td>Running total or count</td></tr>
+                      <tr><td>Index</td><td>Position in a list (<code>0</code> first)</td></tr>
+                      <tr><td>Parameter</td><td>Input name in a function definition</td></tr>
                     </tbody>
                   </table>
-                  <div class="callout"><strong>Next step:</strong> <a href="#activity">Class Activity</a> — finish all phases across the week, then take the quiz.</div>
+                  <div class="callout"><strong>After Week 4:</strong> Keep building in <a href="python-daily-practice.html?course=python-practical">Python Practical</a> and combine Weeks 2–4 into one portfolio project (menu + loop + list + functions).</div>
                 </article>
               </div>
             </div>
