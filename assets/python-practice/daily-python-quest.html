@@ -92,7 +92,7 @@ var weekDay=parseInt(qp.get("dbaDay")||String(new Date().getDay()),10);
 var dbaDate=qp.get("dbaDate")||"";
 var PREDICT_N=Math.min(12,Math.max(5,parseInt(qp.get("dbaPredictCount")||"8",10)));
 (function(){var b=document.getElementById("practiceBlurb");if(b)b.textContent=PREDICT_N+" predict-and-reason challenges today. Wrong answers show step-by-step thinking — hints cost stars, so try first.";})();
-function todaySet(){var shift=parseInt(qp.get("dbaPredictShift")||"0",10);var s=[],st=(dayNum()*PREDICT_N+weekDay*7+shift)%POOL.length;for(var k=0;k<PREDICT_N;k++)s.push(POOL[(st+k)%POOL.length]);return s}
+function todaySet(){var shift=parseInt(qp.get("dbaPredictShift")||"0",10);var pw=parseInt(qp.get("dbaProgramWeek")||"1",10);shift+=Math.max(0,pw-1)*22;var s=[],st=(dayNum()*PREDICT_N+weekDay*7+shift)%POOL.length;for(var k=0;k<PREDICT_N;k++)s.push(POOL[(st+k)%POOL.length]);return s}
 function notifyDayTask(task){if(!dbaDate||!window.parent)return;try{window.parent.postMessage({type:"pp-day-task",task:task,date:dbaDate},"*");}catch(e){}}
 function head(){$("streak").textContent="🔥 "+S.streak;$("xp").textContent="⭐ "+S.xp;
  var h="";for(var k=0;k<PREDICT_N;k++){h+=(k?'<div class="bar '+(k<=i&&k<=res.length?'done':'')+'"></div>':'')+'<div class="node '+(k<res.length?'done':k==i?'cur':'')+'">'+(k<res.length?'✓':k+1)+'</div>'}$("path").innerHTML=h}

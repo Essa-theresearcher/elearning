@@ -6,6 +6,40 @@
     tagline: "Heavy daily practice: predict, code, debug, repeat."
   };
 
+  var PROGRAM_WEEK_KEY = "pp-program-week";
+  var PROG_WEEK_DONE_PREFIX = "pp-progweek-done-";
+
+  var PROGRAM_WEEKS_META = [
+    {
+      n: 1,
+      title: "Foundation & tracing",
+      fundamentalsLabel: "Week 1",
+      fundHref: "python-lesson1.html?course=python-fundamentals#reading",
+      fundSections: "Setup, print(), errors — full Week 1 notes"
+    },
+    {
+      n: 2,
+      title: "Variables, strings & input",
+      fundamentalsLabel: "Week 2",
+      fundHref: "python-lesson2.html?course=python-fundamentals#reading",
+      fundSections: "Variables, types, input(), conversion, projects"
+    },
+    {
+      n: 3,
+      title: "Decisions & logic",
+      fundamentalsLabel: "Week 3",
+      fundHref: "python-lesson3.html?course=python-fundamentals#reading",
+      fundSections: "if/elif, grades, menus — Week 3 notes"
+    },
+    {
+      n: 4,
+      title: "Loops, data & project skills",
+      fundamentalsLabel: "Week 4",
+      fundHref: "python-lesson4.html?course=python-fundamentals#reading",
+      fundSections: "Loops, lists, functions, capstone ideas"
+    }
+  ];
+
   var DAYS = [
     {
       dow: 0,
@@ -24,14 +58,14 @@
         "When you finish, write in Today's log: one rule about when a variable changes."
       ],
       fundamentalsLink: {
-        href: "python-lesson2.html?course=python-fundamentals#reading",
-        label: "Python Fundamentals · Week 2",
-        sections: "Sections 1–2 (variables & types), 7 (tracing drills)"
+        href: "python-lesson1.html?course=python-fundamentals#reading",
+        label: "Python Fundamentals · Week 1",
+        sections: "Sections 1–7 (setup, print, guided practice)"
       },
       visualGames: [
         { id: "snake", label: "Beginner · Snake chase", hint: "Score 3 apples — follow the food.", winScore: 3, variant: 0 },
         { id: "maze", label: "Intermediate · Open maze", hint: "Reach the star (80 steps max).", variant: 0 },
-        { id: "sudoku", label: "Advanced · Row & column rules", hint: "Check names the row or column that repeats a number.", variant: 0 }
+        { id: "sudoku", label: "Advanced · Row & column rules", hint: "Check the row or column that repeats a number.", variant: 0 }
       ]
     },
     {
@@ -43,7 +77,7 @@
       predictShift: 4,
       codeLevel: 0,
       sessionIntro:
-        "Today’s theme: strings are not numbers. You will drill quotes, concatenation, input(), and small bugs until the pattern feels automatic.",
+        "Today’s theme: strings are not numbers. Drill quotes, concatenation, input(), and small bugs.",
       sessionGoals: [
         "8 predict items (string + bug focus)",
         "5 beginner coding tasks (text & input)",
@@ -54,18 +88,17 @@
         "Look for quotes: '5' is text, 5 is a number — they behave differently with + and input().",
         "On fix-the-bug items, find the first line where text and numbers are mixed wrongly.",
         "Coding today is beginner level: names, joining words, and simple input — take your time.",
-        "Visual stages always run Beginner, then Intermediate, then Advanced. Finish each stage before the next tab unlocks.",
-        "If you feel stuck, use the coach steps; hints cost stars, so try one full attempt first."
+        "Visual stages run Beginner, then Intermediate, then Advanced."
       ],
       fundamentalsLink: {
-        href: "python-lesson2.html?course=python-fundamentals#reading",
-        label: "Python Fundamentals · Week 2",
-        sections: "Sections 3–6 (strings, input, conversion, f-strings)"
+        href: "python-lesson1.html?course=python-fundamentals#reading",
+        label: "Python Fundamentals · Week 1",
+        sections: "print() and error reading; Week 2 preview in Fundamentals when ready"
       },
       visualGames: [
         { id: "snake", label: "Beginner · Corner snake", hint: "Score 4 apples without crashing.", winScore: 4, variant: 1 },
         { id: "maze", label: "Intermediate · Tight corridors", hint: "Reach the star in 60 steps.", variant: 1 },
-        { id: "sudoku", label: "Advanced · Box checker", hint: "Check names the 3×3 box when a number is repeated.", variant: 1 }
+        { id: "sudoku", label: "Advanced · Box checker", hint: "Check the 3×3 box when a number repeats.", variant: 1 }
       ]
     },
     {
@@ -79,20 +112,19 @@
       sessionIntro: "Loops repeat work — predict what the counter does before you run code in your head.",
       sessionGoals: ["8 predict challenges", "5 intermediate coding tasks", "3 visual games", "Log one loop pattern"],
       studentNotes: [
-        "For every loop question, write the first three values the counter takes (often 0, 1, 2).",
-        "Coding level is intermediate today — loops, grades, and strings together.",
-        "Ask yourself: does this line run once or many times? That is the heart of loops.",
+        "Write the first three values the counter takes (often 0, 1, 2).",
+        "Ask: does this line run once or many times?",
         "Visual stages run Beginner, then Intermediate, then Advanced."
       ],
       fundamentalsLink: {
-        href: "python-lesson4.html?course=python-fundamentals#reading",
-        label: "Python Fundamentals · Week 4",
-        sections: "Sections 2–6 (while, for, range, accumulators, break)"
+        href: "python-lesson1.html?course=python-fundamentals#reading",
+        label: "Python Fundamentals · Week 1",
+        sections: "Finish Week 1 lab; loops come in Fundamentals Week 4"
       },
       visualGames: [
         { id: "snake", label: "Beginner · Tail watch", hint: "Score 5 apples — avoid your body.", winScore: 5, variant: 2 },
         { id: "maze", label: "Intermediate · Long path", hint: "Reach the star in 100 steps.", variant: 2 },
-        { id: "sudoku", label: "Advanced · Repeat the rules", hint: "New grid. Fix one repeated number, then check again.", variant: 2 }
+        { id: "sudoku", label: "Advanced · Repeat the rules", hint: "Fix one repeated number, then check again.", variant: 2 }
       ]
     },
     {
@@ -106,20 +138,19 @@
       sessionIntro: "Decision trees: only one branch runs — practice reading conditions in order.",
       sessionGoals: ["8 predict challenges", "5 coding tasks", "3 visual games", "Log one if/elif rule"],
       studentNotes: [
-        "Read if / elif / else from top to bottom — stop at the first condition that is True.",
-        "Grade and comparison questions are training for real-world rules (pass marks, limits).",
-        "When code fails tests, change one condition at a time, then run again.",
-        "Visual stages run Beginner, then Intermediate, then Advanced."
+        "Read if / elif / else from top to bottom — stop at the first True condition.",
+        "Grade questions mirror real pass marks and limits.",
+        "Change one condition at a time when debugging."
       ],
       fundamentalsLink: {
-        href: "python-lesson3.html?course=python-fundamentals#reading",
-        label: "Python Fundamentals · Week 3",
-        sections: "Sections 1–5, 7 (comparisons, if/elif, grades, mistakes)"
+        href: "python-lesson1.html?course=python-fundamentals#reading",
+        label: "Python Fundamentals",
+        sections: "Week 3 notes when you unlock Practical Week 3"
       },
       visualGames: [
         { id: "snake", label: "Beginner · If/else chase", hint: "Score 3 apples with smart turns.", winScore: 3, variant: 3 },
         { id: "maze", label: "Intermediate · Wall choices", hint: "Use hit_wall before every move.", variant: 3 },
-        { id: "sudoku", label: "Advanced · Where to look", hint: "The first problem tells you where to look and why.", variant: 3 }
+        { id: "sudoku", label: "Advanced · Where to look", hint: "The coach tells you where to look and why.", variant: 3 }
       ]
     },
     {
@@ -133,20 +164,19 @@
       sessionIntro: "Lists and dicts hold data — track what changes after append and key lookups.",
       sessionGoals: ["8 predict challenges", "5 advanced-leaning tasks", "3 visual games", "Log one data-structure tip"],
       studentNotes: [
-        "Draw the list on paper after each append — predict questions love len() and last item.",
-        "For dictionaries, say the key aloud, then what value it points to.",
-        "Coding is tougher today; read each test’s expected output before you edit code.",
-        "Visual stages run Beginner, then Intermediate, then Advanced."
+        "Draw the list after each append — predict items love len() and last index.",
+        "For dicts: say the key, then the value it maps to.",
+        "Read each coding test’s expected output before you edit code."
       ],
       fundamentalsLink: {
         href: "python-lesson4.html?course=python-fundamentals#reading",
         label: "Python Fundamentals · Week 4",
-        sections: "Section 9 (lists) — intermediate bridge"
+        sections: "Section 9 (lists) — unlocks fully in Practical Week 4"
       },
       visualGames: [
         { id: "snake", label: "Beginner · Body list", hint: "Score 4 — body grows like append.", winScore: 4, variant: 4 },
         { id: "maze", label: "Intermediate · Data path", hint: "Track steps like a list counter.", variant: 4 },
-        { id: "sudoku", label: "Advanced · Cell by cell", hint: "Crosses show every cell that differs. The answer stays hidden.", variant: 4 }
+        { id: "sudoku", label: "Advanced · Cell by cell", hint: "Crosses show cells that differ.", variant: 4 }
       ]
     },
     {
@@ -160,10 +190,9 @@
       sessionIntro: "Functions return values — predict None vs a number before you call code.",
       sessionGoals: ["8 predict challenges", "5 coding tasks", "3 visual games", "Log one return-value mistake"],
       studentNotes: [
-        "If you do not see return in a function, the result is None — watch for that in predict items.",
-        "Nested dicts (data['key']['inner']) are like opening boxes inside boxes.",
-        "Finish functions in coding tasks before moving on — tests check edge cases.",
-        "Visual stages run Beginner, then Intermediate, then Advanced."
+        "No return means None — watch for that in predict items.",
+        "Nested dicts are boxes inside boxes.",
+        "Finish all coding tests — edge cases matter."
       ],
       fundamentalsLink: {
         href: "python-lesson4.html?course=python-fundamentals#reading",
@@ -173,7 +202,7 @@
       visualGames: [
         { id: "snake", label: "Beginner · Score function", hint: "Score 5 to finish strong.", winScore: 5, variant: 5 },
         { id: "maze", label: "Intermediate · choose_direction API", hint: "Return a direction string.", variant: 5 },
-        { id: "sudoku", label: "Advanced · Three hints", hint: "Hint 1 names a group. Hint 3 names one number.", variant: 5 }
+        { id: "sudoku", label: "Advanced · Three hints", hint: "Hints name groups and numbers.", variant: 5 }
       ]
     },
     {
@@ -184,31 +213,312 @@
       logic: "Mixed predict + code from the week",
       predictShift: 6,
       codeLevel: 1,
-      sessionIntro: "Review week — mixed types, loops, decisions, and data. Speed comes from reps.",
-      sessionGoals: ["8 mixed predict items", "5 coding tasks", "3 visual review games", "Log your strongest skill this week"],
+      sessionIntro: "Review week — mixed skills. Speed comes from reps, not rushing.",
+      sessionGoals: ["8 mixed predict items", "5 coding tasks", "3 visual review games", "Log your strongest skill"],
       studentNotes: [
-        "This is review day — mistakes are normal; use them to see what to revise next week.",
-        "Skim your Today's log from earlier days if you kept one — notice what improved.",
-        "Work in order: Predict → Code → Visual games, then mark the day complete.",
-        "Replay any quest for extra practice after you finish once."
+        "Review day — use mistakes to see what to revisit in Fundamentals notes.",
+        "Work Predict → Code → Visual, then mark the day complete.",
+        "Completing all 7 days unlocks the next Practical program week."
       ],
       fundamentalsLink: {
-        href: "python-lesson4.html?course=python-fundamentals#reading",
-        label: "Fundamentals Weeks 2–4",
-        sections: "Week 4 §11 full Practical ↔ notes map; revisit weak weeks"
+        href: "python-lesson1.html?course=python-fundamentals#reading",
+        label: "Python Fundamentals",
+        sections: "Re-read the week that matches your Practical program week"
       },
       visualGames: [
         { id: "snake", label: "Beginner · Review snake", hint: "Score 3 — warm up.", winScore: 3, variant: 6 },
         { id: "maze", label: "Intermediate · Review maze", hint: "Reach the star in 70 steps.", variant: 6 },
-        { id: "sudoku", label: "Advanced · Review sudoku", hint: "Review: Check first. Hints cost stars.", variant: 6 }
+        { id: "sudoku", label: "Advanced · Review sudoku", hint: "Check first. Hints cost stars.", variant: 6 }
       ]
     }
   ];
 
-  function planForDate(d) {
+  function cloneDay(day) {
+    return JSON.parse(JSON.stringify(day));
+  }
+
+  function defaultFundLink(meta, sections) {
+    return {
+      href: meta.fundHref,
+      label: "Python Fundamentals · " + meta.fundamentalsLabel,
+      sections: sections || meta.fundSections
+    };
+  }
+
+  function buildProgramWeek(weekNum, meta, patches) {
+    return DAYS.map(function (base, i) {
+      var d = cloneDay(base);
+      var p = patches[i] || {};
+      if (p.title) d.title = p.title;
+      if (p.logic) d.logic = p.logic;
+      if (p.sessionIntro) d.sessionIntro = p.sessionIntro;
+      if (p.sessionGoals) d.sessionGoals = p.sessionGoals;
+      if (p.studentNotes) d.studentNotes = p.studentNotes;
+      if (p.fundamentalsLink) d.fundamentalsLink = p.fundamentalsLink;
+      else if (meta) d.fundamentalsLink = defaultFundLink(meta, p.fundSections);
+      if (p.visualGames) d.visualGames = p.visualGames;
+      if (p.predictShift != null) d.predictShift = p.predictShift;
+      if (p.codeLevel != null) d.codeLevel = p.codeLevel;
+      d.predictShift = d.predictShift + (weekNum - 1) * 18;
+      d.programWeek = weekNum;
+      d.weekTitle = meta.title;
+      if (p.visualVariantOffset) {
+        d.visualGames = d.visualGames.map(function (g) {
+          return Object.assign({}, g, { variant: (g.variant || 0) + p.visualVariantOffset });
+        });
+      }
+      return d;
+    });
+  }
+
+  var WEEK2_PATCHES = [
+    {
+      title: "Variable tracing (Week 2 focus)",
+      logic: "Types, reassignment, and predict output",
+      predictShift: 1,
+      fundSections: "§1–2 variables & types, §7 tracing",
+      studentNotes: [
+        "Practical Week 2 pairs with Fundamentals Week 2.",
+        "Track every variable after each = line.",
+        "Say the type out loud when you see quotes vs bare numbers."
+      ]
+    },
+    {
+      title: "input() & conversion drills",
+      logic: "Text from input, int/float for math",
+      predictShift: 5,
+      fundSections: "§3–5 input and conversion",
+      studentNotes: [
+        "input() is always str until you convert.",
+        "Fix-the-bug: find str + int before you change code."
+      ]
+    },
+    {
+      title: "f-strings & receipt math",
+      logic: "Formatting output, VAT-style calculations",
+      predictShift: 9,
+      codeLevel: 1,
+      fundSections: "§6 f-strings, §10 receipt project",
+      studentNotes: ["Build one line of output at a time.", "Use float for money when needed."]
+    },
+    {
+      title: "Decisions warm-up",
+      logic: "if/else before full Week 3",
+      predictShift: 3,
+      codeLevel: 1,
+      fundSections: "Week 3 preview — comparisons",
+      studentNotes: ["One branch runs. Trace True/False before each print."]
+    },
+    {
+      title: "Lists intro (data rows)",
+      logic: "len, append, index -1",
+      predictShift: 11,
+      codeLevel: 1,
+      fundSections: "Week 4 §9 lists (preview)",
+      studentNotes: ["After append, len grows by 1.", "Last item: lst[-1]"]
+    },
+    {
+      title: "Week 2 coding project reps",
+      logic: "Receipt or age calculator patterns",
+      predictShift: 13,
+      codeLevel: 1,
+      fundSections: "Week 2 activity Phase D",
+      studentNotes: ["Combine input + f-string + one formula.", "Test with sample numbers you know."]
+    },
+    {
+      title: "Practical Week 2 review",
+      logic: "Mixed variables, strings, input",
+      predictShift: 7,
+      sessionIntro: "Review Practical Week 2 — finish all 7 days to unlock Week 3.",
+      fundSections: "Full Week 2 notes + activity"
+    }
+  ];
+
+  var WEEK3_PATCHES = [
+    {
+      title: "Comparison tracing",
+      logic: "==, !=, <, > and boolean results",
+      predictShift: 0,
+      fundSections: "Week 3 §1 comparisons",
+      visualVariantOffset: 7
+    },
+    {
+      title: "if / else programs",
+      logic: "Two-branch decisions",
+      predictShift: 4,
+      codeLevel: 1,
+      fundSections: "Week 3 §2"
+    },
+    {
+      title: "elif grade ladders",
+      logic: "Ordered thresholds, one winner",
+      predictShift: 8,
+      codeLevel: 1,
+      fundSections: "Week 3 §3–4",
+      studentNotes: ["Put highest grade threshold first.", "Trace mark 72 on paper."]
+    },
+    {
+      title: "Decisions + input",
+      logic: "Login checks, ticket prices, even/odd",
+      predictShift: 2,
+      codeLevel: 1,
+      fundSections: "Week 3 §5–7"
+    },
+    {
+      title: "Lists + decisions",
+      logic: "Filter-style thinking with loops preview",
+      predictShift: 10,
+      codeLevel: 2,
+      fundSections: "Week 3 activity Phase B–C"
+    },
+    {
+      title: "Menu project reps",
+      logic: "if/elif chain for 3–4 options",
+      predictShift: 12,
+      codeLevel: 2,
+      fundSections: "Week 3 §9 menu project"
+    },
+    {
+      title: "Practical Week 3 review",
+      logic: "Mixed decisions and comparisons",
+      predictShift: 6,
+      sessionIntro: "Review Week 3 — unlock Practical Week 4 after 7 completed days.",
+      fundSections: "Full Week 3 notes"
+    }
+  ];
+
+  var WEEK4_PATCHES = [
+    {
+      title: "Loop output tracing",
+      logic: "while/for predict, counter values",
+      predictShift: 1,
+      fundSections: "Week 4 §2–3 loops",
+      visualVariantOffset: 14
+    },
+    {
+      title: "while loops & counters",
+      logic: "Stop conditions, avoid infinite loops",
+      predictShift: 5,
+      codeLevel: 1,
+      fundSections: "Week 4 §2"
+    },
+    {
+      title: "for, range, accumulators",
+      logic: "Sums, tables, counted repetition",
+      predictShift: 9,
+      codeLevel: 2,
+      fundSections: "Week 4 §3–4"
+    },
+    {
+      title: "Loops + decisions",
+      logic: "Guessing game patterns",
+      predictShift: 3,
+      codeLevel: 2,
+      fundSections: "Week 4 §6"
+    },
+    {
+      title: "Lists & loops together",
+      logic: "for item in list, tallies",
+      predictShift: 11,
+      codeLevel: 2,
+      fundSections: "Week 4 §9"
+    },
+    {
+      title: "Functions & mini projects",
+      logic: "def, return, split problem into steps",
+      predictShift: 13,
+      codeLevel: 2,
+      fundSections: "Week 4 §8–10 capstone",
+      studentNotes: [
+        "Project week: guessing game, fee total, or quiz score tracker.",
+        "Use functions to keep main code readable."
+      ]
+    },
+    {
+      title: "Practical Week 4 capstone review",
+      logic: "Full mix — project-ready reps",
+      predictShift: 7,
+      codeLevel: 2,
+      sessionIntro: "Final Practical week — combine loops, data, and functions into one small project idea.",
+      fundSections: "Week 4 §11 Practical map + portfolio project"
+    }
+  ];
+
+  var PROGRAM_WEEK_DAYS = [
+    DAYS,
+    buildProgramWeek(2, PROGRAM_WEEKS_META[1], WEEK2_PATCHES),
+    buildProgramWeek(3, PROGRAM_WEEKS_META[2], WEEK3_PATCHES),
+    buildProgramWeek(4, PROGRAM_WEEKS_META[3], WEEK4_PATCHES)
+  ];
+
+  function getProgramWeek() {
+    try {
+      var w = parseInt(localStorage.getItem(PROGRAM_WEEK_KEY) || "1", 10);
+      if (w < 1 || w > 4) return 1;
+      return w;
+    } catch (e) {
+      return 1;
+    }
+  }
+
+  function setProgramWeek(n) {
+    var w = Math.max(1, Math.min(4, n));
+    try {
+      localStorage.setItem(PROGRAM_WEEK_KEY, String(w));
+    } catch (e) {}
+    return w;
+  }
+
+  function isProgramWeekUnlocked(n) {
+    if (n <= 1) return true;
+    try {
+      return localStorage.getItem(PROG_WEEK_DONE_PREFIX + (n - 1)) === "1";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function markProgramWeekDone(n) {
+    try {
+      localStorage.setItem(PROG_WEEK_DONE_PREFIX + n, "1");
+    } catch (e) {}
+  }
+
+  function countDoneDaysForProgramWeek(weekNum) {
+    var count = 0;
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k || k.indexOf("pp-day-") !== 0) continue;
+        var rec = JSON.parse(localStorage.getItem(k) || "{}");
+        if (!rec.done) continue;
+        if (rec.programWeek === weekNum) count++;
+        else if (!rec.programWeek && weekNum === 1) count++;
+      }
+    } catch (e) {}
+    return count;
+  }
+
+  function tryAdvanceProgramWeek() {
+    var w = getProgramWeek();
+    if (countDoneDaysForProgramWeek(w) < 7) return w;
+    markProgramWeekDone(w);
+    if (w < 4) return setProgramWeek(w + 1);
+    return w;
+  }
+
+  function getDaysForProgramWeek(weekNum) {
+    var idx = Math.max(1, Math.min(4, weekNum)) - 1;
+    return PROGRAM_WEEK_DAYS[idx] || DAYS;
+  }
+
+  function planForDate(d, programWeek) {
+    var pw = programWeek || getProgramWeek();
+    var days = getDaysForProgramWeek(pw);
     var idx = d.getDay();
-    var base = DAYS[idx] || DAYS[0];
-    return Object.assign({}, PRACTICE, base);
+    var base = days[idx] || days[0];
+    var meta = PROGRAM_WEEKS_META[pw - 1] || PROGRAM_WEEKS_META[0];
+    return Object.assign({}, PRACTICE, { programWeek: pw, weekTitle: meta.title }, base);
   }
 
   function visualOrderString(plan) {
@@ -239,6 +549,13 @@
   global.WeeklyContent = {
     PRACTICE: PRACTICE,
     DAYS: DAYS,
+    PROGRAM_WEEKS_META: PROGRAM_WEEKS_META,
+    getProgramWeek: getProgramWeek,
+    setProgramWeek: setProgramWeek,
+    isProgramWeekUnlocked: isProgramWeekUnlocked,
+    tryAdvanceProgramWeek: tryAdvanceProgramWeek,
+    countDoneDaysForProgramWeek: countDoneDaysForProgramWeek,
+    getDaysForProgramWeek: getDaysForProgramWeek,
     planForDate: planForDate,
     visualOrderString: visualOrderString,
     visualSummary: visualSummary,

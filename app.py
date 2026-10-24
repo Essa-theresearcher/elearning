@@ -481,14 +481,14 @@ COURSES = {
         "entry_path": "python-daily-practice.html",
         "price_label": "Manual checkout",
         "description": (
-            "A separate daily track for critical thinking and problem solving: "
-            "30–40 minutes of predict-and-reason quests, in-browser coding, "
-            "and optional project PDFs."
+            "Four program weeks of daily practice (aligned with Python Fundamentals "
+            "Weeks 1–4): predict-and-reason quests, in-browser coding, and visual "
+            "games — about 60–75 minutes per day."
         ),
         "highlights": [
-            "Daily Python Quest: 5 reasoning challenges",
-            "Daily coding challenges at three levels",
-            "Mini-Projects and Project Track PDF downloads",
+            "Program Weeks 1–4 unlock as you complete each Sun–Sat cycle",
+            "8 predict + 5 code + 3 visual stages per day",
+            "Links back to Fundamentals lesson notes when you are stuck",
         ],
         "lesson_slugs": [
             "python-daily-practice",

@@ -783,6 +783,61 @@
       font-size: 14px;
     }
 
+    .program-week-bar {
+      margin: 16px 0;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--ivory);
+    }
+
+    .program-week-bar h3 {
+      margin: 0 0 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      color: var(--navy-dark);
+    }
+
+    .program-week-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .program-week-tab {
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 12px;
+      background: var(--paper);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--navy-dark);
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .program-week-tab.is-current {
+      border-color: var(--gold);
+      background: #fff8e6;
+    }
+
+    .program-week-tab:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .program-week-meta {
+      margin: 10px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .program-week-meta a {
+      color: var(--navy);
+      font-weight: 800;
+      text-decoration: underline;
+    }
+
     .week-calendar {
       margin: 16px 0 20px;
       border: 1px solid var(--line);
@@ -1204,10 +1259,17 @@
               </ol>
             </div>
 
+            <div class="program-week-bar" id="programWeekBar" aria-label="Python Practical program weeks">
+              <h3>Program weeks (1–4)</h3>
+              <p class="week-range">Four weeks of daily practice, aligned with <strong>Python Fundamentals</strong> Weeks 1–4. Complete all 7 days (Sun–Sat) to unlock the next program week. Calendar days still lock if you skip.</p>
+              <div class="program-week-tabs" id="programWeekTabs"></div>
+              <p class="program-week-meta" id="programWeekMeta"></p>
+            </div>
+
             <div class="week-calendar" id="weekCalendar" aria-label="Weekly schedule Sunday to Saturday">
-              <h3>This week (Sunday → Saturday)</h3>
+              <h3>This calendar week (Sunday → Saturday)</h3>
               <p class="week-range" id="weekRangeLabel"></p>
-              <p class="week-range">Work in order from Sunday through Saturday. If you skip a day, that day <strong>locks</strong> and you cannot open it again. Each day has different predict logic and code level. Visual stages always run Beginner, then Intermediate, then Advanced.</p>
+              <p class="week-range">Work in order from Sunday through Saturday. If you skip a day, that day <strong>locks</strong>. Content follows your <strong>program week</strong> above (not the same every calendar week). Visual stages: Beginner → Intermediate → Advanced.</p>
               <div class="week-days" id="weekDays"></div>
               <div class="day-work-banner" id="dayWorkBanner" hidden>
                 <strong id="dayWorkTitle"></strong>
@@ -1808,6 +1870,8 @@
           dow +
           "&dbaDate=" +
           encodeURIComponent(key) +
+          "&dbaProgramWeek=" +
+          (plan.programWeek || WeeklyContent.getProgramWeek()) +
           "&dbaCodeLevel=" +
           plan.codeLevel +
           "&dbaPredictShift=" +
@@ -1817,6 +1881,52 @@
           "&dbaCodeCount=" +
           (plan.codeCount || 5)
         );
+      }
+
+      function renderProgramWeekBar() {
+        const tabsEl = document.getElementById("programWeekTabs");
+        const metaEl = document.getElementById("programWeekMeta");
+        if (!tabsEl || typeof WeeklyContent.getProgramWeek !== "function") return;
+        const current = WeeklyContent.getProgramWeek();
+        tabsEl.innerHTML = "";
+        WeeklyContent.PROGRAM_WEEKS_META.forEach(function (meta) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "program-week-tab" + (meta.n === current ? " is-current" : "");
+          btn.textContent = "Week " + meta.n + ": " + meta.title;
+          const unlocked = WeeklyContent.isProgramWeekUnlocked(meta.n);
+          if (!unlocked) {
+            btn.disabled = true;
+            btn.title = "Complete all 7 days of Practical Week " + (meta.n - 1) + " first.";
+          } else if (meta.n !== current) {
+            btn.addEventListener("click", function () {
+              WeeklyContent.setProgramWeek(meta.n);
+              renderProgramWeekBar();
+              renderWeekCalendar();
+              if (activePracticeDate) {
+                updateDayBanner(activePracticeDate);
+                refreshDayIframes(activePracticeDate);
+              }
+            });
+          }
+          tabsEl.appendChild(btn);
+        });
+        const done = WeeklyContent.countDoneDaysForProgramWeek(current);
+        const pm = WeeklyContent.PROGRAM_WEEKS_META[current - 1];
+        if (metaEl && pm) {
+          metaEl.innerHTML =
+            "You are on <strong>Practical Week " +
+            current +
+            "</strong> (" +
+            done +
+            "/7 days logged for this program week). Fundamentals notes: <a href=\"" +
+            pm.fundHref +
+            "\">" +
+            pm.fundamentalsLabel +
+            "</a> — " +
+            pm.fundSections +
+            ".";
+        }
       }
 
       function refreshDayIframes(date) {
@@ -1847,7 +1957,16 @@
         const rec = WeeklySchedule.getRecord(date);
         const notes = plan.studentNotes || [];
         dayWorkBanner.hidden = false;
-        dayWorkTitle.textContent = plan.name + " · " + plan.title + " (" + (plan.sessionMinutes || "60–75") + " min)";
+        dayWorkTitle.textContent =
+          "Practical W" +
+          (plan.programWeek || WeeklyContent.getProgramWeek()) +
+          " · " +
+          plan.name +
+          " · " +
+          plan.title +
+          " (" +
+          (plan.sessionMinutes || "60–75") +
+          " min)";
         if (daySessionIntro) daySessionIntro.textContent = plan.sessionIntro || plan.logic;
         if (daySessionGoals) {
           daySessionGoals.innerHTML = "";
@@ -2048,7 +2167,19 @@
             alert("Finish today's predict quest, coding quest, and all three visual games first. Each area checks off when you complete it.");
             return;
           }
-          WeeklySchedule.markDone(activePracticeDate);
+          const pw = WeeklyContent.getProgramWeek();
+          WeeklySchedule.markDone(activePracticeDate, pw);
+          const advanced = WeeklyContent.tryAdvanceProgramWeek();
+          if (advanced > pw) {
+            alert(
+              "You completed Practical Week " +
+                pw +
+                ". Week " +
+                advanced +
+                " is now unlocked — new daily themes and harder predict sets."
+            );
+            renderProgramWeekBar();
+          }
           renderWeekCalendar();
           updateDayBanner(activePracticeDate);
         });
@@ -2124,6 +2255,7 @@
       });
 
       renderProgress();
+      renderProgramWeekBar();
       renderWeekCalendar();
       (function pickInitialDay() {
         var today = new Date();

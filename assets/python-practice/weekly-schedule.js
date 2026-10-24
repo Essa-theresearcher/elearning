@@ -120,13 +120,16 @@
     return Boolean(r.predict && r.code && r.visual);
   }
 
-  function markDone(d) {
+  function markDone(d, programWeek) {
     var r = getRecord(d);
     r.predict = true;
     r.code = true;
     r.visual = true;
     r.done = true;
     r.completedAt = new Date().toISOString();
+    if (programWeek != null) {
+      r.programWeek = programWeek;
+    }
     saveRecord(d, r);
   }
 

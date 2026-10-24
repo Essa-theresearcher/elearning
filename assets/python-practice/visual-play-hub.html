@@ -42,7 +42,10 @@
 
   if(weekDay!==null&&dbaDate){
     var wd=parseInt(weekDay,10);
-    var plan=WeeklyContent.DAYS[wd]||WeeklyContent.DAYS[0];
+    var pw=parseInt(qp.get("dbaProgramWeek")||String(WeeklyContent.getProgramWeek()),10);
+    var fakeDate=new Date();
+    fakeDate.setDate(fakeDate.getDate()+(wd-fakeDate.getDay()));
+    var plan=WeeklyContent.planForDate(fakeDate,pw);
     var GAMES=plan.visualGames||[];
     var order=GAMES.map(function(g){return g.id;});
     var orderParam=encodeURIComponent(order.join(","));
