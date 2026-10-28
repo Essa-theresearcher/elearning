@@ -1270,7 +1270,7 @@
               <h3>This calendar week (Sunday → Saturday)</h3>
               <p class="week-range" id="weekRangeLabel"></p>
               <p class="week-range">Work in order from Sunday through Saturday. If you skip a day, that day <strong>locks</strong>. Content follows your <strong>program week</strong> above (not the same every calendar week). Visual stages: Beginner → Intermediate → Advanced.</p>
-              <p class="week-range callout" id="openWeekScheduleNote" hidden><strong>Flexible schedule:</strong> Your account can open any day Sun–Sat this week (including days that were locked). Future days stay closed until that date.</p>
+              <p class="week-range callout" id="openWeekScheduleNote" hidden><strong>Flexible schedule:</strong> You can work any day Sun–Sat that has already started this week (catch up on Sun, Mon, Tue, Wed, and so on). Skipped days are not locked. Future days stay closed until that date.</p>
               <div class="week-days" id="weekDays"></div>
               <div class="day-work-banner" id="dayWorkBanner" hidden>
                 <strong id="dayWorkTitle"></strong>
@@ -1447,8 +1447,8 @@
     </main>
   </div>
 
-  <script src="assets/python-practice/weekly-schedule.js"></script>
-  <script src="assets/python-practice/weekly-content.js"></script>
+  <script src="assets/python-practice/weekly-schedule.js?v=20261028b"></script>
+  <script src="assets/python-practice/weekly-content.js?v=20261028b"></script>
   <script>
     (function () {
       const sections = Array.from(document.querySelectorAll("[data-track-section]"));
@@ -1624,6 +1624,62 @@
           });
       }
 
+      function practiceFlexibleScheduleEnabled(user) {
+        if (!user || user.role !== "student") return false;
+        if (user.pythonPracticalOpenWeek) return true;
+        if (
+          typeof WeeklySchedule !== "undefined" &&
+          WeeklySchedule.countCompletedPracticeDays &&
+          WeeklySchedule.countCompletedPracticeDays() < 7
+        ) {
+          return true;
+        }
+        return false;
+      }
+
+      function applyPracticeFlexibleSchedule(user) {
+        var enabled = practiceFlexibleScheduleEnabled(user);
+        if (typeof WeeklySchedule !== "undefined" && WeeklySchedule.setFlexibleWeekSchedule) {
+          WeeklySchedule.setFlexibleWeekSchedule(enabled);
+        } else if (enabled && WeeklySchedule && WeeklySchedule.syncLocks) {
+          try {
+            for (var i = 0; i < localStorage.length; i++) {
+              var k = localStorage.key(i);
+              if (k && k.indexOf("pp-locked-") === 0) localStorage.removeItem(k);
+            }
+          } catch (e) {}
+        }
+        var openWeekNote = document.getElementById("openWeekScheduleNote");
+        if (openWeekNote) {
+          openWeekNote.hidden = !enabled;
+        }
+        return enabled;
+      }
+
+      function initPracticeWeekUI() {
+        if (typeof WeeklySchedule === "undefined") return;
+        renderProgramWeekBar();
+        renderWeekCalendar();
+        var today = new Date();
+        var dates = WeeklySchedule.weekDates(today);
+        var picked = false;
+        for (var i = 0; i < dates.length; i++) {
+          if (WeeklySchedule.status(dates[i]) === "today" && WeeklySchedule.isAccessible(dates[i])) {
+            selectPracticeDay(dates[i]);
+            picked = true;
+            break;
+          }
+        }
+        if (!picked) {
+          for (var j = 0; j < dates.length; j++) {
+            if (WeeklySchedule.isAccessible(dates[j]) && !WeeklySchedule.isDone(dates[j])) {
+              selectPracticeDay(dates[j]);
+              break;
+            }
+          }
+        }
+      }
+
       function renderAuth(user) {
         if (shouldRedirectStaff(user)) {
           window.location.href = user.role === "teacher" ? "teacher.html" : "admin.html";
@@ -1635,21 +1691,16 @@
         authOverlay.hidden = Boolean(currentUser) || !canUseBackend;
         accountMenu.hidden = !currentUser;
         accountName.textContent = currentUser ? currentUser.displayName || currentUser.username : "";
-        if (typeof WeeklySchedule !== "undefined" && WeeklySchedule.setFlexibleWeekSchedule) {
-          WeeklySchedule.setFlexibleWeekSchedule(
-            Boolean(currentUser && currentUser.pythonPracticalOpenWeek)
-          );
+        applyPracticeFlexibleSchedule(currentUser);
+        if (
+          typeof WeeklySchedule !== "undefined" &&
+          WeeklySchedule.autoEnableProgramWeekCatchUp
+        ) {
+          WeeklySchedule.autoEnableProgramWeekCatchUp();
         }
-        var openWeekNote = document.getElementById("openWeekScheduleNote");
-        if (openWeekNote) {
-          openWeekNote.hidden = !(currentUser && currentUser.pythonPracticalOpenWeek);
-        }
-        if (currentUser && currentUser.pythonPracticalOpenWeek) {
-          renderProgramWeekBar();
-          renderWeekCalendar();
-          if (activePracticeDate) {
-            updateDayBanner(activePracticeDate);
-          }
+        initPracticeWeekUI();
+        if (currentUser && activePracticeDate) {
+          updateDayBanner(activePracticeDate);
         }
         renderProgress();
       }
@@ -1756,6 +1807,8 @@
       function loadUnlockedLessonData() {
         return checkLessonAccess().then(function (unlocked) {
           if (unlocked) {
+            applyPracticeFlexibleSchedule(currentUser);
+            initPracticeWeekUI();
             loadProgressFromBackend();
             loadTeacherResources();
           }
@@ -1785,6 +1838,7 @@
             loadUnlockedLessonData();
           }).catch(function () {
             renderAuth(null);
+            initPracticeWeekUI();
           });
           return;
         }
@@ -1795,10 +1849,13 @@
             renderAuth(data.user);
             if (data.authenticated) {
               loadUnlockedLessonData();
+            } else {
+              initPracticeWeekUI();
             }
           })
           .catch(function () {
             renderAuth(null);
+            initPracticeWeekUI();
           });
       }
 
@@ -2034,7 +2091,11 @@
       function selectPracticeDay(date) {
         WeeklySchedule.syncLocks();
         if (!WeeklySchedule.isAccessible(date)) {
-          alert("This day is locked. Missed days cannot be reopened. Complete today if it is still open.");
+          if (practiceFlexibleScheduleEnabled(currentUser)) {
+            alert("This day is not open yet. Future days unlock on their calendar date.");
+          } else {
+            alert("This day is locked. Missed days cannot be reopened. Complete today if it is still open.");
+          }
           return;
         }
         activePracticeDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -2272,24 +2333,6 @@
       });
 
       renderProgress();
-      renderProgramWeekBar();
-      renderWeekCalendar();
-      (function pickInitialDay() {
-        var today = new Date();
-        var dates = WeeklySchedule.weekDates(today);
-        for (var i = 0; i < dates.length; i++) {
-          if (WeeklySchedule.status(dates[i]) === "today" && WeeklySchedule.isAccessible(dates[i])) {
-            selectPracticeDay(dates[i]);
-            return;
-          }
-        }
-        for (var j = 0; j < dates.length; j++) {
-          if (WeeklySchedule.isAccessible(dates[j]) && !WeeklySchedule.isDone(dates[j])) {
-            selectPracticeDay(dates[j]);
-            return;
-          }
-        }
-      })();
       loadAuth();
     })();
   </script>

@@ -25,8 +25,8 @@ jobs:
           set -euo pipefail
 
           if [ -z "${VPS_HOST:-}" ] || [ -z "${VPS_USER:-}" ] || [ -z "${VPS_SSH_KEY:-}" ]; then
-            echo "Deployment secrets are not configured yet. Add VPS_HOST, VPS_USER, and VPS_SSH_KEY to enable deploys."
-            exit 0
+            echo "::error::GitHub deploy skipped: add repository secrets VPS_HOST, VPS_USER, and VPS_SSH_KEY (Settings → Secrets and variables → Actions)."
+            exit 1
           fi
 
           VPS_PORT="${VPS_PORT:-22}"

@@ -155,6 +155,19 @@
     return Boolean(r.predict && r.code && r.visual);
   }
 
+  function countCompletedPracticeDays() {
+    var n = 0;
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k || k.indexOf("pp-day-") !== 0) continue;
+        var rec = JSON.parse(localStorage.getItem(k) || "{}") || {};
+        if (rec.done) n++;
+      }
+    } catch (e) {}
+    return n;
+  }
+
   function markDone(d, programWeek) {
     var r = getRecord(d);
     r.predict = true;
@@ -166,6 +179,13 @@
       r.programWeek = programWeek;
     }
     saveRecord(d, r);
+  }
+
+  /** Practical Week 1 catch-up: open past Sun–Sat days until 7 daily completions are logged. */
+  function autoEnableProgramWeekCatchUp() {
+    if (countCompletedPracticeDays() < 7) {
+      setFlexibleWeekSchedule(true);
+    }
   }
 
   function weekLabel(anchor) {
@@ -190,11 +210,15 @@
     markTask: markTask,
     tasksComplete: tasksComplete,
     markDone: markDone,
+    countCompletedPracticeDays: countCompletedPracticeDays,
     syncLocks: syncLocks,
     setFlexibleWeekSchedule: setFlexibleWeekSchedule,
     clearPracticeDayLocks: clearPracticeDayLocks,
     isFlexibleWeekSchedule: function () {
       return flexibleWeekSchedule;
-    }
+    },
+    autoEnableProgramWeekCatchUp: autoEnableProgramWeekCatchUp
   };
+
+  autoEnableProgramWeekCatchUp();
 })(typeof window !== "undefined" ? window : this);

@@ -59,6 +59,9 @@ PYTHON_PRACTICAL_OPEN_WEEK_USERNAMES_RAW = os.environ.get(
     "PYTHON_PRACTICAL_OPEN_WEEK_USERNAMES",
     "zakariya",
 )
+PYTHON_PRACTICAL_CATCHUP_DAYS = int(
+    os.environ.get("PYTHON_PRACTICAL_CATCHUP_DAYS", "45")
+)
 DIRECT_ACCESS_STUDENT_PASSWORD = os.environ.get(
     "DIRECT_ACCESS_STUDENT_PASSWORD",
     "changeme123",
@@ -656,6 +659,73 @@ def is_python_practical_open_week_student(username):
     return normalize_username(username) in python_practical_open_week_usernames()
 
 
+def parse_utc_datetime(iso_text):
+    if not iso_text:
+        return None
+    try:
+        normalized = iso_text.replace("Z", "+00:00")
+        dt = datetime.fromisoformat(normalized)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt
+    except ValueError:
+        return None
+
+
+def is_practical_catchup_student(conn, student_id):
+    row = db_execute(
+        conn,
+        """
+        SELECT status, requested_at, reviewed_at
+        FROM course_enrollments
+        WHERE student_id = ? AND course_slug = 'python-practical'
+        """,
+        (student_id,),
+    ).fetchone()
+    if not row or row["status"] != "approved":
+        return False
+    started = parse_utc_datetime(row["reviewed_at"]) or parse_utc_datetime(
+        row["requested_at"]
+    )
+    if not started:
+        return True
+    elapsed = datetime.now(timezone.utc) - started
+    return elapsed.days <= PYTHON_PRACTICAL_CATCHUP_DAYS
+
+
+def has_approved_course(conn, student_id, course_slug):
+    row = db_execute(
+        conn,
+        """
+        SELECT status FROM course_enrollments
+        WHERE student_id = ? AND course_slug = ?
+        """,
+        (student_id, course_slug),
+    ).fetchone()
+    return bool(row and row["status"] == "approved")
+
+
+def student_python_practical_flexible_schedule(conn, user_row):
+    if not user_row or user_row["role"] != "student":
+        return False
+    if is_python_practical_open_week_student(user_row["username"]):
+        return True
+    if is_practical_catchup_student(conn, user_row["id"]):
+        return True
+    if has_approved_course(conn, user_row["id"], "python-practical"):
+        progress = db_execute(
+            conn,
+            """
+            SELECT COUNT(*) AS c FROM lesson_progress
+            WHERE student_id = ? AND lesson_slug = 'python-daily-practice'
+            """,
+            (user_row["id"],),
+        ).fetchone()
+        if not progress or int(progress["c"] or 0) == 0:
+            return True
+    return False
+
+
 def is_direct_access_student(conn, student_id):
     row = db_execute(
         conn,
@@ -683,7 +753,7 @@ def parse_json_field(raw_value, fallback):
         return fallback
 
 
-def public_user(row):
+def public_user(row, conn=None):
     if not row:
         return None
     payload = {
@@ -693,9 +763,14 @@ def public_user(row):
         "role": row["role"],
     }
     if row["role"] == "student":
-        payload["pythonPracticalOpenWeek"] = is_python_practical_open_week_student(
-            row["username"]
-        )
+        if conn is not None:
+            payload["pythonPracticalOpenWeek"] = student_python_practical_flexible_schedule(
+                conn, row
+            )
+        else:
+            payload["pythonPracticalOpenWeek"] = is_python_practical_open_week_student(
+                row["username"]
+            )
     return payload
 
 
@@ -2000,10 +2075,14 @@ class LearningHandler(SimpleHTTPRequestHandler):
 
     def handle_auth_me(self):
         user = self.current_user()
+        public_payload = None
+        if user:
+            with connect_db() as conn:
+                public_payload = public_user(user, conn)
         self.send_json(
             {
                 "authenticated": bool(user),
-                "user": public_user(user),
+                "user": public_payload,
                 "allowSignup": ALLOW_SIGNUP,
             }
         )
@@ -2068,10 +2147,12 @@ class LearningHandler(SimpleHTTPRequestHandler):
             return
 
         token = self.create_auth_session(user["id"])
+        with connect_db() as conn:
+            logged_in_user = public_user(user, conn)
         self.send_json(
             {
                 "authenticated": True,
-                "user": public_user(user),
+                "user": logged_in_user,
                 "allowSignup": ALLOW_SIGNUP,
             },
             auth_token=token,
