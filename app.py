@@ -55,6 +55,10 @@ DIRECT_ACCESS_STUDENT_USERNAMES_RAW = os.environ.get(
     "DIRECT_ACCESS_STUDENT_USERNAMES",
     "zakariya",
 )
+PYTHON_PRACTICAL_OPEN_WEEK_USERNAMES_RAW = os.environ.get(
+    "PYTHON_PRACTICAL_OPEN_WEEK_USERNAMES",
+    "zakariya",
+)
 DIRECT_ACCESS_STUDENT_PASSWORD = os.environ.get(
     "DIRECT_ACCESS_STUDENT_PASSWORD",
     "changeme123",
@@ -639,6 +643,19 @@ def direct_access_student_usernames():
     return usernames
 
 
+def python_practical_open_week_usernames():
+    usernames = []
+    for username in PYTHON_PRACTICAL_OPEN_WEEK_USERNAMES_RAW.split(","):
+        normalized = normalize_username(username)
+        if normalized and normalized not in usernames:
+            usernames.append(normalized)
+    return usernames
+
+
+def is_python_practical_open_week_student(username):
+    return normalize_username(username) in python_practical_open_week_usernames()
+
+
 def is_direct_access_student(conn, student_id):
     row = db_execute(
         conn,
@@ -669,12 +686,17 @@ def parse_json_field(raw_value, fallback):
 def public_user(row):
     if not row:
         return None
-    return {
+    payload = {
         "id": row["id"],
         "username": row["username"],
         "displayName": row["display_name"],
         "role": row["role"],
     }
+    if row["role"] == "student":
+        payload["pythonPracticalOpenWeek"] = is_python_practical_open_week_student(
+            row["username"]
+        )
+    return payload
 
 
 def public_student(row):

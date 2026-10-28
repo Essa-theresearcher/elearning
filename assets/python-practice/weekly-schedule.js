@@ -1,4 +1,6 @@
 (function (global) {
+  var flexibleWeekSchedule = false;
+
   function pad(n) {
     return n < 10 ? "0" + n : String(n);
   }
@@ -65,12 +67,37 @@
   }
 
   function syncLocks() {
+    if (flexibleWeekSchedule) {
+      return;
+    }
     var today = startOfDay(new Date());
     weekDates(today).forEach(function (d) {
       if (d < today && !isDone(d)) {
         lockDay(d);
       }
     });
+  }
+
+  function setFlexibleWeekSchedule(enabled) {
+    flexibleWeekSchedule = Boolean(enabled);
+    if (flexibleWeekSchedule) {
+      clearPracticeDayLocks();
+    }
+  }
+
+  function clearPracticeDayLocks() {
+    try {
+      var keys = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf("pp-locked-") === 0) {
+          keys.push(k);
+        }
+      }
+      keys.forEach(function (k) {
+        localStorage.removeItem(k);
+      });
+    } catch (e) {}
   }
 
   function dayOfWeekIndex(d) {
@@ -84,6 +111,9 @@
   function isAccessible(d) {
     syncLocks();
     var day = startOfDay(d);
+    if (flexibleWeekSchedule) {
+      return !isFuture(day);
+    }
     var today = startOfDay(new Date());
     if (isFuture(day)) return false;
     if (isLocked(day)) return false;
@@ -102,6 +132,11 @@
   function status(d) {
     syncLocks();
     if (isFuture(d)) return "future";
+    if (flexibleWeekSchedule) {
+      if (isDone(d)) return "done";
+      if (dateKey(d) === dateKey(new Date())) return "today";
+      return "open";
+    }
     if (isLocked(d)) return "missed";
     if (isDone(d)) return "done";
     if (dateKey(d) === dateKey(new Date())) return "today";
@@ -155,6 +190,11 @@
     markTask: markTask,
     tasksComplete: tasksComplete,
     markDone: markDone,
-    syncLocks: syncLocks
+    syncLocks: syncLocks,
+    setFlexibleWeekSchedule: setFlexibleWeekSchedule,
+    clearPracticeDayLocks: clearPracticeDayLocks,
+    isFlexibleWeekSchedule: function () {
+      return flexibleWeekSchedule;
+    }
   };
 })(typeof window !== "undefined" ? window : this);

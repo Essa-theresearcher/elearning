@@ -1270,6 +1270,7 @@
               <h3>This calendar week (Sunday → Saturday)</h3>
               <p class="week-range" id="weekRangeLabel"></p>
               <p class="week-range">Work in order from Sunday through Saturday. If you skip a day, that day <strong>locks</strong>. Content follows your <strong>program week</strong> above (not the same every calendar week). Visual stages: Beginner → Intermediate → Advanced.</p>
+              <p class="week-range callout" id="openWeekScheduleNote" hidden><strong>Flexible schedule:</strong> Your account can open any day Sun–Sat this week (including days that were locked). Future days stay closed until that date.</p>
               <div class="week-days" id="weekDays"></div>
               <div class="day-work-banner" id="dayWorkBanner" hidden>
                 <strong id="dayWorkTitle"></strong>
@@ -1634,6 +1635,22 @@
         authOverlay.hidden = Boolean(currentUser) || !canUseBackend;
         accountMenu.hidden = !currentUser;
         accountName.textContent = currentUser ? currentUser.displayName || currentUser.username : "";
+        if (typeof WeeklySchedule !== "undefined" && WeeklySchedule.setFlexibleWeekSchedule) {
+          WeeklySchedule.setFlexibleWeekSchedule(
+            Boolean(currentUser && currentUser.pythonPracticalOpenWeek)
+          );
+        }
+        var openWeekNote = document.getElementById("openWeekScheduleNote");
+        if (openWeekNote) {
+          openWeekNote.hidden = !(currentUser && currentUser.pythonPracticalOpenWeek);
+        }
+        if (currentUser && currentUser.pythonPracticalOpenWeek) {
+          renderProgramWeekBar();
+          renderWeekCalendar();
+          if (activePracticeDate) {
+            updateDayBanner(activePracticeDate);
+          }
+        }
         renderProgress();
       }
 
