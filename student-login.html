@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student sign in - Digital Bridge School</title>
   <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/i18n/site-locale.css">
+  <script src="assets/i18n/ui-strings.js"></script>
+  <script src="assets/i18n/site-locale.js" defer></script>
   <style>
     :root {
       --navy: #0b1b33;
@@ -37,11 +40,18 @@
       color: var(--paper);
     }
 
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
     .topbar-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+      flex-wrap: wrap;
       max-width: 960px;
       margin: 0 auto;
       padding: 14px 22px;
@@ -239,9 +249,10 @@
         <span class="brand-mark">DB</span>
         <span>Digital Bridge School</span>
       </a>
+      <div class="topbar-actions"></div>
       <nav class="nav" aria-label="Login page navigation">
         <a href="home.html">Home</a>
-        <a href="courses.html">Courses</a>
+        <a href="courses.html" data-i18n="nav.courses">Courses</a>
       </nav>
     </div>
   </header>
@@ -249,7 +260,7 @@
   <main class="page">
     <section aria-labelledby="loginHeading">
       <span class="eyebrow">Students</span>
-      <h1 id="loginHeading">Sign in to your course</h1>
+      <h1 id="loginHeading" data-i18n="auth.loginHeading">Sign in to your course</h1>
       <p class="lead">Use the username and password your teacher gave you. This page is only for signing in — buying courses is separate on the <a href="courses.html">Courses</a> page.</p>
 
       <div class="help-card" style="margin-top: 24px;">
@@ -264,7 +275,7 @@
 
     <section class="login-card" aria-label="Student login form">
       <span class="eyebrow">Account</span>
-      <h2>Student login</h2>
+      <h2 data-i18n="auth.title">Student login</h2>
       <p class="sub">Teachers and admins use a different login.</p>
 
       <div class="signed-in-box" id="signedInBox">
@@ -275,14 +286,14 @@
       <form id="loginForm">
         <input type="hidden" name="loginRole" value="student">
         <label>
-          Username
+          <span data-i18n="auth.username">Username</span>
           <input name="username" id="loginUsername" autocomplete="username" required>
         </label>
         <label>
-          Password
+          <span data-i18n="auth.password">Password</span>
           <input name="password" type="password" autocomplete="current-password" required>
         </label>
-        <button class="primary-action" id="submitBtn" type="submit">Sign in</button>
+        <button class="primary-action" id="submitBtn" type="submit" data-i18n="btn.signIn">Sign in</button>
         <p class="status-message" id="loginMessage" role="alert"></p>
       </form>
       <p class="footer-note">Need an account? Ask your teacher — enrollment is not created on this page.</p>

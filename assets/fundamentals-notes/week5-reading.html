@@ -1,0 +1,218 @@
+<article class="topic"><h3>Study guide — Week 5 (Functions, dictionaries &amp; modules)</h3>
+<p><strong>Goal:</strong> Structure code like a junior developer: one function per job, dicts for records, files for save/load, try/except for safe input. <strong>Capstone:</strong> School Records mini-app.</p>
+<p><strong>Daily rhythm:</strong> read steps → trace on paper → code → test three cases → log in notebook (same as Weeks 3–4).</p>
+<table class="note-table"><thead><tr><th>Day</th><th>Sections</th><th>Deliverable</th></tr></thead><tbody>
+<tr><td>Mon</td><td>0–2</td><td>5 small functions with return</td></tr>
+<tr><td>Tue</td><td>3–5</td><td>menu split into functions</td></tr>
+<tr><td>Wed</td><td>6–8</td><td>phonebook dict</td></tr>
+<tr><td>Thu</td><td>9–11</td><td>list of student dicts</td></tr>
+<tr><td>Fri</td><td>12–14</td><td>read/write file</td></tr>
+<tr><td>Sat</td><td>15–18</td><td>capstone phases 1–2</td></tr>
+<tr><td>Sun</td><td>19–22</td><td>capstone + quiz</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>0. From loops to structured projects</h3>
+<h4>Step-by-step: why Week 5 exists</h4>
+<ol>
+<li>Week 3: decisions. Week 4: repetition. Your files grow long.</li>
+<li>Functions <strong>name</strong> chunks so main code reads like an outline.</li>
+<li>Dictionaries <strong>group</strong> fields (name, grade, fee) like a database row.</li>
+<li>Files <strong>persist</strong> data when the program closes.</li>
+<li>Capstone combines all four weeks into one app you own.</li>
+</ol></article>
+
+<article class="topic"><h3>1. Why functions?</h3>
+<p>Copy-paste causes bugs: fix one copy and forget the other. A function is a named recipe.</p>
+<h4>Step-by-step: first function</h4>
+<ol>
+<li>Create <code>greet.py</code>.</li>
+<li>Line 1: <code>def greet(name):</code></li>
+<li>Indented: <code>return f"Hello, {name}"</code></li>
+<li>Unindented: <code>print(greet("Amina"))</code></li>
+<li>Run — expect Hello, Amina.</li>
+<li>Change only the argument in the call — body unchanged.</li>
+</ol>
+<pre class="code-sample"><code>def greet(name):
+    return f"Hello, {name}"
+print(greet("Amina"))</code></pre></article>
+
+<article class="topic"><h3>2. return vs print</h3>
+<p><code>print</code> shows text; <code>return</code> gives a value to the next line of code.</p>
+<h4>Step-by-step: VAT function</h4>
+<ol>
+<li>English: "VAT is 16% of amount."</li>
+<li><code>def vat(amount, rate=0.16): return amount * rate</code></li>
+<li><code>bill = 1000 + vat(1000)</code></li>
+<li>Print bill — trace: vat returns 160, bill 1160.</li>
+<li>Test with amount 500 on paper then in code.</li>
+</ol>
+<pre class="code-sample"><code>def vat(amount, rate=0.16):
+    return amount * rate
+total = 1000 + vat(1000)</code></pre>
+<h4>Practice 2.1–2.8</h4>
+<p>Each: English → def → return → three test calls. Functions: area, perimeter, c_to_f, pass_fail, discount, full_name, count_vowels, is_even.</p></article>
+
+<article class="topic"><h3>3. Scope — local vs global</h3>
+<h4>Step-by-step: see scope</h4>
+<ol>
+<li>Inside function: <code>x = 5</code> — local to function.</li>
+<li>Outside function: different <code>x</code> — not the same variable.</li>
+<li><strong>Rule:</strong> pass data in parameters; return results — avoid <code>global</code> as a beginner.</li>
+</ol></article>
+
+<article class="topic"><h3>4. Docstrings</h3>
+<h4>Step-by-step</h4>
+<ol>
+<li>First line inside function: <code>"""One sentence what it returns."""</code></li>
+<li>Reader (and future you) knows purpose without reading body.</li>
+</ol>
+<pre class="code-sample"><code>def fee(base, member):
+    """Return final fee; members get 10% off."""
+    if member:
+        return base * 0.9
+    return base</code></pre></article>
+
+<article class="topic"><h3>5. Refactor Week 3 menu into functions</h3>
+<h4>Step-by-step</h4>
+<ol>
+<li>Keep <code>while True</code> menu from Week 4 in <code>main.py</code>.</li>
+<li>Move each option body to <code>def show_balance():</code>, <code>def deposit():</code>, etc.</li>
+<li>Menu elif only calls functions — easier to test each alone.</li>
+<li>Run each function from temporary calls at bottom before wiring menu.</li>
+</ol></article>
+
+<article class="topic"><h3>6. Dictionaries — one record</h3>
+<h4>Step-by-step: student record</h4>
+<ol>
+<li><code>student = {"name": "Ali", "age": 17, "grade": "B"}</code></li>
+<li>Read: <code>student["name"]</code></li>
+<li>Update: <code>student["grade"] = "A"</code></li>
+<li>Add key: <code>student["school"] = "DBA"</code></li>
+<li><code>print(student)</code> to debug</li>
+</ol>
+<pre class="code-sample"><code>student = {"name": "Ali", "age": 17, "grade": "B"}
+student["grade"] = "A"</code></pre></article>
+
+<article class="topic"><h3>7. Dict methods — get, items, pop</h3>
+<h4>Step-by-step: safe lookup</h4>
+<ol>
+<li><code>price = catalog.get("rice", 0)</code> — no KeyError if missing.</li>
+<li>Loop: <code>for key, val in stock.items(): print(key, val)</code></li>
+<li>Remove: <code>old = data.pop("temp", None)</code></li>
+</ol>
+<h4>Practice 7.1 phonebook</h4>
+<ol>
+<li>Dict name → phone.</li><li>Function add(name, phone).</li><li>Function lookup(name) using .get.</li><li>Test add two, lookup one missing.</li></ol></article>
+
+<article class="topic"><h3>8. List of dicts — many students</h3>
+<h4>Step-by-step</h4>
+<ol>
+<li><code>students = []</code></li>
+<li><code>students.append({"id": 1, "name": "A", "grade": "B"})</code></li>
+<li>Loop: <code>for s in students: print(s["name"], s["grade"])</code></li>
+<li>Find by id: loop + if s["id"] == target</li>
+</ol></article>
+
+<article class="topic"><h3>9. Sets &amp; tuples (short)</h3>
+<p><strong>Tuple:</strong> fixed group <code>(lat, lon)</code>. <strong>Set:</strong> unique tags — <code>set(list)</code> removes duplicates.</p></article>
+
+<article class="topic"><h3>10. Functions that change data structures</h3>
+<pre class="code-sample"><code>def add_student(students, record):
+    students.append(record)
+
+def find_student(students, sid):
+    for s in students:
+        if s["id"] == sid:
+            return s
+    return None</code></pre>
+<h4>Step-by-step test</h4>
+<ol>
+<li>Empty list, call add twice, call find with existing and missing id.</li>
+<li>Print results — expect dict or None.</li>
+</ol></article>
+
+<article class="topic"><h3>11. Modules &amp; import</h3>
+<h4>Step-by-step: split capstone</h4>
+<ol>
+<li><code>logic.py</code> — functions add/find/update.</li>
+<li><code>main.py</code> — <code>import logic</code>, menu loop calls logic functions.</li>
+<li>Run from folder containing both files.</li>
+</ol>
+<pre class="code-sample"><code>import math
+print(math.sqrt(16))</code></pre></article>
+
+<article class="topic"><h3>12. Files — write then read</h3>
+<h4>Step-by-step: save one line</h4>
+<ol>
+<li><code>with open("notes.txt", "w") as f: f.write("Hello\n")</code></li>
+<li>Check file appears in project folder.</li>
+<li><code>with open("notes.txt") as f: print(f.read())</code></li>
+<li>Confirm Hello prints.</li>
+</ol>
+<pre class="code-sample"><code>with open("notes.txt", "w") as f:
+    f.write("Hello\n")
+with open("notes.txt") as f:
+    print(f.read())</code></pre></article>
+
+<article class="topic"><h3>13. try / except — safe int input</h3>
+<h4>Step-by-step</h4>
+<ol>
+<li>Wrap <code>int(input(...))</code> in try.</li>
+<li>except ValueError: print friendly message, skip or retry.</li>
+<li>Test: type abc, then type 12.</li>
+</ol>
+<pre class="code-sample"><code>try:
+    age = int(input("Age? "))
+except ValueError:
+    print("Please enter a number")
+    age = 0</code></pre></article>
+
+<article class="topic"><h3>14. Common errors — fix method</h3>
+<ol>
+<li><strong>KeyError:</strong> use .get or check <code>key in dict</code>.</li>
+<li><strong>None from function:</strong> forgot return.</li>
+<li><strong>FileNotFoundError:</strong> wrong path — print cwd or use same folder as script.</li>
+</ol></article>
+
+<article class="topic"><h3>15. Capstone — School Records (phases)</h3>
+<h4>Phase 1 — data (day 1)</h4>
+<ol><li><code>students = []</code></li><li>add_student function</li><li>Two test records</li></ol>
+<h4>Phase 2 — CRUD functions (day 2)</h4>
+<ol><li>list_students</li><li>find_student</li><li>update_grade</li></ol>
+<h4>Phase 3 — menu + while (day 3)</h4>
+<ol><li>Options 1–5 + quit with break</li><li>Each option calls a function</li></ol>
+<h4>Phase 4 — file + try (days 4–5)</h4>
+<ol><li>Save students to txt on quit</li><li>Load on start if file exists</li><li>try/except on int(id)</li></ol>
+<p>Submit main.py + three screenshots.</p></article>
+
+<article class="topic"><h3>16. Practice banks — how to work them</h3>
+<p><strong>Functions (20):</strong> English job → def → 3 tests each.<br>
+<strong>Dict (20):</strong> one feature per program (inventory, settings, scores).<br>
+<strong>File (10):</strong> log append, line count, backup copy.<br>
+<strong>Integration (10):</strong> menu + list of dicts + one file operation.<br>
+Minimum 15 items total in <code>week5_work/</code> folder.</p></article>
+
+<article class="topic"><h3>17. Expert path</h3>
+<p>You can: read a spec → pick dict + functions → implement → save file → test edge cases. Next: classes (OOP), APIs, web frameworks.</p></article>
+
+<article class="topic"><h3>18. Python Practical Week 5 map</h3>
+<table class="note-table"><thead><tr><th>Day</th><th>Focus</th><th>Notes</th></tr></thead><tbody>
+<tr><td>Sun–Mon</td><td>Functions</td><td>§1–5</td></tr>
+<tr><td>Wed</td><td>Dicts</td><td>§6–10</td></tr>
+<tr><td>Thu–Fri</td><td>Files/errors</td><td>§12–13</td></tr>
+<tr><td>Sat</td><td>Capstone</td><td>§15</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>19. Vocabulary</h3>
+<table class="note-table"><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>Function</td><td>Named reusable block</td></tr>
+<tr><td>Parameter</td><td>Name in def line</td></tr>
+<tr><td>Argument</td><td>Value you pass in call</td></tr>
+<tr><td>return</td><td>Send value to caller</td></tr>
+<tr><td>Dictionary</td><td>key: value map</td></tr>
+<tr><td>Module</td><td>.py file imported</td></tr>
+<tr><td>Exception</td><td>Runtime error type</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>20. Next steps</h3>
+<p>Complete <a href="#activity">Week 5 activity</a>, quiz, Practical Program Week 5. Download notes in your language from the reading panel.</p></article>

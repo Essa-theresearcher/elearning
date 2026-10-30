@@ -1,0 +1,63 @@
+.lang-switch {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--line, #ded9c9);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--paper, #fff);
+  flex-shrink: 0;
+}
+
+.topbar .lang-switch {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.lang-switch button {
+  border: 0;
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  background: transparent;
+  color: inherit;
+  min-height: 36px;
+}
+
+.lang-switch button.is-active {
+  background: var(--gold, #c9a227);
+  color: var(--navy-dark, #0b1b33);
+}
+
+.topbar .lang-switch button {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.topbar .lang-switch button.is-active {
+  color: var(--navy, #0b1b33);
+}
+
+.notes-download-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.notes-download-row .secondary-link,
+.notes-download-row button.secondary-link {
+  appearance: none;
+  border: 1px solid var(--line-strong, #c8bea3);
+  background: var(--ivory, #faf6ec);
+  color: var(--navy-dark, #0b1b33);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}

@@ -1,0 +1,434 @@
+<article class="topic"><h3>Study guide — Week 3 (Decisions &amp; logic)</h3>
+<p><strong>Goal:</strong> By the end of this week you can read business rules in plain English and write correct Python with <code>if</code>, <code>elif</code>, <code>else</code>, and combined conditions. You will complete <strong>80+ practice items</strong> and one <strong>menu project</strong> you can show a teacher or client.</p>
+<p><strong>How to use this document (~40 study sessions):</strong> Plan <strong>45–75 minutes per day</strong>, Mon–Sun. Every lesson uses the same rhythm: <strong>read steps → predict on paper → type code → test three inputs → log one sentence in your notebook</strong>. Do not skip the paper step — that is what makes you independent on projects.</p>
+<p><strong>Each section includes:</strong> plain-English explanation, numbered steps, a code sample, and what to test. If a step says “trace,” use pen and paper before VS Code.</p>
+<table class="note-table"><thead><tr><th>Day</th><th>Sections</th><th>Output due</th></tr></thead><tbody>
+<tr><td>Mon</td><td>0–4 + Predict set A</td><td>10 traced comparisons</td></tr>
+<tr><td>Tue</td><td>5–8 + Drill bank 1</td><td>5 if/else programs</td></tr>
+<tr><td>Wed</td><td>9–12 + Drill bank 2</td><td>Grade ladder + ticket price</td></tr>
+<tr><td>Thu</td><td>13–16 + and/or/not</td><td>Login checker v1</td></tr>
+<tr><td>Fri</td><td>17–20 + input validation</td><td>Even/odd + age gate</td></tr>
+<tr><td>Sat</td><td>21–24 + nested menus</td><td>Menu project draft</td></tr>
+<tr><td>Sun</td><td>25–30 + project polish</td><td>Submit menu + quiz</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>0. Mindset — rules, not magic</h3>
+<p>Programs make <strong>decisions</strong> the same way a guard at a gate does: look at the facts, apply the rule, then allow one action. Python does not “guess” what you meant — it only runs the lines whose conditions are true.</p>
+<h4>Step-by-step: turn a real rule into code</h4>
+<ol>
+<li><strong>Write the rule in English.</strong> Example: “If the student is 18 or older, allow entry; otherwise say they are too young.”</li>
+<li><strong>List the facts you need.</strong> Here you need one number: <code>age</code>. Decide where it comes from (fixed in code for practice, or <code>input()</code> later).</li>
+<li><strong>Underline the test.</strong> “18 or older” → <code>age &gt;= 18</code>. That expression becomes <code>True</code> or <code>False</code>.</li>
+<li><strong>Write the action for when the test is true.</strong> Indented under <code>if</code>: e.g. <code>print("Enter")</code>.</li>
+<li><strong>Write what happens when the test is false.</strong> Use <code>else:</code> and indent the other action.</li>
+<li><strong>Run with three test values</strong> (17, 18, 25) and confirm output matches your English rule.</li>
+</ol>
+<p><strong>Why this order matters:</strong> Students who skip steps 1–3 usually type <code>if</code> with the wrong comparison or wrong indent. Professionals always nail the sentence first.</p>
+<div class="callout"><strong>Your notebook:</strong> Title a page “English → Python”. Every program this week starts with one English sentence on that page.</div></article>
+
+<article class="topic"><h3>1. Comparisons → True or False</h3>
+<p>A <strong>comparison</strong> asks a yes/no question. Python answers with the boolean values <code>True</code> or <code>False</code> (capital T and F). Those booleans are what <code>if</code> uses to choose a branch.</p>
+<pre class="code-sample"><code>age = 20
+print(age &gt;= 18)   # True  — question: "Is age at least 18?"
+print(age == 17)   # False — question: "Is age exactly 17?"
+print(age != 20)   # False — question: "Is age different from 20?"</code></pre>
+<table class="note-table"><thead><tr><th>Operator</th><th>Question it asks</th><th>Example</th></tr></thead><tbody>
+<tr><td><code>==</code></td><td>Are these equal?</td><td><code>score == 100</code></td></tr>
+<tr><td><code>!=</code></td><td>Are these different?</td><td><code>status != "closed"</code></td></tr>
+<tr><td><code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td><td>Order on a number line</td><td><code>mark &gt;= 50</code></td></tr>
+</tbody></table>
+<h4>Step-by-step: read one comparison line</h4>
+<ol>
+<li>Find the variable’s current value (from earlier assignments).</li>
+<li>Read the operator as a question in English.</li>
+<li>Answer yes → <code>True</code>, no → <code>False</code>.</li>
+<li>If the line is <code>print(...)</code>, that boolean is what gets shown (Python prints <code>True</code>/<code>False</code>).</li>
+</ol>
+<p><strong>= vs == (memorize this):</strong> A single equals <strong>stores</strong> a value: <code>age = 20</code>. Double equals <strong>tests</strong> equality: <code>age == 20</code>. Writing <code>if age = 20:</code> is illegal — Python will show <code>SyntaxError</code> because it expected a condition, not an assignment.</p>
+<h4>Predict set A — work on paper, step by step</h4>
+<ol>
+<li><code>x = 10</code> then <code>print(x &gt; 5)</code> — Step: Is 10 &gt; 5? → <strong>True</strong>.</li>
+<li><code>x = 10</code> then <code>print(x = 5)</code> — Step: this is assignment inside print → <strong>SyntaxError</strong> (no running needed if you spot = vs ==).</li>
+<li><code>a = "10"</code> then <code>print(a == 10)</code> — Step: text "10" is not the number 10 → <strong>False</strong>.</li>
+<li><code>balance = 0</code> then <code>print(balance == 0)</code> → <strong>True</strong>.</li>
+<li><code>name = "Ali"</code> then <code>print(name == "ali")</code> — Step: Python compares letters exactly → <strong>False</strong> (case matters).</li>
+</ol>
+<p>Only after you write your answers, type the five snippets in VS Code and confirm.</p></article>
+
+<article class="topic"><h3>2. Booleans and tracing</h3>
+<p>Every condition becomes <code>True</code> or <code>False</code>. Trace:</p>
+<pre class="code-sample"><code>paid = True
+active = False
+print(paid and active)   # False
+print(paid or active)    # True</code></pre>
+<h4>Drill 2.1 — ten traces</h4>
+<p>For each, write only <code>True</code> or <code>False</code>: <code>3 &gt; 5</code>, <code>3 &lt;= 3</code>, <code>"a" == "a"</code>, <code>not True</code>, <code>True and False</code>, <code>False or True</code>, <code>5 == 5.0</code> (careful!), <code>0 == False</code> (preview), <code>"" == False</code> (preview), <code>len("hi") == 2</code>.</p></article>
+
+<article class="topic"><h3>3. if / else — exactly one branch</h3>
+<p>When you have <strong>two outcomes</strong> only, use <code>if</code> + <code>else</code>. Python evaluates the condition once; exactly one of the two blocks runs.</p>
+<pre class="code-sample"><code>score = 55
+if score &gt;= 50:
+    print("Pass")
+else:
+    print("Retake")</code></pre>
+<h4>Step-by-step: what Python does when this runs</h4>
+<ol>
+<li>Line 1: store <code>55</code> in <code>score</code>.</li>
+<li>Line 2: compute <code>55 &gt;= 50</code> → <code>True</code>.</li>
+<li>Because the condition is true, Python runs the indented block under <code>if</code> (line 3).</li>
+<li>Python <strong>skips</strong> the entire <code>else</code> block when <code>if</code> was true.</li>
+<li>Change <code>score</code> to <code>40</code> and trace again: condition false → line 3 skipped → line 5 runs.</li>
+</ol>
+<h4>Step-by-step: write your own if/else (template)</h4>
+<ol>
+<li>Create file <code>decision1.py</code>.</li>
+<li>Put the fact on line 1 (e.g. <code>age = 17</code> or <code>age = int(input("Age? "))</code> later).</li>
+<li>Line 2: <code>if</code> + condition + colon.</li>
+<li>Lines 3+: four spaces, action when true.</li>
+<li><code>else:</code> aligned with <code>if</code>, then indented action when false.</li>
+<li>Run twice with values that should hit each branch.</li>
+</ol>
+<h4>Practice 3.1 — Adult or minor (fully worked)</h4>
+<p><strong>English:</strong> If age is at least 18, print Adult; otherwise print Minor.</p>
+<pre class="code-sample"><code>age = int(input("Age? "))
+if age &gt;= 18:
+    print("Adult")
+else:
+    print("Minor")</code></pre>
+<p><strong>Test plan:</strong> type 17 → Minor; type 18 → Adult; type 30 → Adult. If any test fails, re-read the comparison — do not change both branches at once.</p>
+<h4>Practice 3.2–3.8 (one .py each — use the six-step template above)</h4>
+<ol><li>Even/odd with <code>n % 2 == 0</code> (remainder 0 means even).</li><li>Password: fixed <code>pwd = "secret"</code> in code first, then compare input.</li><li>Temperature HOT if <code>t &gt; 30</code>.</li><li>Stock message if <code>qty &lt;= 0</code>.</li><li>Membership boolean <code>member = True</code> or <code>False</code> for testing.</li><li>Pass message with f-string showing score.</li><li>Empty name: <code>name == ""</code> before greeting.</li></ol></article>
+
+<article class="topic"><h3>4. Indentation — the syntax of decisions</h3>
+<p>Python has no curly braces <code>{ }</code>. The <strong>colon</strong> after <code>if</code> starts a block; the <strong>indent</strong> (usually four spaces) tells Python which lines belong to that block.</p>
+<pre class="code-sample"><code>if True:
+    print("A")   # inside if
+    print("B")   # inside if
+print("C")       # outside if — ALWAYS runs</code></pre>
+<h4>Step-by-step: read indentation</h4>
+<ol>
+<li>Find the line with <code>if</code> / <code>elif</code> / <code>else</code> — note its indent level (column 0).</li>
+<li>Any line indented <strong>more</strong> than that belongs to the block until indent returns back.</li>
+<li>Lines at the same indent as <code>if</code> are <strong>siblings</strong> — they run after the whole if/else finishes.</li>
+</ol>
+<h4>Fix-it drills 4.1–4.5 (method)</h4>
+<ol>
+<li>Copy the broken snippet into <code>indent_fix.py</code>.</li>
+<li>Run and read the error (<code>IndentationError</code> or wrong output).</li>
+<li>Draw vertical lines on paper showing which lines should group.</li>
+<li>Fix spaces and colon, run again until correct.</li>
+</ol></article>
+
+<article class="topic"><h3>5. elif ladders — grades, tiers, shipping</h3>
+<p>Use <code>elif</code> (“else if”) when you have <strong>three or more outcomes</strong>. Python checks from top to bottom and <strong>stops at the first true condition</strong>.</p>
+<pre class="code-sample"><code>mark = 72
+if mark &gt;= 80:
+    grade = "A"
+elif mark &gt;= 60:
+    grade = "B"
+elif mark &gt;= 50:
+    grade = "C"
+else:
+    grade = "F"
+print(grade)</code></pre>
+<h4>Step-by-step trace for mark = 72</h4>
+<ol>
+<li>Is <code>72 &gt;= 80</code>? No → skip A block.</li>
+<li>Is <code>72 &gt;= 60</code>? Yes → run B block, set <code>grade = "B"</code>.</li>
+<li>Python does <strong>not</strong> check remaining <code>elif</code> lines after one matches.</li>
+<li><code>print(grade)</code> shows B.</li>
+</ol>
+<h4>Step-by-step: build a grade ladder without bugs</h4>
+<ol>
+<li>On paper, list tiers from <strong>highest threshold to lowest</strong> (A first, then B, …).</li>
+<li>Write one <code>if</code> for the top tier, then <code>elif</code> for each lower tier, then <code>else</code> for “everything left”.</li>
+<li>Never use overlapping ranges without thinking — e.g. <code>&gt;= 50</code> before <code>&gt;= 80</code> catches 85 too early.</li>
+<li>Test four marks: one per grade band + edge values (80, 60, 50, 49).</li>
+</ol>
+<p><strong>Common mistake explained:</strong> Student writes <code>if mark &gt;= 50: grade = "C"</code> first. A mark of 90 satisfies <code>&gt;= 50</code>, so they never reach the A branch. Fix: reorder, not rewrite the numbers.</p>
+<h4>Practice 5.1–5.6</h4>
+<p>For each project, use the four-step build process above and record your four test inputs in your notebook.</p>
+<ol><li>Kenyan-style grades: A ≥80, B ≥70, C ≥60, D ≥50, else F.</li><li>Shipping by weight bands.</li><li>Ticket: child / teen / adult / senior rules written in English first.</li><li>HTTP status messages.</li><li>Speed fine tiers.</li><li>BMI bands with thresholds in comments.</li></ol></article>
+
+<article class="topic"><h3>6. Grade ladder — full worked example (copy this method)</h3>
+<p><strong>English rule:</strong> If mark at least 80 → A; else if at least 60 → B; else if at least 50 → C; otherwise F.</p>
+<h4>Step 1 — Paper table before coding</h4>
+<table class="note-table"><thead><tr><th>mark</th><th>Check ≥80?</th><th>Check ≥60?</th><th>Check ≥50?</th><th>grade</th></tr></thead><tbody>
+<tr><td>92</td><td>Yes → stop</td><td>—</td><td>—</td><td>A</td></tr>
+<tr><td>80</td><td>Yes (80≥80)</td><td>—</td><td>—</td><td>A</td></tr>
+<tr><td>72</td><td>No</td><td>Yes</td><td>—</td><td>B</td></tr>
+<tr><td>60</td><td>No</td><td>Yes</td><td>—</td><td>B</td></tr>
+<tr><td>59</td><td>No</td><td>No</td><td>Yes</td><td>C</td></tr>
+<tr><td>49</td><td>No</td><td>No</td><td>No → else</td><td>F</td></tr>
+</tbody></table>
+<h4>Step 2 — Type the program</h4>
+<pre class="code-sample"><code>mark = int(input("Exam mark (0-100)? "))
+if mark &gt;= 80:
+    grade = "A"
+elif mark &gt;= 60:
+    grade = "B"
+elif mark &gt;= 50:
+    grade = "C"
+else:
+    grade = "F"
+print(f"Mark {mark} → grade {grade}")</code></pre>
+<h4>Step 3 — Run the test plan</h4>
+<ol>
+<li>Input 92 → expect A.</li>
+<li>Input 60 → expect B (edge: exactly on boundary).</li>
+<li>Input 59 → expect C.</li>
+<li>Input 49 → expect F.</li>
+<li>Input 100 → expect A.</li>
+</ol>
+<p>If one test fails, fix the ladder order or comparison — do not add extra <code>if</code> statements at the bottom.</p></article>
+
+<article class="topic"><h3>7. and / or / not — real-world gates</h3>
+<p><strong>and</strong> means both facts must be true. <strong>or</strong> means at least one. <strong>not</strong> flips True↔False.</p>
+<h4>Step-by-step: login with AND (secure pattern)</h4>
+<ol>
+<li>Store username and password from input (or fixed strings while learning).</li>
+<li>English: “Access only if username is admin <strong>and</strong> password is 9999.”</li>
+<li>One condition: <code>user == "admin" and pwd == "9999"</code> — both must match.</li>
+<li>else: print denied — do not reveal which part failed (real apps avoid “wrong password” hints to strangers).</li>
+</ol>
+<pre class="code-sample"><code>age = 16
+paid = True
+if age &gt;= 18 and paid:
+    print("Full access")
+elif paid:
+    print("Guest pass")
+else:
+    print("Pay first")</code></pre>
+<p><strong>Trace:</strong> age 16 → first condition false (not 18+). Second line checks <code>elif paid</code> → True → Guest pass.</p>
+<h4>Practice 7.1–7.10</h4>
+<p>For each: write English with AND/OR, then one if/elif/else, then three test rows in notebook.</p></article>
+
+<article class="topic"><h3>8. Truth tables (quick reference)</h3>
+<table class="note-table"><thead><tr><th>A</th><th>B</th><th>A and B</th><th>A or B</th></tr></thead><tbody>
+<tr><td>T</td><td>T</td><td>T</td><td>T</td></tr>
+<tr><td>T</td><td>F</td><td>F</td><td>T</td></tr>
+<tr><td>F</td><td>T</td><td>F</td><td>T</td></tr>
+<tr><td>F</td><td>F</td><td>F</td><td>F</td></tr>
+</tbody></table>
+<p>Memorize: <code>and</code> needs both; <code>or</code> needs one.</p></article>
+
+<article class="topic"><h3>9. input() + decisions (Week 2 review)</h3>
+<p><code>input()</code> always gives you a <strong>string</strong>. Before you compare to numbers, convert with <code>int()</code> or <code>float()</code>.</p>
+<h4>Step-by-step: interactive pass/fail</h4>
+<ol>
+<li>Run program — Python waits at <code>input("Mark? ")</code>.</li>
+<li>User types <code>55</code> and Enter — program receives the string <code>"55"</code>, not the number 55.</li>
+<li><code>int(...)</code> converts to integer 55.</li>
+<li><code>55 &gt;= 50</code> is True → pass branch runs.</li>
+</ol>
+<pre class="code-sample"><code>mark = int(input("Mark? "))
+if mark &gt;= 50:
+    print("Pass")
+else:
+    print("Retake")</code></pre>
+<p><strong>If the user types letters:</strong> <code>int("abc")</code> crashes with <code>ValueError</code>. Section 10 shows how to guard that — for now test with numbers only.</p>
+<h4>Practice 9.1 — step-by-step adult/minor with input</h4>
+<ol>
+<li>Ask for age with <code>int(input(...))</code>.</li>
+<li>Write if/else for 18+.</li>
+<li>Test: 10, 18, 25.</li>
+</ol>
+<h4>Practice 9.2–9.8</h4>
+<p>Each program: English rule → variables from input → convert types → if/elif/else → test plan with at least three inputs written in notebook before running.</p></article>
+
+<article class="topic"><h3>10. Validation guards (step-by-step expert pattern)</h3>
+<p><strong>Guard</strong> means: stop early when input is unusable, so the rest of the program does not make wrong decisions.</p>
+<h4>Step-by-step: validate age input</h4>
+<ol>
+<li><strong>Read raw text</strong> — never convert to int immediately if empty input is possible.<br><code>raw = input("Age? ")</code></li>
+<li><strong>Guard empty:</strong> if user pressed Enter only, <code>raw == ""</code> → print message and stop (or use <code>else</code> for good path).</li>
+<li><strong>Convert inside the good path:</strong> <code>age = int(raw)</code>.</li>
+<li><strong>Guard impossible values:</strong> if <code>age &lt; 0</code>, reject.</li>
+<li><strong>Main rule last:</strong> adult vs minor only when age is valid.</li>
+</ol>
+<pre class="code-sample"><code>raw = input("Age? ")
+if raw == "":
+    print("Age required — please run again and type a number.")
+else:
+    age = int(raw)
+    if age &lt; 0:
+        print("Invalid age")
+    elif age &gt;= 18:
+        print("Adult")
+    else:
+        print("Minor")</code></pre>
+<p><strong>Why nested if here?</strong> You only convert to int when you know the string is not empty. Later Week 5 adds <code>try/except</code> for non-numeric text.</p>
+<h4>Your turn — checklist for every project</h4>
+<ul><li>□ Empty string handled</li><li>□ Wrong type handled (or documented test data only)</li><li>□ Main business rule after guards</li><li>□ Three test inputs recorded</li></ul></article>
+
+<article class="topic"><h3>11. Nested if — trace outside → in</h3>
+<p>When a decision depends on another decision, nest an <code>if</code> inside a block. Always evaluate the <strong>outer</strong> condition first.</p>
+<h4>Step-by-step trace (admin example)</h4>
+<ol>
+<li>User types role <code>admin</code> → outer <code>if</code> true → enter block.</li>
+<li>Program asks for code — second decision only runs because role was admin.</li>
+<li>If code wrong → inner <code>else</code> runs; outer <code>else</code> (student view) is skipped entirely.</li>
+<li>If role not admin → inner block never runs — do not ask for code at all.</li>
+</ol>
+<pre class="code-sample"><code>role = input("Role? ")
+if role == "admin":
+    code = input("Code? ")
+    if code == "9999":
+        print("Admin OK")
+    else:
+        print("Bad code")
+else:
+    print("Student view")</code></pre>
+<h4>Practice 11.1–11.5</h4>
+<p>Draw a two-level flowchart (boxes + arrows) before coding each program.</p></article>
+
+<article class="topic"><h3>12. Flatten nested if (cleaner style)</h3>
+<p>Often <code>and</code> reads better:</p>
+<pre class="code-sample"><code>if role == "admin" and code == "9999":
+    print("Admin OK")</code></pre>
+<p>Rewrite three nested examples from section 11 using <code>and</code> where possible.</p></article>
+
+<article class="topic"><h3>13. Menu programs — mini project (full build steps)</h3>
+<p>A <strong>menu-driven program</strong> shows options, reads a choice, then runs one block. This is the same pattern as ATM apps, school portals, and shop kiosks — without loops yet (Week 4 makes it repeat).</p>
+<h4>Step-by-step: build your first menu (30–45 minutes)</h4>
+<ol>
+<li><strong>Name the file</strong> <code>menu_bank.py</code> and add header comments: your name, date, purpose (“Simple bank menu”).</li>
+<li><strong>Print the menu exactly</strong> — users must see numbers and labels:<br>
+<code>print("1) Check balance")</code><br>
+<code>print("2) Deposit")</code><br>
+<code>print("3) Help")</code><br>
+<code>print("4) Quit")</code></li>
+<li><strong>Read choice as text:</strong> <code>choice = input("Enter option: ")</code> — compare to <code>"1"</code>, not <code>1</code>, unless you convert.</li>
+<li><strong>One elif per option</strong> — same indent pattern as grade ladder.</li>
+<li><strong>else branch</strong> for typos: <code>print("Invalid option")</code>.</li>
+<li><strong>Deepen one option:</strong> e.g. Deposit asks amount with <code>input</code> and checks <code>float(amount) &gt; 0</code> with if/else.</li>
+<li><strong>Test matrix:</strong> run once per menu number + once with <code>9</code> for invalid.</li>
+</ol>
+<pre class="code-sample"><code>print("1) Balance  2) Deposit  3) Quit")
+choice = input("Pick: ")
+if choice == "1":
+    print("Balance: 1200 KES")
+elif choice == "2":
+    amount = input("Amount to deposit? ")
+    if amount == "":
+        print("No amount entered")
+    else:
+        print(f"Deposited {amount} (demo)")
+elif choice == "3":
+    print("Goodbye")
+else:
+    print("Invalid option — pick 1, 2, or 3.")</code></pre>
+<h4>Phase C submission requirements</h4>
+<ul><li>At least <strong>4 options</strong> + quit</li><li>Full elif chain + invalid else</li><li>One option with nested input + decision</li><li>English rules in comments above each branch</li><li>Screenshot or paste output for three test runs in activity form</li></ul>
+<p>Ideas: canteen prices, bus zones, study subject picker, clinic appointment types.</p></article>
+
+<article class="topic"><h3>14. Combining menus with math (receipt style)</h3>
+<h4>Step-by-step: canteen menu with VAT option</h4>
+<ol>
+<li>Print menu: view prices / calculate bill / quit.</li>
+<li>Option 1: print fixed price list (use f-strings).</li>
+<li>Option 2: ask item qty and unit price, compute subtotal.</li>
+<li>Inside option 2: ask member y/n — if y, multiply by 0.9 (Week 3 if).</li>
+<li>Add VAT: <code>total * 1.16</code> in a labeled print.</li>
+<li>Test: non-member one item; member two items.</li>
+</ol>
+<h4>Stretch:</h4> Option 4 prints price table for quantities 1–10 using a loop preview (full loop in Week 4).</article>
+
+<article class="topic"><h3>15. Common mistakes — fix-the-logic bank</h3>
+<ul>
+<li><code>if x = 5</code> → use <code>==</code></li>
+<li>Wrong indent → wrong branch</li>
+<li>elif order reversed → wrong grade</li><li>Comparing <code>"50"</code> to <code>50</code></li>
+<li><code>if age &gt;= 18 and age &lt;= 12</code> — impossible condition</li>
+<li>Using <code>or</code> when you meant <code>and</code> for security checks</li>
+</ul>
+<h4>Fix 15.1–15.12</h4>
+<p>Teacher will provide broken snippets in class; duplicate twelve here for self-study — rewrite each correctly in a file <code>fixes_w3.py</code>.</p></article>
+
+<article class="topic"><h3>16. Decision patterns cheat sheet</h3>
+<table class="note-table"><thead><tr><th>Pattern</th><th>When</th></tr></thead><tbody>
+<tr><td>if / else</td><td>Two outcomes</td></tr>
+<tr><td>elif ladder</td><td>3+ tiers (grades)</td></tr>
+<tr><td>Guard clause</td><td>Reject bad input early</td></tr>
+<tr><td>Nested if</td><td>Step-by-step checks</td></tr>
+<tr><td>Menu elif</td><td>User picks option</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>17. Practice bank — comparisons only (20 items)</h3>
+<h4>How to work the bank (same for sections 18–20)</h4>
+<ol>
+<li>Number your notebook page 1–20.</li>
+<li>For each item: copy expression → English question → True/False → only then verify in Python shell if unsure.</li>
+<li>Circle any mistake and write why in one sentence.</li>
+</ol>
+<p>Include: <code>7 &gt;= 7</code>, <code>"7" == 7</code>, <code>not (3 &lt; 1)</code>, <code>(2+2) == 4</code>, <code>0 &lt; 1 and 1 &lt; 2</code>, plus fifteen more you design from section 1 tables.</p></article>
+
+<article class="topic"><h3>18. Practice bank — if/else programs (15 items)</h3>
+<h4>Worked example — max of two numbers</h4>
+<ol>
+<li>English: print the larger of two numbers.</li>
+<li><code>a = int(input("First? "))</code>, same for b.</li>
+<li><code>if a &gt;= b: print(a)</code> else print(b) — or print labels.</li>
+<li>Test: (5,3), (3,5), (7,7).</li>
+</ol>
+<p>Do items 2–15 the same way: English → code → three tests before moving on.</p>
+<ol><li>Max of two numbers</li><li>Min of two numbers</li><li>Sign of number (+/−/0)</li><li>Leap year hint (div by 4) — simplified</li><li>Pass/fail single threshold</li><li>Compare two strings lexicographically with <code>==</code></li><li>Cat years joke tier</li><li>Electricity bill tier (usage bands)</li><li>Water bill (litres)</li><li>Grade from score (short ladder)</li><li>Approve loan if income &gt; X</li><li>Seat booking if seats &gt; 0</li><li>Coupon valid if code matches</li><li>Night mode if hour &gt; 18</li><li>Greeting by time of day (morning/afternoon/evening)</li></ol></article>
+
+<article class="topic"><h3>19. Practice bank — elif / real rules (15 items)</h3>
+<ol><li>Full A–F grading</li><li>Shipping by weight</li><li>Tax brackets (2–3 tiers)</li><li>Speed camera fines</li><li>Hotel stars from rating</li><li>Rain advice from weather code</li><li>Library fine days overdue</li><li>School house points tier</li><li>Mobile data bundle selector</li><li>Menu meal combo prices</li><li>Bus fare zones</li><li>Exam retake eligibility</li><li>Scholarship tier</li><li>Game difficulty selector</li><li>Language picker 1–3</li></ol></article>
+
+<article class="topic"><h3>20. Practice bank — and / or / not (12 items)</h3>
+<p>Combine conditions for: secure login, weekend sale, eligible voter (age+citizen), free shipping, admin panel, child ticket, senior discount, valid triangle sides (preview), alarm on, door locked, batch approve, dual approval.</p></article>
+
+<article class="topic"><h3>21. Paper tracing marathon (expert skill)</h3>
+<p>Take any program from sections 18–19. For three different inputs, table which lines execute. This is how you pass Practical <strong>Wednesday · Decisions</strong> without guessing.</p></article>
+
+<article class="topic"><h3>22. Python Practical Week 3 alignment</h3>
+<table class="note-table"><thead><tr><th>Practical day</th><th>Theme</th><th>These notes</th></tr></thead><tbody>
+<tr><td>Sunday</td><td>Trace variables</td><td>Sections 0–2 + Week 2 §1</td></tr>
+<tr><td>Monday</td><td>String bugs</td><td>Week 2 §3–5 + section 9 here</td></tr>
+<tr><td>Tuesday</td><td>Loops preview</td><td>Week 4 §2 when stuck</td></tr>
+<tr><td>Wednesday</td><td>Decisions &amp; grades</td><td>Sections 1–7, 15, 21</td></tr>
+<tr><td>Thursday</td><td>Lists preview</td><td>Week 4 §9</td></tr>
+<tr><td>Friday</td><td>Functions preview</td><td>Week 5 §1–3 when live</td></tr>
+<tr><td>Saturday</td><td>Weekly mix</td><td>Banks 17–20</td></tr>
+</tbody></table>
+<p>Complete all 7 Practical days to unlock Program Week 4. Re-read this table when a quest feels hard.</p></article>
+
+<article class="topic"><h3>23. Week 3 lab phases (class activity)</h3>
+<ul><li><strong>Phase A:</strong> 10 comparison traces + 5 if/else files</li>
+<li><strong>Phase B:</strong> Problems 1–10 from activity page (grades, tickets, login)</li>
+<li><strong>Phase C:</strong> Menu project (section 13)</li>
+<li><strong>Phase D:</strong> Optional portfolio: extend menu with loop in Week 4</li></ul></article>
+
+<article class="topic"><h3>24. Self-quiz (no code) — 20 questions</h3>
+<ol><li>Difference between <code>=</code> and <code>==</code>?</li><li>When does <code>else</code> run?</li><li>Why order elif for grades?</li><li>What type does <code>input()</code> return?</li><li>When use <code>and</code> vs <code>or</code>?</li><li>What is a guard clause?</li><li>Indent size in this course?</li><li>Can two elif be true?</li><li>What prints if all elif false?</li><li>Case sensitivity in Python names?</li><li>Compare <code>"5"</code> and <code>5</code>.</li><li>Nested if: which runs first?</li><li>Menu invalid option handling?</li><li>Boolean type values?</li><li>not True equals?</li><li>Trace: if False: print("x") — printed?</li><li>elif after else — legal?</li><li>Combine membership + payment rule in English.</li><li>One project idea for menu.</li><li>What week covers loops fully?</li></ol></article>
+
+<article class="topic"><h3>25. Capstone preview — “rules engine” script</h3>
+<p>Write <code>rules_engine.py</code>: read <code>user_type</code>, <code>amount</code>, <code>is_verified</code> from input (or fixed test values). Print which actions are allowed using only if/elif/else. Document rules in comments. This is how junior developers structure real apps before loops and functions.</p></article>
+
+<article class="topic"><h3>26. From Week 3 to independent projects</h3>
+<p>You can now build: quiz graders, ticket machines, login prompts, fee calculators, and text menus. Week 4 adds <strong>loops</strong> so menus repeat; Week 5 adds <strong>functions &amp; dictionaries</strong> so projects scale.</p>
+<div class="callout"><strong>Portfolio checklist:</strong> 3 menu programs, 5 grade ladders, 10 fix-the-bug snippets saved in a folder <code>week3_work/</code>.</div></article>
+
+<article class="topic"><h3>27. Vocabulary (master list)</h3>
+<table class="note-table"><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>Boolean</td><td><code>True</code> / <code>False</code></td></tr>
+<tr><td>Branch</td><td>Block under if/elif/else</td></tr>
+<tr><td>Condition</td><td>Expression in if/while</td></tr>
+<tr><td>Control flow</td><td>Order lines execute</td></tr>
+<tr><td>Guard</td><td>Early validation check</td></tr>
+<tr><td>Nested</td><td>if inside if</td></tr>
+<tr><td>Ladder</td><td>elif chain</td></tr>
+<tr><td>Menu-driven</td><td>User picks numbered options</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>28. Answer key hints (selected)</h3>
+<p>Predict A: True, SyntaxError on =, False, True, False (case). Drill 2.1: mix as traced. Do not peek until you try — teachers have full key in LMS.</p></article>
+
+<article class="topic"><h3>29. Extra drills — 10 challenge programs</h3>
+<ol><li>Three-number median (if/elif only)</li><li>Rock-paper-scissors two inputs (no loop)</li><li>Simple calculator two ops (+,−)</li><li>Currency note dispenser logic (500/200/100)</li><li>Parking fee by hours</li><li>Library membership type</li><li>COVID-style symptom checker (simplified)</li><li>Grade + remark message</li><li>Two-factor: password AND OTP</li><li>Convert menu to functions in Week 5</li></ol></article>
+
+<article class="topic"><h3>30. Next steps</h3>
+<p>Finish <a href="#activity">Week 3 activity</a>, <a href="#quiz">quiz</a>, mark reading complete. Open Python Practical Program Week 3 daily. Download these notes in your language from the button above.</p>
+<div class="callout"><strong>Week 4:</strong> Loops repeat your menus. <strong>Week 5:</strong> Functions and dictionaries organize project code like a professional.</div></article>

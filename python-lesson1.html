@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Python Fundamentals · Lesson 1 - Getting Started with Python</title>
   <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/i18n/site-locale.css">
+  <script src="assets/i18n/ui-strings.js"></script>
+  <script src="assets/i18n/site-locale.js" defer></script>
+  <script src="assets/fundamentals-notes/notes-loader.js" defer></script>
   <style>
     :root {
       --navy: #132a4c;
@@ -1209,7 +1213,7 @@
     }
   </style>
 </head>
-<body class="auth-locked">
+<body class="auth-locked" data-lesson-id="python-lesson1">
   <div class="auth-overlay" id="authOverlay">
     <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="authTitle">
       <form class="auth-form" id="loginForm">
@@ -1253,7 +1257,7 @@
         <span class="brand-mark">DB</span>
         <span class="brand-text">
           <strong>Digital Bridge Academy</strong>
-          <span>Python Fundamentals for Beginners</span>
+          <span data-i18n="lesson1.brandSub">Python Fundamentals for Beginners</span>
         </span>
       </a>
       <div class="topbar-actions">
@@ -1274,47 +1278,48 @@
   <div class="layout">
     <aside class="sidebar" aria-label="Lesson contents">
       <div class="sidebar-head">
-        <span class="eyebrow">Python · Week 1</span>
-        <h1>Getting Started with Python</h1>
-        <div class="sidebar-meta">Full-week plan: setup, print(), lab, quiz</div>
+        <span class="eyebrow" data-i18n="lesson1.sidebarWeek">Python · Week 1</span>
+        <h1 data-i18n="lesson1.sidebarTitle">Getting Started with Python</h1>
+        <div class="sidebar-meta" data-i18n="lesson1.sidebarMeta">Full-week plan: setup, print(), lab, quiz</div>
         <div class="course-links" aria-label="Python Fundamentals lessons">
-          <a class="course-link" href="courses.html">Courses</a>
+          <a class="course-link" href="courses.html" data-i18n="nav.courses">Courses</a>
           <a class="course-link" href="prework.html?course=python-fundamentals">Week 0</a>
           <a class="course-link is-current" href="python-lesson1.html">Week 1</a>
           <a class="course-link" href="python-lesson2.html">Week 2</a>
           <a class="course-link" href="python-lesson3.html">Week 3</a>
           <a class="course-link" href="python-lesson4.html">Week 4</a>
+          <a class="course-link" href="python-lesson5.html">Week 5</a>
         </div>
       </div>
       <nav class="lesson-nav" id="lessonNav">
         <a href="#welcome" data-section="welcome">
           <span class="nav-dot" aria-hidden="true"></span>
-          <span>Welcome</span>
+          <span data-i18n="lesson1.nav.welcome">Welcome</span>
           <span class="duration">5 min</span>
         </a>
         <a href="#video" data-section="video">
           <span class="nav-dot" aria-hidden="true"></span>
-          <span>Video</span>
+          <span data-i18n="lesson1.nav.video">Video</span>
           <span class="duration">3 parts</span>
         </a>
         <a href="#reading" data-section="reading">
           <span class="nav-dot" aria-hidden="true"></span>
-          <span>Reading Notes</span>
+          <span data-i18n="lesson1.nav.reading">Reading Notes</span>
           <span class="duration">45 min</span>
         </a>
         <a href="#activity" data-section="activity">
           <span class="nav-dot" aria-hidden="true"></span>
-          <span>Class Activity</span>
+          <span data-i18n="lesson1.nav.activity">Class Activity</span>
           <span class="duration">Full week</span>
         </a>
         <a href="#quiz" data-section="quiz">
           <span class="nav-dot" aria-hidden="true"></span>
-          <span>Practice Quiz</span>
+          <span data-i18n="lesson1.nav.quiz">Practice Quiz</span>
           <span class="duration">12 q</span>
         </a>
         <a href="#wrapup" data-section="wrapup">
           <span class="nav-dot" aria-hidden="true"></span>
-          <span>Wrap-up</span>
+          <span data-i18n="lesson1.nav.wrapup">Wrap-up</span>
           <span class="duration">15 min</span>
         </a>
       </nav>
@@ -1325,9 +1330,9 @@
         <div class="section-surface">
           <div class="section-header">
             <div class="section-title">
-              <span class="eyebrow">Welcome and framing</span>
-              <h2>Getting Started with Python</h2>
-              <p>Install Python, run your first programs, and practice print() until it feels natural.</p>
+              <span class="eyebrow" data-i18n="welcome.eyebrow">Welcome and framing</span>
+              <h2 data-i18n="lesson1.welcome.title">Getting Started with Python</h2>
+              <p data-i18n="lesson1.welcome.sub">Install Python, run your first programs, and practice print() until it feels natural.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="welcome">Mark complete</button>
           </div>
@@ -1405,120 +1410,30 @@
         <div class="section-surface">
           <div class="section-header">
             <div class="section-title">
-              <span class="eyebrow">Reading notes</span>
-              <h2>Lesson 1 Notes (expanded)</h2>
-              <p>Concepts from your instructor notes, expanded so you can work independently.</p>
+              <span class="eyebrow" data-i18n="reading.eyebrow">Reading notes</span>
+              <h2 data-i18n="lesson1.reading.title">Lesson 1 Notes (expanded)</h2>
+              <p data-i18n="lesson1.reading.sub">Concepts from your instructor notes, expanded so you can work independently.</p>
             </div>
             <button class="complete-btn" type="button" data-complete="reading">Mark complete</button>
           </div>
           <div class="section-body">
             <div class="reader-layout">
               <div class="reader-actions">
-                <h3>How to use these notes</h3>
-                <p>Read sections <strong>1–10 on this page</strong> while you watch the two recordings. Then complete the <strong>Class Activity</strong> lab (guided + independent problems). The download is the original instructor Word file; this page is the expanded student version with every practical step.</p>
+                <h3 data-i18n="notes.howToUse">How to use these notes</h3>
+                <p data-i18n-html="lesson1.reading.howTo">Week 1 notes load below with <strong>step-by-step instructions</strong> (read → predict → code → test). ~20 sections plus practice banks. Watch the two recordings with this page open. Download Word notes or use <strong>Download notes</strong> for this HTML.</p>
                 <div class="button-row">
                   <a class="primary-link" href="assets/python-beginner-lesson1-notes.docx" download>Download instructor Word notes</a>
                   <a class="secondary-link" href="#activity">Jump to class activity lab</a>
                 </div>
               </div>
-              <div class="topic-stack">
+              <div class="topic-stack" data-notes-en="assets/fundamentals-notes/week1-reading.html">
                 <article class="topic">
+                  <h3>Loading expanded Week 1 notes…</h3>
+                  <p>If this message stays, hard refresh (Cmd+Shift+R) or check your connection.</p>
+                </article>
+                <article class="topic" hidden aria-hidden="true">
                   <h3>1. What is Python?</h3>
-                  <p>Python is a programming language — strict rules for instructions the computer follows <em>exactly</em>, line by line, in order. If you forget a step, the program keeps going the wrong way even when your intention was obvious.</p>
-                  <p><strong>Analogy:</strong> giving directions to a boda rider. Every turn must be stated. Python is readable, free, cross-platform, and widely used for web, data, automation, and learning.</p>
-                </article>
-                <article class="topic">
-                  <h3>2. Install Python (step-by-step)</h3>
-                  <ol>
-                    <li>Open terminal (Command Prompt on Windows, Terminal on Mac).</li>
-                    <li>Run <code>python3 --version</code> or <code>python --version</code>.</li>
-                    <li>If missing: download from <code>python.org/downloads</code>.</li>
-                    <li>On Windows: tick <strong>Add Python to PATH</strong> before Install.</li>
-                    <li>Close and reopen terminal; run the version command again.</li>
-                  </ol>
-                  <div class="callout"><strong>Common fix:</strong> “python is not recognized” → reinstall with Add to PATH checked.</div>
-                </article>
-                <article class="topic">
-                  <h3>3. Install VS Code + Python extension</h3>
-                  <ol>
-                    <li>Download VS Code from <code>code.visualstudio.com</code>.</li>
-                    <li>Open Extensions (four squares), search <strong>Python</strong>, install Microsoft’s official extension.</li>
-                    <li>Create a folder for your work; open it in VS Code.</li>
-                  </ol>
-                </article>
-                <article class="topic">
-                  <h3>4. Your first program</h3>
-                  <pre class="code-sample"><code>print("Hello, Digital Bridge!")
-print("My name is [your name]")
-print("I am learning Python!")</code></pre>
-                  <p>Save as <code>hello.py</code>. Run via <strong>Run Python File in Terminal</strong> or the green play button. Each <code>print()</code> shows on its own line.</p>
-                </article>
-                <article class="topic">
-                  <h3>5. Understanding print()</h3>
-                  <p><code>print()</code> is a built-in <strong>function</strong>. Text inside must be a <strong>string</strong> in quotation marks. You will use <code>print()</code> heavily until you learn variables in Lesson 2.</p>
-                </article>
-                <article class="topic">
-                  <h3>6. Read errors without fear</h3>
-                  <p>Break code on purpose to learn:</p>
-                  <pre class="code-sample"><code>print("Hello, Digital Bridge!)   # missing closing quote
-Print("Hi")                     # wrong capital P</code></pre>
-                  <p>Read the error slowly. Note the <strong>line number</strong>. Python is <strong>case-sensitive</strong>: <code>print</code> ≠ <code>Print</code>.</p>
-                </article>
-                <article class="topic">
-                  <h3>7. Guided practice — do these in VS Code</h3>
-                  <p>Type each program, predict the output out loud, then run it. Sample answers are shown so you can self-check.</p>
-                  <table class="note-table" aria-label="Guided practice">
-                    <thead><tr><th>Exercise</th><th>Task</th><th>Sample answer</th></tr></thead>
-                    <tbody>
-                      <tr><td>1.1</td><td>Three <code>print()</code> lines: name, age, favourite food.</td><td><code>print("Amina")</code> etc.</td></tr>
-                      <tr><td>1.2</td><td>Predict output of three prints: "I love", "Python", "programming".</td><td>Three separate lines.</td></tr>
-                      <tr><td>1.3</td><td>Fix: <code>print("Karibu Digital Bridge)</code></td><td>Add closing <code>"</code></td></tr>
-                      <tr><td>1.4</td><td>Fix: <code>print("Hello World"))</code></td><td>Remove extra <code>)</code></td></tr>
-                      <tr><td>1.5</td><td>Text poster with 5+ lines and a <code>*</code> or <code>=</code> border.</td><td>Border + school name + tagline.</td></tr>
-                    </tbody>
-                  </table>
-                </article>
-                <article class="topic">
-                  <h3>8. Independent practice — ten problems</h3>
-                  <p>Complete each in its own <code>.py</code> file. Use the Class Activity form to paste code or output and submit to your teacher.</p>
-                  <ol>
-                    <li>Print full name on one line, town on the next.</li>
-                    <li>Print numbers 1–5 using five separate <code>print()</code> calls.</li>
-                    <li>Print a 3-line shopping list (one item per line).</li>
-                    <li>Print a favourite quote, then who said it on the next line.</li>
-                    <li>Remove a quotation mark on purpose, read the error, fix it.</li>
-                    <li>Misspell <code>print</code> as <code>prit</code>, read the error, fix it.</li>
-                    <li>Print a small 3×3 box using only <code>#</code>.</li>
-                    <li>Print Monday through Sunday (seven lines).</li>
-                    <li>Print a two-line joke (punchline on line 2).</li>
-                    <li>Challenge: ASCII smiley with characters like <code>: )</code>.</li>
-                  </ol>
-                </article>
-                <article class="topic">
-                  <h3>9. Homework</h3>
-                  <ul>
-                    <li>Confirm Python and VS Code work at home (or note where you can practice).</li>
-                    <li>Finish any independent problems not done in class.</li>
-                    <li>Write a program with <strong>at least six</strong> <code>print()</code> statements introducing yourself.</li>
-                    <li>Optional: ASCII art header using only <code>print()</code>.</li>
-                  </ul>
-                </article>
-                <article class="topic">
-                  <h3>10. Key vocabulary</h3>
-                  <table class="note-table" aria-label="Key vocabulary">
-                    <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
-                    <tbody>
-                      <tr><td>Programming language</td><td>Rules for giving instructions to a computer.</td></tr>
-                      <tr><td>Interpreter</td><td>Program that reads and runs Python line by line.</td></tr>
-                      <tr><td>Terminal</td><td>Text-based way to run commands and scripts.</td></tr>
-                      <tr><td>Code editor</td><td>VS Code — where you write and organize code.</td></tr>
-                      <tr><td>Function</td><td>Reusable instruction block, e.g. <code>print()</code>.</td></tr>
-                      <tr><td>String</td><td>Text in quotation marks.</td></tr>
-                      <tr><td>Syntax error</td><td>Code written incorrectly (missing quote, bracket, etc.).</td></tr>
-                      <tr><td>Case-sensitive</td><td><code>print</code> and <code>Print</code> are different names.</td></tr>
-                    </tbody>
-                  </table>
-                  <div class="callout"><strong>Next step:</strong> Open <a href="#activity">Class Activity</a> and work through Phases A–D. Submit when you finish Phase A, at least six independent problems, and your homework program.</div>
+                  <p>Python is a programming language — instructions the computer follows line by line.</p>
                 </article>
               </div>
             </div>

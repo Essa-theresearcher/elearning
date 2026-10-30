@@ -80,6 +80,7 @@ LESSON_PAGE_PATHS = {
     "python-beginner-lesson-2": "python-lesson2.html",
     "python-beginner-lesson-3": "python-lesson3.html",
     "python-beginner-lesson-4": "python-lesson4.html",
+    "python-beginner-lesson-5": "python-lesson5.html",
     "python-daily-practice": "python-daily-practice.html",
 }
 COURSE_NAV_LABELS = {
@@ -92,6 +93,7 @@ COURSE_NAV_LABELS = {
     "python-beginner-lesson-2": "Week 2",
     "python-beginner-lesson-3": "Week 3",
     "python-beginner-lesson-4": "Week 4",
+    "python-beginner-lesson-5": "Week 5",
     "python-daily-practice": "Daily track",
 }
 MAX_VIDEO_UPLOAD_BYTES = int(os.environ.get("MAX_VIDEO_UPLOAD_MB", "250")) * 1024 * 1024
@@ -416,6 +418,34 @@ LESSONS = {
             },
         ],
     },
+    "python-beginner-lesson-5": {
+        "title": "Week 5 · Functions, Dictionaries & Modules",
+        "section_ids": ["welcome", "video", "reading", "activity", "quiz", "wrapup"],
+        "prerequisite": "python-beginner-lesson-4",
+        "video_dir": os.environ.get(
+            "PYTHON_LESSON5_VIDEO_DIR", "assets/videos/python-lesson5"
+        ),
+        "recording_segments": [
+            {
+                "part": 1,
+                "title": "Functions — def, return, parameters",
+                "duration": "Recording 1",
+                "slug": "functions-def-return",
+            },
+            {
+                "part": 2,
+                "title": "Dictionaries & data records",
+                "duration": "Recording 2",
+                "slug": "dictionaries-records",
+            },
+            {
+                "part": 3,
+                "title": "Files, errors & capstone planning",
+                "duration": "Recording 3",
+                "slug": "files-exceptions-capstone",
+            },
+        ],
+    },
     "python-daily-practice": {
         "title": "Python Practical · Daily Track",
         "section_ids": ["welcome", "predict", "code", "visual", "projects", "wrapup"],
@@ -463,13 +493,13 @@ COURSES = {
         "entry_path": "prework.html",
         "price_label": "Manual checkout",
         "description": (
-            "Week 0 readiness, then four weeks of Python: setup and print(), "
-            "variables and input, decisions, and loops — each week includes "
-            "recordings, notes, a multi-day activity lab, and a quiz."
+            "Week 0 readiness, then five weeks of Python: setup and print(), "
+            "variables and input, decisions, loops, and functions/dictionaries — "
+            "each week includes recordings, expanded notes, activity lab, and quiz."
         ),
         "highlights": [
             "Week 0: Python readiness quiz and coding review",
-            "Weeks 1–4: Full-week plans (not single-day cramming)",
+            "Weeks 1–5: Full-week plans (not single-day cramming)",
             "Class activities, notes, and quizzes each week",
         ],
         "lesson_slugs": [
@@ -478,6 +508,7 @@ COURSES = {
             "python-beginner-lesson-2",
             "python-beginner-lesson-3",
             "python-beginner-lesson-4",
+            "python-beginner-lesson-5",
         ],
     },
     "python-practical": {
@@ -488,12 +519,12 @@ COURSES = {
         "entry_path": "python-daily-practice.html",
         "price_label": "Manual checkout",
         "description": (
-            "Four program weeks of daily practice (aligned with Python Fundamentals "
-            "Weeks 1–4): predict-and-reason quests, in-browser coding, and visual "
+            "Five program weeks of daily practice (aligned with Python Fundamentals "
+            "Weeks 1–5): predict-and-reason quests, in-browser coding, and visual "
             "games — about 60–75 minutes per day."
         ),
         "highlights": [
-            "Program Weeks 1–4 unlock as you complete each Sun–Sat cycle",
+            "Program Weeks 1–5 unlock as you complete each Sun–Sat cycle",
             "8 predict + 5 code + 3 visual stages per day",
             "Links back to Fundamentals lesson notes when you are stuck",
         ],

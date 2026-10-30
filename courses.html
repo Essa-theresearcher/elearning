@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Course Marketplace - Digital Bridge School</title>
   <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/i18n/site-locale.css">
+  <script src="assets/i18n/ui-strings.js"></script>
+  <script src="assets/i18n/site-locale.js" defer></script>
   <style>
     :root {
       --navy: #0b1b33;
@@ -559,7 +562,7 @@
       <nav class="nav" aria-label="Course marketplace navigation">
         <a href="home.html">Home</a>
         <a href="courses.html" aria-current="page">Courses</a>
-        <a id="signInLink" href="student-login.html?next=courses.html">Student sign in</a>
+        <a id="signInLink" href="student-login.html?next=courses.html" data-i18n="nav.studentSignIn">Student sign in</a>
         <button id="logoutButton" type="button" hidden>Log out</button>
       </nav>
     </div>
@@ -568,7 +571,7 @@
   <main class="market">
     <section class="market-head">
       <div>
-        <span class="eyebrow">Course marketplace</span>
+        <span class="eyebrow" data-i18n="courses.title">Course marketplace</span>
         <h1>Buy courses, then wait for admin approval</h1>
         <p>Choose full courses for your cart. After checkout and payment confirmation, admin approves your enrollment and the course opens in your student account.</p>
       </div>

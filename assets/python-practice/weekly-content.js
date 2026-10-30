@@ -37,6 +37,13 @@
       fundamentalsLabel: "Week 4",
       fundHref: "python-lesson4.html?course=python-fundamentals#reading",
       fundSections: "Loops, lists, functions, capstone ideas"
+    },
+    {
+      n: 5,
+      title: "Functions, dictionaries & modules",
+      fundamentalsLabel: "Week 5",
+      fundHref: "python-lesson5.html?course=python-fundamentals#reading",
+      fundSections: "def, return, dict, files, errors — project-ready Week 5"
     }
   ];
 
@@ -336,54 +343,118 @@
 
   var WEEK3_PATCHES = [
     {
-      title: "Comparison tracing",
-      logic: "==, !=, <, > and boolean results",
+      title: "Comparison tracing (deep)",
+      logic: "==, !=, <, > and boolean results — 20 paper traces",
       predictShift: 0,
-      fundSections: "Week 3 §1 comparisons",
+      fundSections: "Week 3 §0–2, practice bank 17",
+      sessionIntro:
+        "Program Week 3 · Sunday: treat every predict like an exam. Open Fundamentals Week 3 expanded notes sections 1–2.",
+      sessionGoals: [
+        "8 predict (comparison heavy)",
+        "5 code tasks",
+        "3 visual games",
+        "Notebook: 10 True/False traces without running code"
+      ],
+      studentNotes: [
+        "Use = only for assignment; == for comparison — say it aloud before each answer.",
+        "Section 1 Predict set A: complete all five on paper first.",
+        "If stuck, re-read Week 3 notes section 0 (mindset) and Week 2 input conversion.",
+        "Log one mistake type in Today's log (wrong operator vs wrong type)."
+      ],
       visualVariantOffset: 7
     },
     {
       title: "if / else programs",
-      logic: "Two-branch decisions",
+      logic: "Two-branch decisions + indent drills",
       predictShift: 4,
       codeLevel: 1,
-      fundSections: "Week 3 §2"
+      fundSections: "Week 3 §3–4, practice bank 18 (items 1–5)",
+      sessionIntro: "Monday: write small if/else files — one concept per file.",
+      studentNotes: [
+        "Practice 3.1–3.8 in expanded notes — aim for at least four today.",
+        "Indentation: four spaces; else aligns with if.",
+        "Run Fix-it drills 4.1–4.5 once this week."
+      ]
     },
     {
       title: "elif grade ladders",
       logic: "Ordered thresholds, one winner",
       predictShift: 8,
       codeLevel: 1,
-      fundSections: "Week 3 §3–4",
-      studentNotes: ["Put highest grade threshold first.", "Trace mark 72 on paper."]
+      fundSections: "Week 3 §5–6, practice bank 19 (items 1–5)",
+      sessionIntro: "Tuesday: grade ladders — trace mark 72 before coding.",
+      studentNotes: [
+        "Put highest grade threshold first (≥80 before ≥60).",
+        "Complete worked example section 6 table for marks 80, 60, 59.",
+        "Build Kenyan A–F ladder from practice bank 19.1."
+      ]
     },
     {
-      title: "Decisions + input",
-      logic: "Login checks, ticket prices, even/odd",
+      title: "Decisions + input (Wednesday focus)",
+      logic: "Login checks, ticket prices, even/odd, guards",
       predictShift: 2,
       codeLevel: 1,
-      fundSections: "Week 3 §5–7"
+      fundSections: "Week 3 §9–11, §15, Practical map §22",
+      sessionIntro:
+        "Wednesday matches Fundamentals decision week — grades, gates, and input validation.",
+      sessionGoals: [
+        "8 predict (if/elif chains)",
+        "5 coding (intermediate)",
+        "3 visual stages",
+        "Start menu project outline (section 13)"
+      ],
+      studentNotes: [
+        "Convert input before comparing numbers (Week 2).",
+        "Guard clause pattern section 10 — reject empty input first.",
+        "Menu project: four options + quit + invalid choice handler.",
+        "Paper tracing marathon section 21 — pick one program, three inputs."
+      ]
     },
     {
-      title: "Lists + decisions",
-      logic: "Filter-style thinking with loops preview",
+      title: "and / or / not",
+      logic: "Real gates — membership, payment, age",
       predictShift: 10,
       codeLevel: 2,
-      fundSections: "Week 3 activity Phase B–C"
+      fundSections: "Week 3 §7–8, practice bank 20",
+      sessionIntro: "Thursday: combine facts with and/or/not; truth tables on paper.",
+      studentNotes: [
+        "Practice 7.1–7.10 across the week — do at least three today.",
+        "Security-style checks use AND (user and password both correct).",
+        "Try flattening nested if to and (section 12)."
+      ]
     },
     {
-      title: "Menu project reps",
-      logic: "if/elif chain for 3–4 options",
+      title: "Menu project build day",
+      logic: "if/elif chain — portfolio piece",
       predictShift: 12,
       codeLevel: 2,
-      fundSections: "Week 3 §9 menu project"
+      fundSections: "Week 3 §13–14, §25 rules engine preview",
+      sessionIntro: "Friday: ship menu project v1 — comments, four options, one nested input branch.",
+      studentNotes: [
+        "Phase C requirements in section 13 — check each bullet before submit.",
+        "Optional: rules_engine.py from section 25 for stretch.",
+        "Save in folder week3_work/ for your portfolio."
+      ]
     },
     {
-      title: "Practical Week 3 review",
-      logic: "Mixed decisions and comparisons",
+      title: "Practical Week 3 review & banks",
+      logic: "Mixed decisions — unlock Week 4 after 7 days",
       predictShift: 6,
-      sessionIntro: "Review Week 3 — unlock Practical Week 4 after 7 completed days.",
-      fundSections: "Full Week 3 notes"
+      codeLevel: 2,
+      sessionIntro:
+        "Saturday: review banks 17–20, self-quiz section 24, finish unfinished menu project.",
+      sessionGoals: [
+        "Complete any missing day from Sun–Fri",
+        "8 predict review mix",
+        "5 code review",
+        "3 visual games"
+      ],
+      studentNotes: [
+        "Self-quiz section 24 — 20 questions without notes.",
+        "Extra challenges section 29 — pick one.",
+        "When 7/7 days done, Program Week 4 unlocks (loops)."
+      ],
+      fundSections: "Full expanded Week 3 notes (sections 0–30)"
     }
   ];
 
@@ -444,17 +515,81 @@
     }
   ];
 
+  var WEEK5_PATCHES = [
+    {
+      title: "def / return fundamentals",
+      logic: "Split programs into reusable functions",
+      predictShift: 0,
+      fundSections: "Week 5 §1–4 functions",
+      sessionIntro: "Program Week 5: every coding task should call at least one function you wrote.",
+      studentNotes: [
+        "One function = one job (calculate, format, validate).",
+        "Use return to send a value back; print is not return.",
+        "Open Fundamentals Week 5 notes — sections 1–4 today."
+      ],
+      visualVariantOffset: 21
+    },
+    {
+      title: "Parameters & scope",
+      logic: "Arguments, defaults, local vs global",
+      predictShift: 4,
+      codeLevel: 2,
+      fundSections: "Week 5 §5–7"
+    },
+    {
+      title: "Dictionaries — records & lookup",
+      logic: "Keys, values, get, update",
+      predictShift: 8,
+      codeLevel: 2,
+      fundSections: "Week 5 §8–12 dicts",
+      studentNotes: [
+        "Model a student or product as a dict — real project pattern.",
+        "Loop .items() for reports."
+      ]
+    },
+    {
+      title: "Dict + function projects",
+      logic: "Inventory, phonebook, fee ledger",
+      predictShift: 2,
+      codeLevel: 2,
+      fundSections: "Week 5 §13–16 project bank"
+    },
+    {
+      title: "Files & persistence",
+      logic: "open, read, write, with statement",
+      predictShift: 10,
+      codeLevel: 2,
+      fundSections: "Week 5 §17–19 files"
+    },
+    {
+      title: "Errors & try/except",
+      logic: "Graceful failure, int conversion",
+      predictShift: 12,
+      codeLevel: 2,
+      fundSections: "Week 5 §20–22 exceptions"
+    },
+    {
+      title: "Week 5 capstone review",
+      logic: "Mini app: menu + dict + functions + file",
+      predictShift: 6,
+      codeLevel: 3,
+      sessionIntro: "Final Practical week — combine Week 3–5 into one small app you own.",
+      fundSections: "Week 5 §23–28 capstone & expert path"
+    }
+  ];
+
   var PROGRAM_WEEK_DAYS = [
     DAYS,
     buildProgramWeek(2, PROGRAM_WEEKS_META[1], WEEK2_PATCHES),
     buildProgramWeek(3, PROGRAM_WEEKS_META[2], WEEK3_PATCHES),
-    buildProgramWeek(4, PROGRAM_WEEKS_META[3], WEEK4_PATCHES)
+    buildProgramWeek(4, PROGRAM_WEEKS_META[3], WEEK4_PATCHES),
+    buildProgramWeek(5, PROGRAM_WEEKS_META[4], WEEK5_PATCHES)
   ];
 
   function getProgramWeek() {
     try {
       var w = parseInt(localStorage.getItem(PROGRAM_WEEK_KEY) || "1", 10);
-      if (w < 1 || w > 4) return 1;
+      if (w < 1 || w > 5) return 1;
       return w;
     } catch (e) {
       return 1;
@@ -462,7 +597,7 @@
   }
 
   function setProgramWeek(n) {
-    var w = Math.max(1, Math.min(4, n));
+    var w = Math.max(1, Math.min(5, n));
     try {
       localStorage.setItem(PROGRAM_WEEK_KEY, String(w));
     } catch (e) {}
@@ -503,12 +638,12 @@
     var w = getProgramWeek();
     if (countDoneDaysForProgramWeek(w) < 7) return w;
     markProgramWeekDone(w);
-    if (w < 4) return setProgramWeek(w + 1);
+    if (w < 5) return setProgramWeek(w + 1);
     return w;
   }
 
   function getDaysForProgramWeek(weekNum) {
-    var idx = Math.max(1, Math.min(4, weekNum)) - 1;
+    var idx = Math.max(1, Math.min(5, weekNum)) - 1;
     return PROGRAM_WEEK_DAYS[idx] || DAYS;
   }
 

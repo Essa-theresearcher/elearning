@@ -1,0 +1,223 @@
+<article class="topic"><h3>Study guide — Week 4 (Loops, lists &amp; projects)</h3>
+<p><strong>Goal:</strong> Repeat work without copy-paste, combine loops with Week 3 decisions, store many values in lists, and ship a small game or calculator you can demo.</p>
+<p><strong>Daily rhythm (same as Week 3):</strong> read steps → trace on paper → type → test three cases → one sentence in notebook.</p>
+<table class="note-table"><thead><tr><th>Day</th><th>Sections</th><th>Deliverable</th></tr></thead><tbody>
+<tr><td>Mon</td><td>0–2</td><td>while counter trace 0→4</td></tr>
+<tr><td>Tue</td><td>3–5</td><td>for/range times table</td></tr>
+<tr><td>Wed</td><td>6–8</td><td>accumulator average program</td></tr>
+<tr><td>Thu</td><td>9–11</td><td>guessing game v1</td></tr>
+<tr><td>Fri</td><td>12–14</td><td>menu + while loop</td></tr>
+<tr><td>Sat</td><td>15–17 lists</td><td>roster loop</td></tr>
+<tr><td>Sun</td><td>18–22 capstone</td><td>submit project + quiz</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>0. Why loops?</h3>
+<p>Week 3 menus run once then stop. Real apps repeat until the user quits. Loops run a block <strong>many times</strong> while a condition holds (<code>while</code>) or for each item in a sequence (<code>for</code>).</p>
+<h4>Step-by-step: spot when you need a loop</h4>
+<ol>
+<li>Underline words like “each”, “until”, “repeat”, “for every student”.</li>
+<li>Count how many times — fixed number → often <code>for</code>; unknown until event → often <code>while</code>.</li>
+<li>Identify what changes each time (counter, item in list, user guess).</li>
+<li>Write the stop rule in English before coding (infinite loops = missing update).</li>
+</ol></article>
+
+<article class="topic"><h3>1. while loops — counted repetition</h3>
+<pre class="code-sample"><code>count = 0
+while count &lt; 5:
+    print(count)
+    count += 1</code></pre>
+<h4>Step-by-step: trace each iteration (mandatory on paper)</h4>
+<table class="note-table"><thead><tr><th>Step</th><th>count before</th><th>count &lt; 5?</th><th>prints</th><th>count after</th></tr></thead><tbody>
+<tr><td>1</td><td>0</td><td>Yes</td><td>0</td><td>1</td></tr>
+<tr><td>2</td><td>1</td><td>Yes</td><td>1</td><td>2</td></tr>
+<tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+<tr><td>last</td><td>4</td><td>Yes</td><td>4</td><td>5</td></tr>
+<tr><td>exit</td><td>5</td><td>No</td><td>—</td><td>—</td></tr>
+</tbody></table>
+<h4>Step-by-step: write your own countdown</h4>
+<ol>
+<li>Start <code>n = 10</code>.</li>
+<li><code>while n &gt; 0:</code></li>
+<li>Print n, then <code>n -= 1</code> (must change n toward false condition).</li>
+<li>After loop, print "Lift off".</li>
+<li>Test: output 10 down to 1 then Lift off.</li>
+</ol></article>
+
+<article class="topic"><h3>2. Infinite loop mistakes — how to fix</h3>
+<p>If the condition never becomes false, the program runs forever (stop with Ctrl+C in terminal).</p>
+<h4>Step-by-step debug</h4>
+<ol>
+<li>Find the variable in the <code>while</code> condition.</li>
+<li>Confirm the loop body <strong>updates</strong> that variable toward False.</li>
+<li>Add temporary <code>print</code> of the variable inside the loop to watch it change.</li>
+</ol></article>
+
+<article class="topic"><h3>3. for loops and range()</h3>
+<pre class="code-sample"><code>for i in range(5):
+    print(i)          # 0,1,2,3,4
+
+for n in range(1, 6):
+    print(n)          # 1,2,3,4,5</code></pre>
+<h4>Step-by-step: read range(a, b)</h4>
+<ol>
+<li>Start at <code>a</code>.</li>
+<li>Go up by 1 each time.</li>
+<li>Stop <strong>before</strong> <code>b</code> (never prints b).</li>
+</ol>
+<h4>Step-by-step: 5 times table</h4>
+<ol>
+<li><code>for n in range(1, 13):</code></li>
+<li><code>print(f"5 x {n} = {5 * n}")</code></li>
+<li>Verify first line 5 x 1 = 5 and last 5 x 12 = 60.</li>
+</ol></article>
+
+<article class="topic"><h3>4. Accumulators — sum, count, average</h3>
+<p><strong>Pattern:</strong> initialize before loop → update inside → use after.</p>
+<pre class="code-sample"><code>total = 0
+count = 0
+for _ in range(5):
+    mark = int(input("Mark? "))
+    total += mark
+    count += 1
+print("Average:", total / count)</code></pre>
+<h4>Step-by-step: build average of 5 marks</h4>
+<ol>
+<li>Before loop: <code>total = 0</code>, <code>count = 0</code>.</li>
+<li>Loop exactly 5 times (or until user quits — your choice).</li>
+<li>Each time: read mark, add to total, increment count.</li>
+<li>After loop: divide total by count (only if count &gt; 0).</li>
+<li>Test with five known marks on paper first; compare to program output.</li>
+</ol></article>
+
+<article class="topic"><h3>5. while vs for — choose correctly</h3>
+<table class="note-table"><thead><tr><th>Use</th><th>Loop</th><th>Example</th></tr></thead><tbody>
+<tr><td>Known repetitions</td><td><code>for</code></td><td>Times table 1–12</td></tr>
+<tr><td>Until user succeeds</td><td><code>while</code></td><td>Guess until correct</td></tr>
+<tr><td>Until "quit"</td><td><code>while</code></td><td>Menu loop</td></tr>
+</tbody></table>
+<h4>Step-by-step decision</h4>
+<ol>
+<li>Write stop rule in English.</li>
+<li>If stop is "after N times" → <code>for</code> + <code>range(N)</code>.</li>
+<li>If stop is "when condition true" → <code>while not condition</code>.</li>
+</ol></article>
+
+<article class="topic"><h3>6. break — leave the loop early</h3>
+<pre class="code-sample"><code>secret = 7
+while True:
+    guess = int(input("Guess 1-10: "))
+    if guess == secret:
+        print("Correct!")
+        break
+    print("Try again")</code></pre>
+<h4>Step-by-step: guessing game core</h4>
+<ol>
+<li>Store secret number (fixed or random later).</li>
+<li><code>while True</code> — intentional infinite loop controlled by break.</li>
+<li>Read guess, compare with Week 3 <code>if</code>.</li>
+<li>On success: message + <code>break</code>.</li>
+<li>On fail: hint, loop continues.</li>
+</ol></article>
+
+<article class="topic"><h3>7. Loops + decisions together</h3>
+<p>Every line inside the loop runs <strong>each iteration</strong>. Indent both loop body and inner if correctly.</p>
+<h4>Step-by-step trace</h4>
+<ol>
+<li>Draw two columns: iteration number and which if-branch ran.</li>
+<li>For guessing game: three wrong guesses then correct — list each print.</li>
+</ol></article>
+
+<article class="topic"><h3>8. Menu that repeats (Week 3 + Week 4)</h3>
+<h4>Step-by-step: repeating bank menu</h4>
+<ol>
+<li>Copy Week 3 menu elif chain into <code>while True:</code>.</li>
+<li>Add option "Quit" that calls <code>break</code> (or set <code>running = False</code>).</li>
+<li>Run: pick option 1 twice, then quit — menu must show again without restarting program.</li>
+<li>Invalid choice should not crash loop.</li>
+</ol>
+<pre class="code-sample"><code>while True:
+    print("1) Balance  2) Quit")
+    choice = input("Pick: ")
+    if choice == "1":
+        print("Balance: 500")
+    elif choice == "2":
+        print("Bye")
+        break
+    else:
+        print("Invalid")</code></pre></article>
+
+<article class="topic"><h3>9. Capstone A — Guessing game (full steps)</h3>
+<ol>
+<li>Secret number 1–10 (fixed).</li><li>Loop until correct.</li><li>Count guesses with accumulator.</li><li>Print total guesses at end.</li><li>Comments + test win in 1 and 5 tries.</li></ol></article>
+
+<article class="topic"><h3>10. Capstone B — Fee total for class</h3>
+<ol>
+<li>Ask how many students N.</li><li>Loop N times: read name + fee.</li><li>Accumulate total fees.</li><li>Print total with f-string.</li><li>Optional: list names (section 15 lists).</li></ol></article>
+
+<article class="topic"><h3>11. Capstone C — Star pattern</h3>
+<ol>
+<li><code>for row in range(1, 6):</code></li><li>Inner loop or multiply string: print row stars.</li><li>Trace row 3 on paper before coding.</li></ol></article>
+
+<article class="topic"><h3>12. Week 4 lab phases</h3>
+<ul><li><strong>Phase A:</strong> trace while/for output on paper</li>
+<li><strong>Phase B:</strong> countdown, table, sum 1..n</li>
+<li><strong>Phase C:</strong> one capstone from §9–11</li></ul></article>
+
+<article class="topic"><h3>13. Lists — store many values</h3>
+<pre class="code-sample"><code>names = ["Amina", "Ben", "Chen"]
+print(names[0], len(names))
+names.append("Dina")
+for n in names:
+    print("Hello", n)</code></pre>
+<h4>Step-by-step: class roster</h4>
+<ol>
+<li>Create list literal or empty <code>[]</code>.</li>
+<li><code>append</code> three names.</li>
+<li><code>for name in names:</code> print greeting.</li>
+<li>Access last: <code>names[-1]</code>.</li>
+</ol></article>
+
+<article class="topic"><h3>14. Lists + loops + decisions</h3>
+<p>Example: count how many scores pass (≥50).</p>
+<ol>
+<li><code>scores = [40, 55, 90, 48]</code></li>
+<li><code>passed = 0</code></li>
+<li>Loop scores; if s &gt;= 50: passed += 1</li>
+<li>Print passed count</li>
+</ol></article>
+
+<article class="topic"><h3>15. Functions preview (full detail in Week 5)</h3>
+<pre class="code-sample"><code>def line_total(qty, price):
+    return qty * price</code></pre>
+<h4>Step-by-step: extract one formula</h4>
+<ol>
+<li>Find repeated calculation in loop project.</li>
+<li>Move to <code>def</code> with parameters.</li>
+<li>Replace inline math with function call.</li>
+<li>Test function alone before using in loop.</li>
+</ol></article>
+
+<article class="topic"><h3>16–20. Practice banks</h3>
+<p><strong>Loop trace bank (15):</strong> for each snippet, table variable values per iteration.<br>
+<strong>while programs (10):</strong> countdown, password retry, sum until 0 entered.<br>
+<strong>for programs (10):</strong> tables, patterns, file line counter preview.<br>
+<strong>Integration (5):</strong> menu + list + loop capstone.<br>
+Use same bank method as Week 3 §17: notebook → English → trace → code → test.</p></article>
+
+<article class="topic"><h3>21. Python Practical Week 4 map</h3>
+<table class="note-table"><thead><tr><th>Day</th><th>Theme</th><th>Notes</th></tr></thead><tbody>
+<tr><td>Tue</td><td>Loops</td><td>§1–8</td></tr>
+<tr><td>Thu</td><td>Lists</td><td>§13–14</td></tr>
+<tr><td>Fri</td><td>Functions</td><td>§15 + Week 5</td></tr>
+<tr><td>Sat</td><td>Mix</td><td>§16–20</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>22. Vocabulary &amp; next week</h3>
+<table class="note-table"><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>Iteration</td><td>One trip through loop body</td></tr>
+<tr><td>Accumulator</td><td>Variable that builds a total</td></tr>
+<tr><td>break</td><td>Exit loop early</td></tr>
+<tr><td>range</td><td>Sequence of numbers for for-loops</td></tr>
+<tr><td>Index</td><td>Position in list (0-based)</td></tr>
+</tbody></table>
+<p><strong>Week 5</strong> organizes this code with functions, dictionaries, and files.</p></article>

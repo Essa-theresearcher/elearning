@@ -1,0 +1,249 @@
+<article class="topic"><h3>Study guide — Week 1 (Getting started with Python)</h3>
+<p><strong>Goal:</strong> Install tools, run your first programs, use <code>print()</code> confidently, and read errors without panic. You will finish <strong>15+ small programs</strong> and one <strong>six-line introduction</strong> you can submit to your teacher.</p>
+<p><strong>How to use this document:</strong> Plan <strong>45–60 minutes per day</strong> for seven days (or follow your class schedule). Every lesson uses the same rhythm: <strong>read steps → predict output on paper → type in VS Code → run → fix errors → log one sentence in your notebook</strong>.</p>
+<table class="note-table"><thead><tr><th>Day</th><th>Sections</th><th>Output due</th></tr></thead><tbody>
+<tr><td>Mon</td><td>0–3 + install check</td><td>Terminal shows Python version</td></tr>
+<tr><td>Tue</td><td>4–6</td><td><code>hello.py</code> runs</td></tr>
+<tr><td>Wed</td><td>7–9</td><td>Guided exercises 1.1–1.5</td></tr>
+<tr><td>Thu</td><td>10–12</td><td>Five independent .py files</td></tr>
+<tr><td>Fri</td><td>13–15</td><td>Error-fix drills + poster</td></tr>
+<tr><td>Sat</td><td>16–18</td><td>Homework intro program (6+ prints)</td></tr>
+<tr><td>Sun</td><td>19–22</td><td>Quiz + activity Phase A complete</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>0. Mindset — the computer is literal</h3>
+<p>Python does not understand your intention — only what you <strong>typed</strong>, in <strong>order</strong>, with correct <strong>spelling and punctuation</strong>. That feels strict at first; it is why programming becomes predictable once you learn the rules.</p>
+<h4>Step-by-step: your first session (15 minutes)</h4>
+<ol>
+<li>Open VS Code and your course folder (create <code>python_week1</code> if needed).</li>
+<li>Confirm Python works (section 2) — do not skip.</li>
+<li>Create <code>hello.py</code> with exactly three <code>print()</code> lines from section 4.</li>
+<li>Run once; if error, read section 6 before changing random lines.</li>
+<li>Write in notebook: “Today I ran my first program and saw ___ on the screen.”</li>
+</ol>
+<div class="callout"><strong>Analogy:</strong> Python is like directions to a boda rider — every turn must be stated. “Go to town” is not enough; “Turn left at the mosque” is code.</div></article>
+
+<article class="topic"><h3>1. What is Python?</h3>
+<p>Python is a <strong>programming language</strong>: rules for writing instructions the computer follows. An <strong>interpreter</strong> reads your <code>.py</code> file line by line and executes it.</p>
+<h4>Step-by-step: explain Python to a friend</h4>
+<ol>
+<li>Say: “I write text in a file ending in <code>.py</code>.”</li>
+<li>Say: “Python reads it top to bottom.”</li>
+<li>Say: “Each line is one instruction, like <code>print("Hi")</code>.”</li>
+<li>Mention one use: websites, data, automation, learning — you are learning the foundation used everywhere.</li>
+</ol>
+<p><strong>Free and cross-platform:</strong> Same ideas on Windows, Mac, and Linux. Your code travels with you if you save files in the cloud or USB.</p></article>
+
+<article class="topic"><h3>2. Install Python (step-by-step)</h3>
+<ol>
+<li>Open <strong>Terminal</strong> (Mac) or <strong>Command Prompt</strong> (Windows).</li>
+<li>Type <code>python3 --version</code> or <code>python --version</code> and press Enter.</li>
+<li>If you see <code>Python 3.x.x</code>, skip to section 3.</li>
+<li>If “not recognized”: go to <code>python.org/downloads</code>, download Python 3.</li>
+<li><strong>Windows only:</strong> on the installer first screen, tick <strong>Add Python to PATH</strong>, then Install.</li>
+<li>Close terminal completely; open a new one; run the version command again.</li>
+</ol>
+<div class="callout"><strong>Common fix:</strong> “python is not recognized” → reinstall with Add to PATH checked, or use <code>py -3</code> on Windows.</div>
+<h4>Verify in VS Code terminal</h4>
+<ol>
+<li>VS Code → Terminal → New Terminal.</li>
+<li>Run the same version command inside the project folder.</li>
+<li>Notebook check: write the version number you saw.</li>
+</ol></article>
+
+<article class="topic"><h3>3. Install VS Code + Python extension</h3>
+<h4>Step-by-step</h4>
+<ol>
+<li>Download VS Code from <code>code.visualstudio.com</code>.</li>
+<li>Open VS Code → Extensions icon (four squares) → search <strong>Python</strong> → install <strong>Python</strong> by Microsoft.</li>
+<li>File → Open Folder → choose your <code>python_week1</code> folder.</li>
+<li>File → New File → save as <code>hello.py</code> immediately (Python extension activates for <code>.py</code> files).</li>
+</ol>
+<p><strong>Why a folder?</strong> All week’s programs stay together; easier to submit and backup.</p></article>
+
+<article class="topic"><h3>4. Your first program — line by line</h3>
+<pre class="code-sample"><code>print("Hello, Digital Bridge!")
+print("My name is Amina")
+print("I am learning Python!")</code></pre>
+<h4>Step-by-step: create and run</h4>
+<ol>
+<li>Save file as <code>hello.py</code> (not <code>hello.py.txt</code> — hide extensions if Windows adds .txt).</li>
+<li>Click <strong>Run Python File in Terminal</strong> (play icon) or right-click editor → Run.</li>
+<li>Watch the <strong>Terminal</strong> panel at bottom — output appears there, not in the editor.</li>
+<li>Expect three lines of text, one per <code>print</code>.</li>
+<li>Change the second line to your real name; run again.</li>
+</ol>
+<p><strong>Order matters:</strong> Python runs line 1, then 2, then 3. It never runs line 3 before line 1.</p></article>
+
+<article class="topic"><h3>5. Understanding print() and strings</h3>
+<p><code>print()</code> is a built-in <strong>function</strong>. The text you show must be a <strong>string</strong>: characters inside matching quotation marks <code>"..."</code> or <code>'...'</code>.</p>
+<h4>Step-by-step: read one print line</h4>
+<ol>
+<li>Find the word <code>print</code> — lowercase p.</li>
+<li>Parentheses <code>( )</code> hold what to display.</li>
+<li>Inside quotes is literal text — spaces and punctuation print exactly.</li>
+<li>Python adds a <strong>newline</strong> after each print (next print starts on a new line).</li>
+</ol>
+<pre class="code-sample"><code>print("Line one")
+print('Line two')   # single quotes also work
+print("Score:", 100)  # comma: space between parts (preview Week 2)</code></pre>
+<h4>Practice 5.1</h4>
+<p>Predict output on paper for three prints: "I love", "Python", "programming". Then run — confirm three separate lines.</p></article>
+
+<article class="topic"><h3>6. Read errors without fear</h3>
+<p>Errors are messages, not failure. They point to <strong>line number</strong> and <strong>problem type</strong>.</p>
+<h4>Step-by-step: fix a SyntaxError (missing quote)</h4>
+<ol>
+<li>Type on purpose: <code>print("Hello, Digital Bridge!)</code> — missing closing <code>"</code>.</li>
+<li>Run — read red text in terminal.</li>
+<li>Find <code>SyntaxError</code> and the line number (often the line with the mistake).</li>
+<li>Add the closing quote before <code>)</code>.</li>
+<li>Run again — error gone.</li>
+</ol>
+<h4>Step-by-step: fix NameError (wrong spelling)</h4>
+<ol>
+<li>Type <code>Print("Hi")</code> — capital P.</li>
+<li>Run — <code>NameError: name 'Print' is not defined</code>.</li>
+<li>Python is <strong>case-sensitive</strong>: only <code>print</code> exists.</li>
+<li>Fix to <code>print("Hi")</code>.</li>
+</ol>
+<table class="note-table"><thead><tr><th>Error</th><th>Usually means</th></tr></thead><tbody>
+<tr><td>SyntaxError</td><td>Missing quote, bracket, or colon</td></tr>
+<tr><td>NameError</td><td>Misspelled name (Print, prit)</td></tr>
+<tr><td>IndentationError</td><td>Wrong spaces (more in Week 3)</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>7. Comments — notes for humans</h3>
+<p>Lines starting with <code>#</code> are ignored by Python. Use them for your name, date, and what the program does.</p>
+<pre class="code-sample"><code># Week 1 — Amina — intro poster
+print("Digital Bridge Academy")
+print("Python Week 1")</code></pre>
+<h4>Step-by-step</h4>
+<ol>
+<li>Line 1: <code>#</code> + description.</li>
+<li>Never put code you need to run after <code>#</code> on the same line unless after the code: <code>print("Hi")  # greeting</code>.</li>
+</ol></article>
+
+<article class="topic"><h3>8. Guided practice — do in VS Code (with steps)</h3>
+<table class="note-table"><thead><tr><th>Exercise</th><th>Step-by-step task</th></tr></thead><tbody>
+<tr><td>1.1</td><td>Three prints: name, age (as text), favourite food. Run and screenshot.</td></tr>
+<tr><td>1.2</td><td>Predict then run three prints (section 5).</td></tr>
+<tr><td>1.3</td><td>Fix <code>print("Karibu Digital Bridge)</code> — add closing quote.</td></tr>
+<tr><td>1.4</td><td>Fix <code>print("Hello World"))</code> — remove extra <code>)</code>.</td></tr>
+<tr><td>1.5</td><td>Poster: 5+ lines + border using <code>*</code> or <code>=</code> in strings.</td></tr>
+</tbody></table>
+<h4>Worked example — text poster (1.5)</h4>
+<ol>
+<li>Line 1: <code>print("***************")</code></li>
+<li>Line 2: school name centered in your design.</li>
+<li>Lines 3–5: tagline, your name, week number.</li>
+<li>Last line: same border as line 1.</li>
+<li>Run — adjust spacing inside strings until it looks good.</li>
+</ol></article>
+
+<article class="topic"><h3>9. Independent practice — ten problems (method)</h3>
+<p>For <strong>each</strong> problem: new file <code>week1_p01.py</code>, …; header comment; code; run; save output or screenshot.</p>
+<ol>
+<li>Full name one line, town next line.</li>
+<li>Numbers 1–5 with five separate <code>print</code> calls (not one print with five lines yet).</li>
+<li>Three-line shopping list.</li>
+<li>Quote line 1, author line 2.</li>
+<li>Break quote on purpose → read error → fix.</li>
+<li>Misspell <code>print</code> → fix.</li>
+<li>3×3 box with <code>#</code> only.</li>
+<li>Monday–Sunday, seven lines.</li>
+<li>Two-line joke.</li>
+<li>ASCII smiley with characters like <code>: )</code>.</li>
+</ol>
+<h4>Worked example — 3×3 box</h4>
+<pre class="code-sample"><code>print("###")
+print("###")
+print("###")</code></pre>
+<p>Test: three lines, three hashes each. Extension: one loop in Week 4 — note idea in notebook.</p></article>
+
+<article class="topic"><h3>10. Running from terminal (optional skill)</h3>
+<h4>Step-by-step</h4>
+<ol>
+<li>cd to your folder in terminal.</li>
+<li><code>python3 hello.py</code> or <code>python hello.py</code>.</li>
+<li>Same output as green play button — useful on servers and exams.</li>
+</ol></article>
+
+<article class="topic"><h3>11. Week 1 class activity phases</h3>
+<ul>
+<li><strong>Phase A:</strong> Environment + guided 1.1–1.5</li>
+<li><strong>Phase B:</strong> Independent problems 1–6 minimum</li>
+<li><strong>Phase C:</strong> Problems 7–10 + poster polish</li>
+<li><strong>Phase D:</strong> Homework intro (6+ prints) + submit form</li>
+</ul>
+<p>Open <a href="#activity">Class Activity</a> in the lesson page and tick phases as you finish.</p></article>
+
+<article class="topic"><h3>12. Python Practical — Week 1 alignment</h3>
+<p>If you enrolled in <strong>Python Practical</strong>, daily quests assume Week 1 skills: reading output, fixing small syntax errors, tracing simple prints.</p>
+<table class="note-table"><thead><tr><th>When stuck on…</th><th>Re-read</th></tr></thead><tbody>
+<tr><td>Output order</td><td>Sections 4–5</td></tr>
+<tr><td>Quotes / SyntaxError</td><td>Section 6</td></tr>
+<tr><td>Spelling print</td><td>Section 6 NameError</td></tr>
+</tbody></table>
+<p>Practical gets harder in Week 2 (variables) — finish Week 1 setup first.</p></article>
+
+<article class="topic"><h3>13. Homework (required + optional)</h3>
+<ul>
+<li>Confirm Python + VS Code at home (or write where you will practice).</li>
+<li>Finish any independent problems not done in class.</li>
+<li><strong>Required:</strong> program with at least <strong>six</strong> <code>print()</code> statements introducing yourself (school, goal, hobby, etc.).</li>
+<li><strong>Optional:</strong> ASCII art header using only print.</li>
+</ul></article>
+
+<article class="topic"><h3>14. Practice bank — predict output (15 items)</h3>
+<h4>Method (same all weeks)</h4>
+<ol>
+<li>Write predicted output on paper.</li>
+<li>Type snippet in <code>predict.py</code> or Python shell.</li>
+<li>Circle mismatches and write why in one sentence.</li>
+</ol>
+<p>Include: three prints in order; print with comma; empty <code>print()</code> (blank line); two strings in one print with comma; broken then fixed quote; comment-only line does nothing; mix of <code>'</code> and <code>"</code>; print numbers without quotes (Week 2 preview); duplicate print lines; poster border pattern.</p></article>
+
+<article class="topic"><h3>15. Practice bank — fix-the-bug (10 items)</h3>
+<p>Teacher may give broken snippets. Self-study pattern: copy to <code>fix01.py</code>, run, read error, fix one thing at a time. Common bugs: missing quote, extra parenthesis, wrong capital on print, wrong file name (.txt), running wrong file in terminal.</p></article>
+
+<article class="topic"><h3>16. Self-quiz (no code) — 15 questions</h3>
+<ol>
+<li>What file extension for Python?</li>
+<li>What does the interpreter do?</li>
+<li>What is a string?</li>
+<li>Why case-sensitive for print?</li>
+<li>Where does output appear in VS Code?</li>
+<li>What starts a comment?</li>
+<li>SyntaxError often means?</li>
+<li>How many lines from three print calls?</li>
+<li>= vs == (preview: = assign later in Week 2)?</li>
+<li>Why Add Python to PATH on Windows?</li>
+<li>Name two error types from Week 1.</li>
+<li>What is Phase D homework?</li>
+<li>What week covers variables?</li>
+<li>Can you run .py from terminal?</li>
+<li>One reason Python is used in industry?</li>
+</ol></article>
+
+<article class="topic"><h3>17. Key vocabulary</h3>
+<table class="note-table"><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>Programming language</td><td>Rules for computer instructions</td></tr>
+<tr><td>Interpreter</td><td>Runs Python line by line</td></tr>
+<tr><td>Terminal</td><td>Text window for commands</td></tr>
+<tr><td>VS Code</td><td>Editor for writing code</td></tr>
+<tr><td>Function</td><td>Reusable command, e.g. print()</td></tr>
+<tr><td>String</td><td>Text in quotes</td></tr>
+<tr><td>Syntax error</td><td>Invalid Python grammar</td></tr>
+<tr><td>Case-sensitive</td><td>print ≠ Print</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>18. From Week 1 to Week 2</h3>
+<p>Week 2 adds <strong>variables</strong>, <strong>input()</strong>, and <strong>numbers</strong> so programs respond to the user. You already know how to run files and read errors — that saves hours next week.</p>
+<div class="callout"><strong>Portfolio folder:</strong> Save <code>hello.py</code>, poster, homework intro, and three best independent programs in <code>week1_work/</code>.</div></article>
+
+<article class="topic"><h3>19. Recordings + this page</h3>
+<p>Watch the two Week 1 recordings with this page open. Pause after each demo and repeat the same steps on your laptop — passive watching is not enough.</p></article>
+
+<article class="topic"><h3>20. Next steps</h3>
+<p>Mark reading complete, finish <a href="#activity">activity</a> and <a href="#quiz">quiz</a>. Download notes in your language from the reading panel. Continue to <a href="python-lesson2.html">Week 2</a> when your teacher unlocks it.</p></article>

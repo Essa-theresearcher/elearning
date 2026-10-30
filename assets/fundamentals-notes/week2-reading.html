@@ -1,0 +1,249 @@
+<article class="topic"><h3>Study guide — Week 2 (Variables, types &amp; input)</h3>
+<p><strong>Goal:</strong> Store values in names, convert types safely, build receipts with f-strings, and debug <code>TypeError</code> / <code>ValueError</code>. You will complete <strong>20+ small programs</strong> and a <strong>Phase D receipt or age project</strong>.</p>
+<p><strong>Daily rhythm (same as Weeks 1 and 3–5):</strong> read steps → trace variables on paper after each line → type → test three inputs → one notebook sentence.</p>
+<table class="note-table"><thead><tr><th>Day</th><th>Sections</th><th>Deliverable</th></tr></thead><tbody>
+<tr><td>Mon</td><td>0–3</td><td>10 variable traces</td></tr>
+<tr><td>Tue</td><td>4–6</td><td>input + int/float demos</td></tr>
+<tr><td>Wed</td><td>7–9</td><td>f-string receipt draft</td></tr>
+<tr><td>Thu</td><td>10–12</td><td>Phase B input problems</td></tr>
+<tr><td>Fri</td><td>13–15</td><td>Phase C bug fixes</td></tr>
+<tr><td>Sat</td><td>16–17</td><td>Phase D project</td></tr>
+<tr><td>Sun</td><td>18–22</td><td>Quiz + Practical catch-up</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>0. Mindset — names hold values</h3>
+<p>A <strong>variable</strong> is a label on a box. The box can hold different values over time; the label (name) stays. Assignment <code>=</code> means “store into the name”, not “equals” in math class.</p>
+<h4>Step-by-step: trace like Practical Sunday</h4>
+<ol>
+<li>Write each line number on paper.</li>
+<li>After each assignment, write the name and its value in a table.</li>
+<li>At <code>print</code>, read the current value — not the old one.</li>
+<li>Only then run the program and compare.</li>
+</ol></article>
+
+<article class="topic"><h3>1. Variables store values (full trace)</h3>
+<pre class="code-sample"><code>score = 10
+score = score + 5
+print(score)   # 15</code></pre>
+<h4>Step-by-step: what happens</h4>
+<ol>
+<li><code>score = 10</code> — box named score holds 10.</li>
+<li><code>score = score + 5</code> — read score (10), add 5, store 15 back into score.</li>
+<li><code>print(score)</code> — shows 15.</li>
+</ol>
+<h4>Practice 1.1</h4>
+<p>Trace on paper then run:</p>
+<pre class="code-sample"><code>a = 3
+b = a + 2
+a = 1
+print(b)</code></pre>
+<p>Answer: b stays 5 because b was set before a changed to 1.</p></article>
+
+<article class="topic"><h3>2. Core types you must recognize</h3>
+<table class="note-table"><thead><tr><th>Type</th><th>Example</th><th>Check</th></tr></thead><tbody>
+<tr><td><code>str</code></td><td><code>"hello"</code></td><td>Quotes</td></tr>
+<tr><td><code>int</code></td><td><code>42</code></td><td>Whole number</td></tr>
+<tr><td><code>float</code></td><td><code>19.99</code></td><td>Decimal point</td></tr>
+<tr><td><code>bool</code></td><td><code>True</code>, <code>False</code></td><td>Week 3 decisions</td></tr>
+</tbody></table>
+<h4>Step-by-step: use type() when confused</h4>
+<ol>
+<li><code>x = "5"</code> → <code>print(type(x))</code> → &lt;class 'str'&gt;</li>
+<li><code>x = 5</code> → int</li>
+<li>Practical predict questions often hide a type change — watch for quotes.</li>
+</ol></article>
+
+<article class="topic"><h3>3. Strings vs numbers</h3>
+<p><code>"5"</code> is text; <code>5</code> is a number. They are not interchangeable without converting.</p>
+<pre class="code-sample"><code>print("Hello" + " World")   # Hello World
+print(3 + 4)                 # 7
+# print("3" + 4)             # TypeError</code></pre>
+<h4>Step-by-step: fix TypeError on +</h4>
+<ol>
+<li>Read error: unsupported operand types str and int.</li>
+<li>Find the + that mixes text and number.</li>
+<li>Either convert: <code>int("3") + 4</code> or use f-string: <code>f"Total: {3 + 4}"</code>.</li>
+<li>Re-run with same test input.</li>
+</ol>
+<p>Stuck on Practical <em>Strings &amp; small bugs</em>? Re-read this section and section 5.</p></article>
+
+<article class="topic"><h3>4. input() always returns a string</h3>
+<pre class="code-sample"><code>name = input("Name? ")
+age = int(input("Age? "))
+price = float(input("Price? "))</code></pre>
+<h4>Step-by-step: interactive age in 5 years</h4>
+<ol>
+<li>Program waits at first <code>input</code> — user types and presses Enter.</li>
+<li>Even if user types <code>17</code>, <code>input</code> returns <code>"17"</code> (string).</li>
+<li><code>int(...)</code> converts to number 17 for math.</li>
+<li><code>future = age + 5</code> then <code>print(f"In 5 years you will be {future}")</code>.</li>
+<li>Test: age 10 → 15; age 18 → 23.</li>
+</ol>
+<p><strong>ValueError:</strong> user types letters into <code>int(input())</code> — program crashes. Week 3 guards and Week 5 try/except fix this; for now test with numbers only.</p></article>
+
+<article class="topic"><h3>5. Conversion cheat sheet (with steps)</h3>
+<ul>
+<li><code>int("12")</code> → 12 — use for whole counts</li>
+<li><code>float("3.5")</code> → 3.5 — money and measurements</li>
+<li><code>str(100)</code> → <code>"100"</code> — building messages</li>
+</ul>
+<h4>Step-by-step: fix-the-bug pattern</h4>
+<ol>
+<li>Broken: <code>total = input("Total? "); print(total + 1)</code></li>
+<li>Trace: total is str → + 1 fails.</li>
+<li>Fix: <code>total = int(input("Total? "))</code> or float for decimals.</li>
+<li>Test with 10 → expect 11.</li>
+</ol></article>
+
+<article class="topic"><h3>6. f-strings for receipts and reports</h3>
+<pre class="code-sample"><code>item = "Notebook"
+qty = 2
+unit = 150
+line = qty * unit
+print(f"{qty} x {item} = {line} KES")
+print(f"VAT 16%: {line * 0.16:.2f}")</code></pre>
+<h4>Step-by-step: build a 4-line receipt</h4>
+<ol>
+<li>Ask item (string input), qty (int), unit (float).</li>
+<li>Compute <code>line = qty * unit</code>.</li>
+<li>Compute VAT: <code>line * 0.16</code>.</li>
+<li>Print header, line item, VAT, grand total with f-strings.</li>
+<li>Test: qty 2, unit 100 → line 200, VAT 32, total 232.</li>
+</ol>
+<p><strong>.2f</strong> formats two decimal places for money display.</p></article>
+
+<article class="topic"><h3>7. Operators — math and assignment</h3>
+<pre class="code-sample"><code>count = 0
+count += 1    # same as count = count + 1
+total = 10 * 3 + 2   # 32 — * and / before +</code></pre>
+<h4>Step-by-step: read an expression</h4>
+<ol>
+<li>Do multiplication/division first (unless parentheses).</li>
+<li>Then addition/subtraction.</li>
+<li>Store result in variable on left of <code>=</code>.</li>
+</ol></article>
+
+<article class="topic"><h3>8. Guided drills (section 7 expanded)</h3>
+<ol>
+<li><strong>Three assignments one name:</strong> predict print after each reassignment.</li>
+<li><strong>Two inputs → sum and product:</strong> both int; print labeled lines.</li>
+<li><strong>Fix:</strong> <code>print("Total: " + 50)</code> → use f-string or str(50).</li>
+<li><strong>Fix:</strong> <code>age = input(); print(age + 1)</code> → int(input()).</li>
+<li><strong>Intro card:</strong> four lines — name, town, subject, goal.</li>
+</ol></article>
+
+<article class="topic"><h3>9. Python Practical — when stuck, re-read…</h3>
+<table class="note-table"><thead><tr><th>Practical day</th><th>Theme</th><th>These notes</th></tr></thead><tbody>
+<tr><td>Sunday</td><td>Trace &amp; predict variables</td><td>§0–2, 8</td></tr>
+<tr><td>Monday</td><td>Strings &amp; small bugs</td><td>§3–6</td></tr>
+<tr><td>Tuesday</td><td>Loops preview</td><td>Week 4 §1–3 when live</td></tr>
+<tr><td>Wednesday</td><td>Decisions</td><td>Week 3 after this week</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>10. Beginner project — simple receipt (Phase D)</h3>
+<h4>Step-by-step (45–60 min)</h4>
+<ol>
+<li>File <code>receipt.py</code>, header comment.</li>
+<li>Inputs: item name, quantity, unit price (float).</li>
+<li>Subtotal = qty * price; VAT optional; grand total.</li>
+<li>At least four print lines, professional labels.</li>
+<li>Screenshot for activity submission.</li>
+</ol>
+<p><strong>Extension:</strong> Week 4 loop to add multiple items — sketch that idea in comments now.</p></article>
+
+<article class="topic"><h3>11. Alternative Phase D — age in five years</h3>
+<ol>
+<li>Ask name and age (int).</li>
+<li>Print greeting with name.</li>
+<li>Print age + 5 with f-string.</li>
+<li>Test ages 8, 18, 60.</li>
+</ol></article>
+
+<article class="topic"><h3>12. Week 2 lab phases (Mon–Sun)</h3>
+<ul>
+<li><strong>Mon:</strong> Phase A — type diary (write type of 10 literals)</li>
+<li><strong>Tue–Wed:</strong> Phase B input problems + Phase C bug fixes</li>
+<li><strong>Thu–Fri:</strong> Phase D receipt or age project</li>
+<li><strong>Sat–Sun:</strong> Quiz + catch-up</li>
+</ul></article>
+
+<article class="topic"><h3>13. Debugging checklist</h3>
+<ul>
+<li><strong>TypeError</strong> on + → mixed str and int/float? Convert or f-string.</li>
+<li><strong>ValueError</strong> on int(input()) → non-numeric input; use valid test data.</li>
+<li>Wrong math → print debug: <code>print("debug qty", qty)</code> before total.</li>
+<li>Wrong output order → trace assignments top to bottom.</li>
+</ul></article>
+
+<article class="topic"><h3>14. Practice bank — trace only (15 items)</h3>
+<h4>Method</h4>
+<ol>
+<li>Copy snippet to notebook.</li>
+<li>Table: line | variables after line.</li>
+<li>Write final print value.</li>
+<li>Verify in VS Code.</li>
+</ol>
+<p>Include: reassignment chains, int vs str, input then math (simulate input values on paper), f-string with expression inside <code>{}</code>, += twice, float rounding display with .2f.</p></article>
+
+<article class="topic"><h3>15. Practice bank — small programs (15 items)</h3>
+<ol>
+<li>Rectangle area (width, height input)</li>
+<li>Celsius to Fahrenheit (formula in variable)</li>
+<li>Bill split (total / people)</li>
+<li>Minutes to hours + remainder</li>
+<li>Shop discount 10% on subtotal</li>
+<li>Concatenate first + last name with space</li>
+<li>Repeat string n times (preview: <code>"*" * 5</code>)</li>
+<li>Swap two variables using third temp</li>
+<li>Currency formatter with f-string</li>
+<li>Two-number calculator (+ and *) only</li>
+<li>Pet years joke (age * 7)</li>
+<li>Salary monthly from annual input</li>
+<li>Tip calculator 15%</li>
+<li>Stock value qty * price</li>
+<li>Intro card v2 with five fields</li>
+</ol>
+<p>Each: English spec → code → three test inputs in notebook.</p></article>
+
+<article class="topic"><h3>16. Common mistakes</h3>
+<ul>
+<li>Using <code>input</code> result in math without int/float</li>
+<li><code>print("Age: " + age)</code> when age is int — use f-string</li>
+<li>Confusing <code>==</code> (compare, Week 3) with <code>=</code> (assign)</li>
+<li>Float money: use float for prices, int for counts when appropriate</li>
+</ul></article>
+
+<article class="topic"><h3>17. Self-quiz — 15 questions</h3>
+<ol>
+<li>What does input() return?</li>
+<li>How convert "12" to number?</li>
+<li>Difference str vs int?</li>
+<li>What is f-string?</li>
+<li>Trace: a=1; a=2; print(a)?</li>
+<li>TypeError cause example?</li>
+<li>When use float not int?</li>
+<li>What week covers if/else?</li>
+<li>Name += 1 meaning?</li>
+<li>Why .2f in receipt?</li>
+<li>Can "5" + "5" work?</li>
+<li>Can 5 + 5 work?</li>
+<li>Phase D options?</li>
+<li>Practical Monday maps to which sections?</li>
+<li>One variable naming tip (no spaces)?</li>
+</ol></article>
+
+<article class="topic"><h3>18. Vocabulary</h3>
+<table class="note-table"><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>Variable</td><td>Name for a value</td></tr>
+<tr><td>Literal</td><td>Fixed value in code</td></tr>
+<tr><td>Expression</td><td>Code that produces a value</td></tr>
+<tr><td>f-string</td><td>f"..." with {expressions}</td></tr>
+<tr><td>Cast / convert</td><td>int(), float(), str()</td></tr>
+</tbody></table></article>
+
+<article class="topic"><h3>19. From Week 2 to Week 3</h3>
+<p>Week 3 uses your numbers and strings in <strong>if / elif / else</strong> — pass/fail, grades, menus. Finish Week 2 activity Phase D and quiz first.</p>
+<div class="callout"><strong>Folder:</strong> Save receipt, age project, and five trace drills in <code>week2_work/</code>.</div></article>
+
+<article class="topic"><h3>20. Next steps</h3>
+<p>Complete <a href="#activity">Week 2 lab</a>, <a href="#quiz">quiz</a>, mark reading done. Open <a href="python-lesson3.html">Week 3</a> when unlocked. Download bilingual notes from the reading panel.</p></article>
