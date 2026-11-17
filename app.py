@@ -109,7 +109,7 @@ LESSONS = {
     "cs-fundamentals-lesson-1": {
         "title": "How Computers Actually Work",
         "section_ids": ["welcome", "video", "reading", "activity", "quiz", "wrapup"],
-        "prerequisite": "intermediate-readiness-week",
+        "prerequisite": None,
         "video_dir": os.environ.get("LESSON1_VIDEO_DIR", "assets/videos/lesson1"),
         "recording_segments": [
             {
@@ -309,7 +309,7 @@ LESSONS = {
     "python-beginner-lesson-1": {
         "title": "Week 1 · Getting Started with Python",
         "section_ids": ["welcome", "video", "reading", "activity", "quiz", "wrapup"],
-        "prerequisite": "intermediate-readiness-week",
+        "prerequisite": None,
         "video_dir": os.environ.get(
             "PYTHON_LESSON1_VIDEO_DIR", "assets/videos/python-lesson1"
         ),
@@ -463,7 +463,7 @@ COURSES = {
         "category": "Technology",
         "status": "open",
         "image": "assets/school/icon-coding.png",
-        "entry_path": "prework.html",
+        "entry_path": "index.html",
         "price_label": "Manual checkout",
         "description": (
             "Understand how computers, memory, operating systems, and the "
@@ -471,7 +471,7 @@ COURSES = {
             "deeper programming lessons."
         ),
         "highlights": [
-            "Week 0 readiness assessment",
+            "Optional Week 0 readiness (Python placement)",
             "How Computers Actually Work",
             "How the Internet Actually Works",
             "How Databases Actually Store Your Data",
@@ -490,15 +490,16 @@ COURSES = {
         "category": "Programming",
         "status": "open",
         "image": "assets/school/icon-coding.png",
-        "entry_path": "prework.html",
+        "entry_path": "python-lesson1.html",
         "price_label": "Manual checkout",
         "description": (
-            "Week 0 readiness, then five weeks of Python: setup and print(), "
-            "variables and input, decisions, loops, and functions/dictionaries — "
-            "each week includes recordings, expanded notes, activity lab, and quiz."
+            "Five weeks of Python: setup and print(), variables and input, "
+            "decisions, loops, and functions/dictionaries — each week includes "
+            "recordings, expanded notes, activity lab, and quiz. Week 0 readiness "
+            "is optional."
         ),
         "highlights": [
-            "Week 0: Python readiness quiz and coding review",
+            "Optional Week 0: Python readiness quiz and coding review",
             "Weeks 1–5: Full-week plans (not single-day cramming)",
             "Class activities, notes, and quizzes each week",
         ],
